@@ -1046,7 +1046,7 @@ h3 {
   }
 
   .section {
-    padding: 72px 0;
+    padding: 42px 0;
   }
 
   .office-layout,
@@ -1096,8 +1096,12 @@ h3 {
   }
 
   .hero-inner {
-    padding-top: 64px;
-    gap: 20px;
+    padding-top: 36px;
+    gap: 16px;
+  }
+
+  .section {
+    padding: 36px 0;
   }
 
   .hero-overlay {
@@ -1183,7 +1187,7 @@ h3 {
   }
 
   .office-points {
-    margin-bottom: 8px;
+    margin-bottom: 0;
   }
 
   .catering-gallery {
@@ -1226,14 +1230,14 @@ h3 {
 
   .catering-panel {
     order: 3;
-    margin-top: 18px;
+    margin-top: 10px;
   }
 
   .contact-details {
     padding-left: 0;
     border-left: 0;
     border-top: 1px solid rgba(242, 236, 228, 0.24);
-    padding-top: 24px;
+    padding-top: 18px;
   }
 }
 
@@ -1308,7 +1312,7 @@ h3 {
   }
 
   .hero-inner {
-    padding: 58px 0 54px;
+    padding: 32px 0 30px;
   }
 
   .hero-copy h1 {
@@ -1537,7 +1541,7 @@ h3 {
   }
 
   .section {
-    padding: 64px 0;
+    padding: 32px 0;
   }
 }
 
@@ -1581,7 +1585,11 @@ h3 {
   }
 
   .hero-inner {
-    padding: 52px 0 48px;
+    padding: 27px 0 26px;
+  }
+
+  .section {
+    padding: 27px 0;
   }
 
   .hero-copy h1 {
