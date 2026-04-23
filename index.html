@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uno de Miga</title>
+    <meta
+      name="description"
+      content="Sitio estatico de Uno de Miga con una identidad visual inspirada en su branding."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      Sabores grandes, identidad fuerte, sandwicheria con sello propio.
+    </div>
+
+    <header class="site-header">
+      <nav class="nav">
+        <a class="nav-logo" href="#inicio" aria-label="Uno de Miga">
+          <img src="./LOGO.png" alt="Logo de Uno de Miga" />
+        </a>
+        <div class="nav-side nav-side-main">
+          <a href="#menu">MENÚ</a>
+          <a href="#office">Oficinas</a>
+          <a href="#catering">Eventos</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+        <div class="nav-actions">
+          <a
+            class="nav-action-button nav-maps"
+            href="https://www.google.com/maps/dir/?api=1&destination=Calle%20Llop%201%2C%20Valencia"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Como llegar
+          </a>
+          <a
+            class="nav-action-button nav-whatsapp"
+            href="https://wa.me/34641514569?text=Hola%21%20Quiero%20hacer%20una%20consulta%20en%20Uno%20de%20Miga."
+            target="_blank"
+            rel="noreferrer"
+          >
+            WhatsApp
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero">
+        <div class="hero-slider" aria-hidden="true">
+          <div class="hero-slide slide-1"></div>
+          <div class="hero-slide slide-2"></div>
+          <div class="hero-slide slide-3"></div>
+        </div>
+        <div class="hero-overlay" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <h1>Sandwiches de miga, frescos, rapidos, y deliciosos</h1>
+            <p class="hero-text">la primer sandwucheria de miga de Valencia</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="menu" class="section section-light">
+        <div class="section-heading">
+          <h2>Menu</h2>
+          <h4 class="kicker menu-kicker">Sabores</h4>
+        </div>
+
+        <div class="flavor-grid">
+          <article class="flavor-card flavor-card-category flavor-card-category-brand">
+            <div class="flavor-body">
+              <span class="office-size">Categoria</span>
+              <h3>Sabores clasicos y Especiales</h3>
+              <p>Los sabores de siempre, simples, ricos y faciles de elegir.</p>
+            </div>
+          </article>
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img src="./jamonyqueso.jpg" alt="Sandwich de jamon y queso" />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">Clasicos</span>
+              <h3>Jamon y queso</h3>
+              <p>Un clasico infalible con jamon cocido y queso.</p>
+              <p class="flavor-price">3,5€</p>
+            </div>
+          </article>
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img src="./aceitunas.jpg" alt="Sandwich de aceituna y queso" />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">Clasicos</span>
+              <h3>Aceituna y queso</h3>
+              <p>Una combinacion simple y sabrosa con aceituna y queso.</p>
+              <p class="flavor-price">3,5€</p>
+            </div>
+          </article>
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img
+                src="./morronesAsados.jpg"
+                alt="Sandwich de morrones asados, queso gouda y queso crema"
+              />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">Especiales</span>
+              <h3>Morrones asados, gouda y crema</h3>
+              <p>Morrones asados, queso gouda y queso crema.</p>
+              <p class="flavor-price">3,5€</p>
+            </div>
+          </article>
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img src="./pestoTomate.jpg" alt="Sandwich de pesto, queso y tomate" />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">Especiales</span>
+              <h3>Pesto, queso y tomate</h3>
+              <p>Una combinacion fresca y aromatica con pesto, queso y tomate.</p>
+              <p class="flavor-price">3,5€</p>
+            </div>
+          </article>
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img
+                src="./berenjenas.png"
+                alt="Sandwich de berenjenas asadas y queso brie"
+              />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">Especiales</span>
+              <h3>Berenjenas asadas y brie</h3>
+              <p>Berenjenas asadas y queso brie para un sabor mas delicado.</p>
+              <p class="flavor-price">3,5€</p>
+            </div>
+          </article>
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img src="./jamonSerrano.jpg" alt="Sandwich de jamon serrano, rucula y queso" />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">Especiales</span>
+              <h3>Jamon serrano, rucula y queso</h3>
+              <p>Una opcion intensa y fresca con jamon serrano, rucula y queso.</p>
+              <p class="flavor-price">3,5 EUR</p>
+            </div>
+          </article>
+          <article class="flavor-card flavor-card-category flavor-card-category-premium">
+            <div class="flavor-body">
+              <span class="office-size">Categoria</span>
+              <h3>De la casa</h3>
+              <p>Sabores propios para cerrar el menu con las opciones mas premium.</p>
+            </div>
+          </article>
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img src="./atunPalta.jpg" alt="Sandwich de atun, palta y queso" />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">De la casa</span>
+              <h3>Atun, palta y queso</h3>
+              <p>Una mezcla cremosa y fresca, bien representativa de la casa.</p>
+              <p class="flavor-price">3,90€</p>
+            </div>
+          </article>
+
+
+          <article class="flavor-card">
+            <div class="flavor-image">
+              <img src="./salmon.png" alt="Sandwich de salmon y queso" />
+            </div>
+            <div class="flavor-body">
+              <span class="office-size">De la casa</span>
+              <h3>Salmon y queso</h3>
+              <p>Una opcion especial con salmon y queso, suave y con mucho sabor.</p>
+              <p class="flavor-price">3,90€</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="office" class="section section-light">
+        <div class="office-layout">
+          <div class="office-copy">
+            <p class="kicker menu-kicker">Office</p>
+            <h2>Transforma el viernes con boxes pensadas para compartir</h2>
+            <p class="office-text">
+              Nuestros packs de sandwiches estan pensados para oficinas,
+              reuniones y equipos que quieren resolver el almuerzo con algo rico,
+              simple y facil de compartir.
+            </p>
+            <div class="office-points">
+              <span>Pedidos para equipos</span>
+              <span>Formatos listos para compartir</span>
+              <span>Ideal para viernes de oficina</span>
+            </div>
+          </div>
+
+          <div class="office-grid">
+            <article class="office-card office-card-accent">
+              <div class="office-card-image">
+                <img src="./box1.png" alt="Box office de 18 unidades" />
+              </div>
+              <div class="office-card-body">
+                <span class="office-size">18 unidades</span>
+                <h3>Box chico</h3>
+                <p>
+                  Ideal para reuniones cortas, equipos chicos o desayunos de
+                  oficina.
+                </p>
+                <a
+                  class="office-link"
+                  href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20el%20Box%20chico%20de%2018%20unidades%20para%20oficinas."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Pedir este formato
+                </a>
+              </div>
+            </article>
+
+            <article class="office-card office-card-offset">
+              <div class="office-card-image">
+                <img src="./box2.png" alt="Box office de 36 unidades" />
+              </div>
+              <div class="office-card-body">
+                <span class="office-size">36 unidades</span>
+                <h3>Box mediano</h3>
+                <p>
+                  Una opcion equilibrada para compartir entre varios sin quedarse
+                  corto.
+                </p>
+                <a
+                  class="office-link"
+                  href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20el%20Box%20mediano%20de%2036%20unidades%20para%20oficinas."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Pedir este formato
+                </a>
+              </div>
+            </article>
+
+            <article class="office-card">
+              <div class="office-card-image">
+                <img src="./box3.png" alt="Box office de 48 unidades" />
+              </div>
+              <div class="office-card-body">
+                <span class="office-size">48 unidades</span>
+                <h3>Box grande</h3>
+                <p>
+                  Perfecto para viernes de equipo, eventos internos o mesas
+                  compartidas.
+                </p>
+                <a
+                  class="office-link"
+                  href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20el%20Box%20grande%20de%2048%20unidades%20para%20oficinas."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Pedir este formato
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="catering" class="section section-light">
+        <div class="catering-cta">
+          <div class="catering-copy">
+            <p class="kicker menu-kicker">Eventos</p>
+            <h2>Mesas, eventos y pedidos a medida</h2>
+            <p class="catering-text">
+              Armamos propuestas para cumpleanos, reuniones, presentaciones,
+              rodajes y encuentros especiales. Ademas de sandwiches de miga,
+              podemos sumar tortas saladas y formatos pensados para compartir.
+              Contanos cuantas personas son, la fecha y el tipo de evento, y te
+              preparamos un presupuesto a medida.
+            </p>
+            <div class="catering-panel">
+              <p class="catering-label">Pedi presupuesto</p>
+              <p class="catering-note">
+                Respuesta personalizada segun cantidad, formatos, sabores y
+                opciones de tortas saladas para tu evento.
+              </p>
+              <a
+                class="button primary"
+                href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20presupuesto%20para%20un%20evento%20o%20catering."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Pedir presupuesto
+              </a>
+            </div>
+          </div>
+
+          <div class="catering-gallery">
+            <figure class="catering-shot catering-shot-large">
+              <img
+                src="./eventos1.png"
+                alt="Mesa de catering con sandwiches de miga"
+              />
+            </figure>
+            <figure class="catering-shot">
+              <img
+                src="./eventos2.png"
+                alt="Catering de sandwiches para eventos"
+              />
+            </figure>
+            <figure class="catering-shot">
+              <img
+                src="./eventos3.png"
+                alt="Opciones de sandwiches y tortas saladas para eventos"
+              />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto" class="section section-accent contact-section">
+        <div class="contact-shell">
+          <div class="contact-copy">
+            
+            <h2>Hacemos tu pedido facil y rapido</h2>
+            <p class="contact-text">
+              Escribinos para pedir sabores, armar tu box office o solicitar
+              presupuesto para tu evento. Te respondemos con una propuesta clara y
+              a medida.
+            </p>
+            <div class="contact-actions">
+              <a
+                class="button contact-button-primary"
+                href="https://wa.me/34641514569?text=Hola%21%20Quiero%20hacer%20un%20pedido%20en%20Uno%20de%20Miga."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Pedir por WhatsApp
+              </a>
+              <a class="button contact-button-secondary" href="#menu">
+                Ver sabores
+              </a>
+              <a
+                class="button contact-button-secondary"
+                href="https://www.google.com/maps/dir/?api=1&destination=Calle%20Llop%201%2C%20Valencia"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Como llegar
+              </a>
+            </div>
+          </div>
+
+          <div class="contact-details">
+               <div class="contact-item">
+              
+              <a>
+                CONTACTANOS :)
+              </a>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">Instagram:</span>
+              <a
+                href="https://www.instagram.com/unodemigavalencia?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noreferrer"
+              >
+                @unodemigavalencia
+              </a>
+            </div>
+
+            <div class="contact-item">
+              <span class="contact-label">WhatsApp:</span>
+              <a
+                href="https://wa.me/34641514569?text=Hola%21%20Quiero%20hacer%20una%20consulta%20general%20sobre%20Uno%20de%20Miga."
+                target="_blank"
+                rel="noreferrer"
+              >
+                +34 641 514 569
+              </a>
+            </div>
+
+            <div class="contact-item">
+              <span class="contact-label">Direccion:</span>
+              <a
+                href="https://www.google.com/maps/dir/?api=1&destination=Calle%20Llop%201%2C%20Valencia"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Calle Llop 1, vuelta del Ayuntament
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <a
+      class="floating-whatsapp"
+      href="https://wa.me/34641514569?text=Hola%21%20Quiero%20hacer%20una%20consulta%20en%20Uno%20de%20Miga."
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Abrir WhatsApp"
+    >
+      <span class="floating-whatsapp-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="img" focusable="false">
+          <path
+            d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.5 0 .18 5.31.18 11.87c0 2.09.55 4.13 1.58 5.93L0 24l6.38-1.67a11.83 11.83 0 0 0 5.68 1.45h.01c6.55 0 11.88-5.31 11.88-11.88 0-3.17-1.23-6.15-3.43-8.42Zm-8.46 18.3h-.01a9.88 9.88 0 0 1-5.04-1.38l-.36-.21-3.79 1 1.01-3.7-.24-.38a9.9 9.9 0 0 1-1.52-5.25C2.11 6.41 6.58 1.94 12.06 1.94c2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.9 6.99c0 5.48-4.47 9.95-9.89 9.95Zm5.44-7.44c-.3-.15-1.78-.88-2.05-.98-.27-.1-.47-.15-.67.15-.19.3-.77.98-.94 1.18-.17.2-.35.23-.64.08-.3-.15-1.25-.46-2.38-1.48a8.8 8.8 0 0 1-1.65-2.06c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.49.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.48-.5-.67-.51h-.57c-.2 0-.52.08-.79.38-.27.3-1.04 1.01-1.04 2.46 0 1.45 1.07 2.86 1.22 3.06.15.2 2.09 3.2 5.08 4.49.71.31 1.27.49 1.7.63.71.23 1.35.2 1.86.12.57-.09 1.78-.73 2.03-1.43.25-.71.25-1.31.17-1.43-.08-.13-.28-.2-.57-.35Z"
+          />
+        </svg>
+      </span>
+    </a>
+
+    <a
+      class="floating-maps"
+      href="https://www.google.com/maps/dir/?api=1&destination=Calle%20Llop%201%2C%20Valencia"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Como llegar"
+    >
+      <span class="floating-maps-icon" aria-hidden="true">
+        <img src="./google-maps-icon.png" alt="" />
+      </span>
+    </a>
+  </body>
+</html>
