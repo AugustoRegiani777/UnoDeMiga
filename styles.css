@@ -201,19 +201,19 @@ a {
 }
 
 .slide-1 {
-  background-image: url("./img-36.jpg");
+  background-image: url("./assets/img/img-36.jpg");
   background-position: center 62%;
   animation-delay: 0s;
 }
 
 .slide-2 {
-  background-image: url("./img-63.jpg");
+  background-image: url("./assets/img/img-63.jpg");
   background-position: center 58%;
   animation-delay: 4s;
 }
 
 .slide-3 {
-  background-image: url("./img-3.jpg");
+  background-image: url("./assets/img/img-3.jpg");
   background-position: center 56%;
   animation-delay: 8s;
 }
