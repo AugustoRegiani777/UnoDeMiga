@@ -1,8 +1,8 @@
 :root {
   --cream: #f2ece4;
   --cream-deep: #e7ddd2;
-  --orange: #bf5634;
-  --orange-dark: #8f3c21;
+  --orange: #c83010;
+  --orange-dark: #8f260f;
   --text: #261712;
   --line: rgba(38, 23, 18, 0.16);
   --shadow: 0 24px 80px rgba(86, 35, 18, 0.18);
@@ -62,9 +62,9 @@ a {
 }
 
 .nav {
-  width: var(--frame-width);
+  width: calc(100% - 40px);
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr;
   align-items: center;
   gap: 24px;
   padding: 0;
@@ -92,6 +92,7 @@ a {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+  justify-self: end;
 }
 
 .nav a {
@@ -102,16 +103,17 @@ a {
 .nav-logo {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0;
   height: 100%;
+  width: clamp(260px, 24vw, 380px);
   align-self: stretch;
   overflow: hidden;
 }
 
 .nav-logo img {
   display: block;
-  width: 108px;
+  width: 100%;
   height: 100%;
   object-fit: contain;
 }
@@ -374,7 +376,7 @@ h3 {
   display: flex;
   align-items: stretch;
   background:
-    linear-gradient(145deg, rgba(191, 86, 52, 0.14) 0%, rgba(191, 86, 52, 0.04) 100%),
+    linear-gradient(145deg, rgba(200, 48, 16, 0.14) 0%, rgba(200, 48, 16, 0.04) 100%),
     #f7f0e7;
 }
 
@@ -402,7 +404,7 @@ h3 {
     "UNO DE MIGA.";
   position: absolute;
   inset: -8px;
-  color: rgba(191, 86, 52, 0.72);
+  color: rgba(200, 48, 16, 0.72);
   font-family: "Archivo Black", sans-serif;
   font-size: clamp(2rem, 2.15vw, 2.85rem);
   line-height: 0.8;
@@ -485,10 +487,10 @@ h3 {
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(circle at top right, rgba(191, 86, 52, 0.18) 0%, rgba(191, 86, 52, 0.02) 34%, transparent 58%),
-    linear-gradient(145deg, rgba(143, 60, 33, 0.16) 0%, rgba(191, 86, 52, 0.08) 46%, rgba(242, 236, 228, 0.9) 100%),
+    radial-gradient(circle at top right, rgba(200, 48, 16, 0.18) 0%, rgba(200, 48, 16, 0.02) 34%, transparent 58%),
+    linear-gradient(145deg, rgba(143, 38, 15, 0.16) 0%, rgba(200, 48, 16, 0.08) 46%, rgba(242, 236, 228, 0.9) 100%),
     #f4ede5;
-  border-color: rgba(143, 60, 33, 0.24);
+  border-color: rgba(143, 38, 15, 0.24);
 }
 
 .flavor-card-category-premium::before {
@@ -502,7 +504,7 @@ h3 {
     "DE LA CASA.";
   position: absolute;
   inset: -4px 0 0 0;
-  color: rgba(143, 60, 33, 0.16);
+  color: rgba(143, 38, 15, 0.16);
   font-family: "Archivo Black", sans-serif;
   font-size: clamp(1.45rem, 1.75vw, 2.2rem);
   line-height: 0.84;
@@ -634,7 +636,7 @@ h3 {
   padding: 0 14px;
   border-radius: 999px;
   border: 1px solid rgba(38, 23, 18, 0.12);
-  background: rgba(191, 86, 52, 0.06);
+  background: rgba(200, 48, 16, 0.06);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -744,7 +746,7 @@ h3 {
   padding: 14px;
   border-radius: 28px;
   background:
-    linear-gradient(135deg, rgba(191, 86, 52, 0.08) 0%, rgba(191, 86, 52, 0.02) 100%);
+    linear-gradient(135deg, rgba(200, 48, 16, 0.08) 0%, rgba(200, 48, 16, 0.02) 100%);
   border: 1px solid rgba(38, 23, 18, 0.12);
   box-shadow: 0 16px 40px rgba(86, 35, 18, 0.08);
 }
@@ -908,12 +910,12 @@ h3 {
   flex-direction: column;
   justify-content: center;
   gap: 0;
-  padding-left: 24px;
+  padding-left: 18px;
   border-left: 1px solid rgba(242, 236, 228, 0.28);
 }
 
 .contact-item {
-  padding: 18px 0;
+  padding: 14px 0;
   border-bottom: 1px solid rgba(242, 236, 228, 0.18);
 }
 
@@ -936,15 +938,26 @@ h3 {
   color: rgba(242, 236, 228, 0.72);
 }
 
+.contact-item-inline {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.contact-item-inline .contact-label {
+  margin-bottom: 0;
+}
+
 .contact-item a,
 .contact-item p {
   margin: 0;
   color: var(--cream);
   font-family: "Archivo Black", sans-serif;
-  font-size: clamp(0.9rem, 1.3vw, 1.26rem);
+  font-size: clamp(0.82rem, 1.05vw, 1.08rem);
   line-height: 1.08;
   text-transform: uppercase;
-  max-width: 20ch;
+  max-width: 28ch;
 }
 
 .floating-whatsapp {
@@ -1029,7 +1042,7 @@ h3 {
   }
 
   .nav-logo img {
-    width: 128px;
+    width: 100%;
   }
 
   .section {
@@ -1093,6 +1106,7 @@ h3 {
   }
 
   .nav {
+    grid-template-columns: auto minmax(0, 1fr);
     height: 112px;
     font-size: 0.98rem;
     gap: 14px;
@@ -1100,10 +1114,24 @@ h3 {
 
   .nav-side {
     gap: 14px;
+    justify-content: flex-end;
+  }
+
+  .nav-actions {
+    display: none;
+  }
+
+  .nav-logo {
+    width: clamp(180px, 28vw, 250px);
   }
 
   .nav-logo img {
-    width: 112px;
+    width: 100%;
+  }
+
+  .floating-whatsapp,
+  .floating-maps {
+    display: inline-flex;
   }
 
   .flavor-grid {
@@ -1259,12 +1287,13 @@ h3 {
   }
 
   .nav-logo img {
-    width: 88px;
-    height: 88px;
+    width: 100%;
+    height: 100%;
   }
 
   .nav-logo {
     position: static;
+    width: clamp(130px, 28vw, 190px);
     height: 88px;
     justify-self: start;
   }
@@ -1367,13 +1396,13 @@ h3 {
 
   .flavor-card-category-brand {
     background:
-      linear-gradient(145deg, rgba(191, 86, 52, 0.14) 0%, rgba(191, 86, 52, 0.04) 100%),
+      linear-gradient(145deg, rgba(200, 48, 16, 0.14) 0%, rgba(200, 48, 16, 0.04) 100%),
       #f7f0e7;
   }
 
   .flavor-card-category-premium {
     background:
-      linear-gradient(145deg, rgba(143, 60, 33, 0.14) 0%, rgba(191, 86, 52, 0.05) 100%),
+      linear-gradient(145deg, rgba(143, 38, 15, 0.14) 0%, rgba(200, 48, 16, 0.05) 100%),
       #f7f0e7;
   }
 
@@ -1542,11 +1571,12 @@ h3 {
   }
 
   .nav-logo img {
-    width: 74px;
-    height: 74px;
+    width: 100%;
+    height: 100%;
   }
 
   .nav-logo {
+    width: 118px;
     height: 74px;
   }
 
@@ -1883,11 +1913,12 @@ h3 {
   }
 
   .nav-logo img {
-    width: 62px;
-    height: 62px;
+    width: 100%;
+    height: 100%;
   }
 
   .nav-logo {
+    width: 96px;
     height: 62px;
   }
 }
