@@ -482,6 +482,101 @@ h3 {
   padding-bottom: 6px;
 }
 
+.flavor-card-category-veggie::before {
+  content:
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN\A"
+    "UNO DE MIGA VEGAN.";
+  color: rgba(105, 145, 98, 0.6);
+}
+
+.flavor-card-category-veggie .flavor-body {
+  color: #56774f;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-height: 280px;
+  padding-top: 72px;
+}
+
+.flavor-card-category-veggie .office-size,
+.flavor-card-category-veggie .flavor-body h3,
+.flavor-card-category-veggie .flavor-body p {
+  color: #56774f;
+}
+
+.flavor-card-category-veggie .flavor-body h3 {
+  font-size: 1.45rem;
+}
+
+.veggie-note {
+  margin: 10px 0 8px;
+  min-height: 0;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.veggie-highlight {
+  margin: 0;
+  min-height: 0;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.veggie-minimum {
+  margin: 8px 0 0;
+  min-height: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.flavor-card-veggie-detail .flavor-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.veggie-flavors {
+  min-height: 0;
+  margin: 10px 0 0;
+  line-height: 1.35;
+  font-size: 0.78rem;
+}
+
+.veggie-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.veggie-actions .flavor-price {
+  margin: 0;
+  align-self: auto;
+  text-align: left;
+}
+
+.flavor-link-veggie {
+  margin-top: 0;
+  align-self: auto;
+  background: #6d9661;
+}
+
+.flavor-link-veggie:hover {
+  background: #56774f;
+}
+
 .flavor-card-category-premium {
   position: relative;
   overflow: hidden;
