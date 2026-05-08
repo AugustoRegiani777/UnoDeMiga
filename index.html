@@ -329,7 +329,8 @@
 
       <section id="catering" class="section section-light">
         <div class="catering-cta">
-          <div class="catering-copy">
+          <div class="catering-hero">
+            <div class="catering-copy">
             <p class="kicker menu-kicker">Catering</p>
             <h2>Mesas, catering y pedidos a medida</h2>
             <p class="catering-text">
@@ -341,43 +342,160 @@
               <br />
               Envío sin costo.
             </p>
-            <div class="catering-panel">
+            </div>
+
+            <div class="catering-stage">
+            <div class="catering-teaser" id="catering-intro-panel">
+            <div class="catering-panel catering-panel-intro">
               <p class="catering-label">Pedí presupuesto</p>
               <p class="catering-note">
                 Respuesta personalizada según cantidad, formatos, sabores y
                 opciones de tortas saladas para tu evento.
               </p>
+              <button type="button" class="button primary catering-launch-button" id="catering-launch-button">
+                Hacer presupuesto
+              </button>
               <a
-                class="button primary"
+                class="catering-panel-link"
                 href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20presupuesto%20para%20un%20evento%20o%20catering."
                 target="_blank"
                 rel="noreferrer"
               >
-                Pedir presupuesto
+                Prefiero pedirlo por WhatsApp
               </a>
             </div>
-          </div>
+            </div>
 
-          <div class="catering-gallery">
-            <figure class="catering-shot catering-shot-large">
-              <img
-                src="./assets/img/eventos1.png"
-                alt="Mesa de catering con sándwiches de miga"
-              />
-            </figure>
-            <figure class="catering-shot">
-              <img
-                src="./assets/img/eventos2.png"
-                alt="Catering de sándwiches para eventos"
-              />
-            </figure>
-            <figure class="catering-shot">
-              <img
-                src="./assets/img/eventos3.png"
-                alt="Opciones de sándwiches y tortas saladas para eventos"
-              />
-            </figure>
-          </div>
+              <div class="catering-modal" id="catering-modal" hidden>
+                <button type="button" class="catering-modal-backdrop" id="catering-modal-backdrop" aria-label="Cerrar cotizador"></button>
+                <div class="catering-builder" id="catering-builder" role="dialog" aria-modal="true" aria-labelledby="builder-modal-title">
+                  <div class="catering-modal-head">
+                    <p class="catering-modal-kicker">Cotizador</p>
+                    <button type="button" class="catering-modal-close" id="catering-modal-close" aria-label="Cerrar cotizador">Cerrar</button>
+                  </div>
+
+                  <div class="builder-progress">
+                    <div class="builder-progress-bar">
+                      <span class="builder-progress-fill" id="builder-progress-fill"></span>
+                    </div>
+                    <div class="builder-steps" id="builder-steps"></div>
+                  </div>
+
+                  <div class="builder-body">
+                    <section class="builder-step is-active" data-step="1">
+                      <div class="builder-step-copy">
+                        <p class="builder-eyebrow">Paso 1</p>
+                        <h3 id="builder-modal-title">¿Cuántas personas son?</h3>
+                        <p>Empezamos por la base del evento. Luego ajustamos el resto.</p>
+                      </div>
+                      <div class="builder-counter">
+                        <button type="button" class="builder-counter-btn" data-person-action="decrease">-</button>
+                        <div class="builder-counter-value" id="person-count">10</div>
+                        <button type="button" class="builder-counter-btn" data-person-action="increase">+</button>
+                      </div>
+                      <p class="builder-helper">Mínimo recomendado para catering: 10 personas.</p>
+                    </section>
+
+                    <section class="builder-step" data-step="2" hidden>
+                      <div class="builder-step-copy">
+                        <p class="builder-eyebrow">Paso 2</p>
+                        <h3>¿Qué intensidad necesita el evento?</h3>
+                        <p>Traducimos el momento a una cantidad orientativa por persona.</p>
+                      </div>
+                      <div class="builder-choice-grid" id="service-options"></div>
+                    </section>
+
+                    <section class="builder-step" data-step="3" hidden>
+                      <div class="builder-step-copy">
+                        <p class="builder-eyebrow">Paso 3</p>
+                        <h3>Elige un estilo</h3>
+                        <p>Preparamos una selección inicial para que no arranques desde cero.</p>
+                      </div>
+                      <div class="builder-choice-grid builder-choice-grid-wide" id="style-options"></div>
+                    </section>
+
+                    <section class="builder-step" data-step="4" hidden>
+                      <div class="builder-step-copy">
+                        <p class="builder-eyebrow">Paso 4</p>
+                        <h3>Ajusta los sabores</h3>
+                        <p>Tu selección debe completar el total sugerido para el evento.</p>
+                      </div>
+                      <div class="builder-totals">
+                        <div>
+                          <span class="builder-total-label">Objetivo</span>
+                          <strong id="flavor-target">0 sándwiches</strong>
+                        </div>
+                        <div>
+                          <span class="builder-total-label">Seleccion actual</span>
+                          <strong id="flavor-selected">0 / 0</strong>
+                        </div>
+                      </div>
+                      <div class="builder-filters" id="filter-options"></div>
+                      <div class="builder-flavors" id="flavor-groups"></div>
+                    </section>
+
+                    <section class="builder-step" data-step="5" hidden>
+                      <div class="builder-step-copy">
+                        <p class="builder-eyebrow">Paso 5</p>
+                        <h3>Suma extras si quieres</h3>
+                        <p>Un plus para redondear el pedido segun el tipo de evento.</p>
+                      </div>
+                      <div class="builder-extras" id="extra-options"></div>
+                    </section>
+
+                    <section class="builder-step" data-step="6" hidden>
+                      <div class="builder-step-copy">
+                        <p class="builder-eyebrow">Paso 6</p>
+                        <h3>Resumen del pedido</h3>
+                        <p>Te mostramos el estimado antes de enviarlo por WhatsApp.</p>
+                      </div>
+                      <div class="builder-summary">
+                        <div class="builder-summary-card">
+                          <span class="builder-summary-kicker">Precio estimado</span>
+                          <strong id="summary-price-per-person">0,00 EUR</strong>
+                          <p id="summary-total-line">Total 0,00 EUR</p>
+                        </div>
+                        <div class="builder-summary-details">
+                          <div class="builder-summary-block">
+                            <h4>Configuración</h4>
+                            <ul id="summary-config"></ul>
+                          </div>
+                          <div class="builder-summary-block">
+                            <h4>Sabores elegidos</h4>
+                            <ul id="summary-flavors"></ul>
+                          </div>
+                          <div class="builder-summary-block">
+                            <h4>Extras</h4>
+                            <ul id="summary-extras"></ul>
+                          </div>
+                        </div>
+                        <div class="builder-summary-footer">
+                          <p>Envío sin costo en Valencia y confirmación final por WhatsApp.</p>
+                          <a
+                            class="button primary builder-whatsapp"
+                            id="builder-whatsapp-link"
+                            href="https://wa.me/34641514569"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Enviar por WhatsApp
+                          </a>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+
+                  <div class="builder-actions">
+                    <button type="button" class="button builder-nav builder-nav-secondary" id="builder-prev">
+                      Anterior
+                    </button>
+                    <button type="button" class="button builder-nav builder-nav-primary" id="builder-next">
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
         </div>
       </section>
 
@@ -488,6 +606,8 @@
         <img src="./assets/img/google-maps-icon.png" alt="" />
       </span>
     </a>
+    <script src="./script.js"></script>
   </body>
 </html>
+
 

@@ -1,0 +1,1611 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cotizador Interactivo de Catering</title>
+    <style>
+      :root {
+        --bg: #f7f2eb;
+        --surface: #fffdf9;
+        --surface-strong: #ffffff;
+        --ink: #1d2c35;
+        --muted: #687781;
+        --line: rgba(29, 44, 53, 0.12);
+        --brand: #0f4e68;
+        --brand-strong: #0a3f54;
+        --accent: #e58e83;
+        --accent-soft: rgba(229, 142, 131, 0.16);
+        --success: #1fa463;
+        --success-strong: #11824d;
+        --danger: #c23934;
+        --shadow: 0 24px 60px rgba(23, 42, 54, 0.08);
+        --radius-xl: 28px;
+        --radius-lg: 20px;
+        --radius-md: 16px;
+        --radius-sm: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(229, 142, 131, 0.12), transparent 26%),
+          linear-gradient(180deg, #fcfaf6 0%, var(--bg) 100%);
+        color: var(--ink);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 48px 0 72px;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 4.1rem);
+        line-height: 0.95;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+
+      .hero p {
+        max-width: 720px;
+        margin: 16px auto 0;
+        color: var(--muted);
+        font-size: 1.08rem;
+        line-height: 1.6;
+      }
+
+      .wizard {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(29, 44, 53, 0.08);
+        border-radius: 32px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .wizard-inner {
+        padding: 38px clamp(18px, 4vw, 40px);
+      }
+
+      .progress-rail {
+        width: 100%;
+        height: 5px;
+        background: rgba(29, 44, 53, 0.08);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 16.666%;
+        background: linear-gradient(90deg, var(--brand-strong), var(--brand));
+        border-radius: inherit;
+        transition: width 0.24s ease;
+      }
+
+      .progress-steps {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
+      }
+
+      .progress-step-badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(29, 44, 53, 0.15);
+        color: rgba(29, 44, 53, 0.46);
+        background: var(--surface-strong);
+        font-weight: 700;
+      }
+
+      .progress-step-label {
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(29, 44, 53, 0.48);
+        font-weight: 700;
+      }
+
+      .progress-step.is-active .progress-step-badge,
+      .progress-step.is-done .progress-step-badge {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: white;
+      }
+
+      .progress-step.is-active .progress-step-label,
+      .progress-step.is-done .progress-step-label {
+        color: var(--brand);
+      }
+
+      .step {
+        display: none;
+        padding: 42px 0 28px;
+        min-height: 520px;
+      }
+
+      .step.is-active {
+        display: block;
+      }
+
+      .step-header {
+        max-width: 760px;
+        margin: 0 auto 28px;
+        text-align: center;
+      }
+
+      .step-header h2 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        line-height: 0.98;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+
+      .step-header p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 1.02rem;
+      }
+
+      .person-picker {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .counter-btn,
+      .qty-btn {
+        width: 56px;
+        height: 56px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface-strong);
+        color: var(--brand);
+        font-size: 1.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+      }
+
+      .counter-btn:hover,
+      .qty-btn:hover,
+      .card:hover,
+      .filter-chip:hover,
+      .nav-btn:hover,
+      .cta:hover {
+        transform: translateY(-2px);
+      }
+
+      .person-value {
+        min-width: 132px;
+        padding: 16px 20px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--surface-strong);
+        font-size: clamp(2.2rem, 6vw, 3.5rem);
+        font-weight: 800;
+        text-align: center;
+        color: var(--brand);
+      }
+
+      .person-helper {
+        margin-top: 20px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: var(--surface-strong);
+        padding: 24px 20px;
+        text-align: left;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+        box-shadow: 0 10px 24px rgba(23, 42, 54, 0.04);
+      }
+
+      .card.is-selected {
+        border-color: rgba(15, 78, 104, 0.26);
+        background: rgba(15, 78, 104, 0.08);
+        box-shadow: 0 18px 36px rgba(23, 42, 54, 0.08);
+      }
+
+      .card-title {
+        display: block;
+        font-size: 1.22rem;
+        font-weight: 800;
+        color: var(--brand);
+        text-transform: uppercase;
+      }
+
+      .card-subtitle,
+      .card-copy {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .flavor-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .selection-meter {
+        padding: 14px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(15, 78, 104, 0.14);
+        background: rgba(15, 78, 104, 0.08);
+        color: var(--brand);
+        font-weight: 800;
+      }
+
+      .selection-meter.is-invalid {
+        background: rgba(194, 57, 52, 0.12);
+        border-color: rgba(194, 57, 52, 0.18);
+        color: var(--danger);
+      }
+
+      .filter-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .filter-chip {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-strong);
+        color: var(--ink);
+        padding: 10px 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+      }
+
+      .filter-chip.is-active {
+        background: var(--brand);
+        color: white;
+        border-color: var(--brand);
+      }
+
+      .category-block + .category-block {
+        margin-top: 24px;
+      }
+
+      .category-title {
+        margin: 0 0 12px;
+        color: var(--accent);
+        font-size: 0.84rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .flavor-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .flavor-item,
+      .extra-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: var(--surface-strong);
+      }
+
+      .flavor-item.is-disabled {
+        opacity: 0.42;
+      }
+
+      .flavor-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background:
+          linear-gradient(135deg, rgba(229, 142, 131, 0.24), rgba(15, 78, 104, 0.16)),
+          linear-gradient(180deg, #fff, #f7efe5);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .flavor-icon::before,
+      .flavor-icon::after {
+        content: "";
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        border-radius: 999px;
+      }
+
+      .flavor-icon::before {
+        top: 14px;
+        height: 12px;
+        background: rgba(255, 226, 176, 0.95);
+      }
+
+      .flavor-icon::after {
+        top: 30px;
+        height: 10px;
+        background: rgba(232, 165, 110, 0.82);
+      }
+
+      .flavor-name,
+      .extra-name {
+        display: block;
+        font-weight: 800;
+        color: var(--brand);
+      }
+
+      .flavor-meta,
+      .extra-meta {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .qty-control {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .qty-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 1.35rem;
+        border-radius: 12px;
+      }
+
+      .qty-value {
+        min-width: 30px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 1.08rem;
+        color: var(--brand);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+      }
+
+      .summary-hero {
+        border-radius: 24px;
+        padding: 24px;
+        background:
+          linear-gradient(145deg, rgba(15, 78, 104, 0.1), rgba(15, 78, 104, 0.02)),
+          var(--surface-strong);
+        border: 1px solid rgba(15, 78, 104, 0.12);
+      }
+
+      .summary-hero-label {
+        margin: 0;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-weight: 700;
+        font-size: 0.72rem;
+      }
+
+      .summary-price {
+        margin: 14px 0 0;
+        font-size: clamp(2.4rem, 7vw, 4.4rem);
+        line-height: 0.92;
+        font-weight: 900;
+        color: var(--brand);
+      }
+
+      .summary-total {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
+      .summary-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .summary-breakdown-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .summary-breakdown-line small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      .summary-logistics {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 0.96rem;
+        line-height: 1.55;
+      }
+
+      .delivery-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(31, 164, 99, 0.1);
+        color: var(--success-strong);
+        font-weight: 700;
+      }
+
+      .summary-panels {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .summary-panel {
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--surface-strong);
+        padding: 18px;
+      }
+
+      .summary-panel h3 {
+        margin: 0 0 12px;
+        font-size: 0.94rem;
+        color: var(--brand);
+        text-transform: uppercase;
+      }
+
+      .summary-panel ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .summary-panel li + li {
+        margin-top: 8px;
+      }
+
+      .extras-flow {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .extras-hub {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .extras-subview {
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .extras-subview.is-active {
+        display: flex;
+      }
+
+      .extras-subheader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .extras-subtitle {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .ghost-btn {
+        min-height: 44px;
+        padding: 0 16px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--surface-strong);
+        color: var(--ink);
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .wizard-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        padding: 26px clamp(18px, 4vw, 40px) 34px;
+        border-top: 1px solid rgba(29, 44, 53, 0.08);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .nav-btn,
+      .cta {
+        min-height: 52px;
+        border-radius: 16px;
+        padding: 0 22px;
+        border: 1px solid var(--line);
+        background: var(--surface-strong);
+        color: var(--ink);
+        cursor: pointer;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+      }
+
+      .nav-btn[disabled] {
+        opacity: 0.42;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .cta {
+        border-color: var(--success);
+        background: var(--success);
+        color: white;
+      }
+
+      .cta:hover {
+        background: var(--success-strong);
+        border-color: var(--success-strong);
+      }
+
+      .footer-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .wizard-note {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 980px) {
+        .card-grid,
+        .summary-panels,
+        .summary-grid,
+        .extras-hub {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          width: min(100%, calc(100% - 18px));
+          padding: 24px 0 40px;
+        }
+
+        .wizard-inner {
+          padding: 22px 14px;
+        }
+
+        .progress-steps {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          row-gap: 14px;
+        }
+
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .flavor-item,
+        .extra-item {
+          grid-template-columns: 1fr;
+          justify-items: start;
+        }
+
+        .qty-control {
+          width: 100%;
+          justify-content: flex-end;
+        }
+
+        .wizard-footer,
+        .footer-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .nav-btn,
+        .cta {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <p class="eyebrow">En 6 pasos</p>
+        <h1>Monta tu pedido perfecto</h1>
+        <p>Elige cantidad, perfil y extras. Nosotros nos encargamos del resto.</p>
+      </header>
+
+      <section class="wizard" aria-label="Cotizador interactivo de catering">
+        <div class="wizard-inner">
+          <div class="progress-rail" aria-hidden="true">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-steps" id="progressSteps"></div>
+
+          <section class="step is-active" data-step="1">
+            <div class="step-header">
+              <h2>Cuantos sois?</h2>
+              <p>Para cuantas personas es el evento.</p>
+            </div>
+            <div class="person-picker">
+              <button class="counter-btn" type="button" id="decreasePeople" aria-label="Restar personas">-</button>
+              <div class="person-value" id="peopleValue">10</div>
+              <button class="counter-btn" type="button" id="increasePeople" aria-label="Sumar personas">+</button>
+            </div>
+            <p class="person-helper">Siempre puedes ajustarlo después.</p>
+          </section>
+
+          <section class="step" data-step="2">
+            <div class="step-header">
+              <h2>Cuanto apetito hay?</h2>
+              <p>Elige la intensidad del servicio.</p>
+            </div>
+            <div class="card-grid" id="serviceCards"></div>
+          </section>
+
+          <section class="step" data-step="3">
+            <div class="step-header">
+              <h2>Elige un estilo</h2>
+              <p>Preconfiguramos el reparto inicial para que no empieces desde cero.</p>
+            </div>
+            <div class="card-grid" id="styleCards"></div>
+          </section>
+
+          <section class="step" data-step="4">
+            <div class="step-header">
+              <h2>Elige los sabores</h2>
+              <p>Tu selección tiene que coincidir con la cantidad sugerida.</p>
+            </div>
+
+            <div class="flavor-toolbar">
+              <div class="selection-meter" id="selectionMeter">0 / 0 sándwiches</div>
+              <div class="filter-row" id="filterRow"></div>
+            </div>
+
+            <div id="flavorCategories"></div>
+          </section>
+
+          <section class="step" data-step="5">
+            <div class="step-header">
+              <h2>Completa con extras</h2>
+              <p>Primero elegimos si quieres sumar algo dulce, salado o alguna torta.</p>
+            </div>
+            <div class="extras-flow">
+              <div class="extras-hub" id="extrasHub"></div>
+              <div class="extras-subview" id="extrasSubview"></div>
+            </div>
+          </section>
+
+          <section class="step" data-step="6">
+            <div class="step-header">
+              <h2>Resumen final</h2>
+              <p>Revisamos el detalle y te lo dejamos listo para confirmar por WhatsApp.</p>
+            </div>
+
+            <div class="summary-grid">
+              <aside class="summary-hero">
+                <p class="summary-hero-label">Precio por persona</p>
+                <div class="summary-price" id="summaryPricePerPerson">0,00 €</div>
+                <p class="summary-total" id="summaryTotal">Total general 0,00 €</p>
+                <div class="summary-breakdown" id="summaryBreakdown"></div>
+                <div class="delivery-badge">🛵 Envío refrigerado gratis en Valencia</div>
+                <p class="summary-logistics" id="summaryLogistics"></p>
+              </aside>
+
+              <div class="summary-panels">
+                <article class="summary-panel">
+                  <h3>Configuración</h3>
+                  <ul id="summaryConfig"></ul>
+                </article>
+                <article class="summary-panel">
+                  <h3>Sabores</h3>
+                  <ul id="summaryFlavors"></ul>
+                </article>
+                <article class="summary-panel">
+                  <h3>Extras</h3>
+                  <ul id="summaryExtras"></ul>
+                </article>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <footer class="wizard-footer">
+          <p class="wizard-note">Calculamos una tarifa estándar o tarifa catering según el volumen seleccionado.</p>
+          <div class="footer-actions">
+            <button class="nav-btn" id="prevBtn" type="button">Anterior</button>
+            <button class="nav-btn" id="nextBtn" type="button">Siguiente</button>
+            <button class="cta" id="whatsappBtn" type="button" hidden>Confirmar catering por WhatsApp</button>
+          </div>
+        </footer>
+      </section>
+    </main>
+
+    <script>
+      const WHATSAPP_NUMBER = "34641514569";
+
+      const steps = [
+        { id: 1, label: "Personas" },
+        { id: 2, label: "Servicio" },
+        { id: 3, label: "Estilo" },
+        { id: 4, label: "Sabores" },
+        { id: 5, label: "Extras" },
+        { id: 6, label: "Resumen" },
+      ];
+
+      const services = [
+        {
+          id: "picoteo",
+          name: "Picoteo",
+          factor: 1.5,
+          subtitle: "1.5 sándwiches por persona",
+          copy: "Ideal para eventos informales",
+        },
+        {
+          id: "ligero",
+          name: "Ligero",
+          factor: 2.5,
+          subtitle: "2.5 sándwiches por persona",
+          copy: "Perfecto para almuerzos",
+        },
+        {
+          id: "completo",
+          name: "Completo",
+          factor: 3.5,
+          subtitle: "3.5 sándwiches por persona",
+          copy: "Para eventos largos",
+        },
+      ];
+
+      const styles = [
+        {
+          id: "mixto",
+          name: "Mixto",
+          copy: "60% clásicos y 40% gourmet.",
+        },
+        {
+          id: "gourmet",
+          name: "Gourmet",
+          copy: "20% clásicos y 80% de la casa.",
+        },
+        {
+          id: "vegetariano-vegano",
+          name: "Vegetariano/Vegano",
+          copy: "Solo reparte sabores vegetarianos o veganos.",
+        },
+      ];
+
+      const filters = [
+        { id: "sin-cerdo", label: "Sin Cerdo", tag: "cerdo" },
+        { id: "sin-pescado", label: "Sin Pescado", tag: "pescado" },
+        { id: "vegano", label: "Vegano", mode: "only-vegan" },
+      ];
+
+      // Base editable de sabores y tags.
+      const flavors = [
+        { id: "jamon-queso", name: "Jamón y queso", category: "clasicos", family: "clasico", tags: ["cerdo"] },
+        { id: "pasta-oliva", name: "Pasta de oliva y queso", category: "clasicos", family: "clasico", tags: ["vegetariano"] },
+        { id: "pesto-tomate", name: "Pesto, tomate y queso", category: "especiales", family: "clasico", tags: ["vegetariano"] },
+        { id: "pimiento-gouda", name: "Pimiento asado, gouda y philadelphia", category: "especiales", family: "clasico", tags: ["vegetariano"] },
+        { id: "berenjena-brie", name: "Berenjena asada y queso brie", category: "especiales", family: "clasico", tags: ["vegetariano"] },
+        { id: "jamon-serrano", name: "Jamón serrano, rúcula y queso", category: "especiales", family: "clasico", tags: ["cerdo"] },
+        { id: "atun-palta", name: "Atún, palta y queso", category: "de-la-casa", family: "gourmet", tags: ["pescado"] },
+        { id: "salmon-phila", name: "Salmón ahumado y philadelphia", category: "de-la-casa", family: "gourmet", tags: ["pescado"] },
+      ];
+
+      const extras = [
+        { id: "croissant-dulce", type: "dulces", name: "Croissant de Dulce de Leche", price: 2.5 },
+        { id: "croissant-salado", type: "salados", name: "Croissant de Jamón y Queso", price: 3 },
+        { id: "torta-salada", type: "tortas", name: "Torta de sándwiches de miga (Salada)", price: 45 },
+        { id: "torta-dulce", type: "tortas", name: "Torta Dulce artesanal", price: 35 },
+      ];
+
+      const extraTypes = [
+        { id: "dulces", name: "Dulces", copy: "Croissants y cierres dulces." },
+        { id: "salados", name: "Salados", copy: "Opciones saladas para reforzar el evento." },
+        { id: "tortas", name: "Tortas", copy: "Tortas saladas o dulces para compartir." },
+      ];
+
+      // Precios de negocio editables.
+      const pricing = {
+        normal: {
+          clasico: 3.5,
+          gourmet: 3.8,
+        },
+        catering: {
+          clasico: 3.16,
+          gourmet: 3.3,
+        },
+      };
+
+      const state = {
+        currentStep: 1,
+        people: 10,
+        serviceId: "ligero",
+        styleId: "mixto",
+        filterIds: new Set(),
+        extraView: "hub",
+        extraType: null,
+        selectedFlavors: Object.fromEntries(flavors.map((flavor) => [flavor.id, 0])),
+        selectedExtras: Object.fromEntries(extras.map((extra) => [extra.id, 0])),
+      };
+
+      const refs = {
+        progressFill: document.getElementById("progressFill"),
+        progressSteps: document.getElementById("progressSteps"),
+        steps: Array.from(document.querySelectorAll(".step")),
+        peopleValue: document.getElementById("peopleValue"),
+        serviceCards: document.getElementById("serviceCards"),
+        styleCards: document.getElementById("styleCards"),
+        filterRow: document.getElementById("filterRow"),
+        flavorCategories: document.getElementById("flavorCategories"),
+        extrasHub: document.getElementById("extrasHub"),
+        extrasSubview: document.getElementById("extrasSubview"),
+        selectionMeter: document.getElementById("selectionMeter"),
+        summaryPricePerPerson: document.getElementById("summaryPricePerPerson"),
+        summaryTotal: document.getElementById("summaryTotal"),
+        summaryBreakdown: document.getElementById("summaryBreakdown"),
+        summaryLogistics: document.getElementById("summaryLogistics"),
+        summaryConfig: document.getElementById("summaryConfig"),
+        summaryFlavors: document.getElementById("summaryFlavors"),
+        summaryExtras: document.getElementById("summaryExtras"),
+        prevBtn: document.getElementById("prevBtn"),
+        nextBtn: document.getElementById("nextBtn"),
+        whatsappBtn: document.getElementById("whatsappBtn"),
+        decreasePeople: document.getElementById("decreasePeople"),
+        increasePeople: document.getElementById("increasePeople"),
+      };
+
+      function init() {
+        renderProgressSteps();
+        renderServiceCards();
+        renderStyleCards();
+        renderFilters();
+        renderFlavorCategories();
+        renderExtras();
+        bindEvents();
+        applyStylePreset();
+        updateUI();
+      }
+
+      function bindEvents() {
+        refs.decreasePeople.addEventListener("click", () => {
+          state.people = Math.max(10, state.people - 1);
+          applyStylePreset();
+          updateUI();
+        });
+
+        refs.increasePeople.addEventListener("click", () => {
+          state.people += 1;
+          applyStylePreset();
+          updateUI();
+        });
+
+        refs.prevBtn.addEventListener("click", () => {
+          if (state.currentStep > 1) {
+            state.currentStep -= 1;
+            updateUI();
+          }
+        });
+
+        refs.nextBtn.addEventListener("click", () => {
+          if (!canAdvance()) {
+            return;
+          }
+          if (state.currentStep < 6) {
+            state.currentStep += 1;
+            updateUI();
+          }
+        });
+
+        refs.whatsappBtn.addEventListener("click", () => {
+          const message = buildWhatsAppMessage();
+          const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+          window.open(url, "_blank", "noopener");
+        });
+      }
+
+      function renderProgressSteps() {
+        refs.progressSteps.innerHTML = steps
+          .map(
+            (step) => `
+              <div class="progress-step" data-progress-step="${step.id}">
+                <div class="progress-step-badge">${step.id}</div>
+                <div class="progress-step-label">${step.label}</div>
+              </div>
+            `,
+          )
+          .join("");
+      }
+
+      function renderServiceCards() {
+        refs.serviceCards.innerHTML = services
+          .map(
+            (service) => `
+              <button class="card" type="button" data-service-id="${service.id}">
+                <span class="card-title">${service.name}</span>
+                <span class="card-subtitle">${service.subtitle}</span>
+                <span class="card-copy">${service.copy}</span>
+              </button>
+            `,
+          )
+          .join("");
+
+        refs.serviceCards.querySelectorAll("[data-service-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.serviceId = button.dataset.serviceId;
+            applyStylePreset();
+            updateUI();
+          });
+        });
+      }
+
+      function renderStyleCards() {
+        refs.styleCards.innerHTML = styles
+          .map(
+            (style) => `
+              <button class="card" type="button" data-style-id="${style.id}">
+                <span class="card-title">${style.name}</span>
+                <span class="card-copy">${style.copy}</span>
+              </button>
+            `,
+          )
+          .join("");
+
+        refs.styleCards.querySelectorAll("[data-style-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.styleId = button.dataset.styleId;
+            if (state.styleId === "vegetariano-vegano") {
+              state.filterIds.delete("sin-cerdo");
+              state.filterIds.delete("sin-pescado");
+            }
+            applyStylePreset();
+            updateUI();
+          });
+        });
+      }
+
+      function renderFilters() {
+        refs.filterRow.innerHTML = filters
+          .map(
+            (filter) => `
+              <button class="filter-chip" type="button" data-filter-id="${filter.id}">
+                ${filter.label}
+              </button>
+            `,
+          )
+          .join("");
+
+        refs.filterRow.querySelectorAll("[data-filter-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const filterId = button.dataset.filterId;
+            if (state.filterIds.has(filterId)) {
+              state.filterIds.delete(filterId);
+            } else {
+              state.filterIds.add(filterId);
+            }
+            applyFilterRedistribution();
+            updateUI();
+          });
+        });
+      }
+
+      function renderFlavorCategories() {
+        const categories = [
+          { id: "clasicos", label: "Clásicos" },
+          { id: "especiales", label: "Especiales" },
+          { id: "de-la-casa", label: "De la Casa" },
+        ];
+
+        refs.flavorCategories.innerHTML = categories
+          .map((category) => {
+            const items = flavors
+              .filter((flavor) => flavor.category === category.id)
+              .map(
+                (flavor) => `
+                  <div class="flavor-item" data-flavor-row="${flavor.id}">
+                    <div class="flavor-icon" aria-hidden="true"></div>
+                    <div>
+                      <span class="flavor-name">${flavor.name}</span>
+                      <span class="flavor-meta">${formatTags(flavor.tags)}</span>
+                    </div>
+                    <div class="qty-control">
+                      <button class="qty-btn" type="button" data-flavor-action="decrease" data-flavor-id="${flavor.id}">-</button>
+                      <span class="qty-value" id="flavorQty-${flavor.id}">0</span>
+                      <button class="qty-btn" type="button" data-flavor-action="increase" data-flavor-id="${flavor.id}">+</button>
+                    </div>
+                  </div>
+                `,
+              )
+              .join("");
+
+            return `
+              <section class="category-block">
+                <h3 class="category-title">${category.label}</h3>
+                <div class="flavor-list">${items}</div>
+              </section>
+            `;
+          })
+          .join("");
+
+        refs.flavorCategories.querySelectorAll("[data-flavor-action]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const flavorId = button.dataset.flavorId;
+            const action = button.dataset.flavorAction;
+            const isIncrease = action === "increase";
+
+            if (isFlavorBlocked(getFlavorById(flavorId))) {
+              return;
+            }
+
+            state.selectedFlavors[flavorId] = Math.max(
+              0,
+              state.selectedFlavors[flavorId] + (isIncrease ? 1 : -1),
+            );
+
+            updateUI();
+          });
+        });
+      }
+
+      function renderExtras() {
+        refs.extrasHub.innerHTML = `
+          ${extraTypes
+            .map(
+              (type) => `
+                <button class="card" type="button" data-extra-type="${type.id}">
+                  <span class="card-title">${type.name}</span>
+                  <span class="card-copy">${type.copy}</span>
+                </button>
+              `,
+            )
+            .join("")}
+          <button class="card" type="button" data-extra-type="none">
+            <span class="card-title">No, gracias</span>
+            <span class="card-copy">Sigue sin sumar extras al pedido.</span>
+          </button>
+        `;
+
+        refs.extrasHub.querySelectorAll("[data-extra-type]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const type = button.dataset.extraType;
+            if (type === "none") {
+              state.extraView = "hub";
+              state.extraType = null;
+              updateUI();
+              return;
+            }
+
+            state.extraView = "detail";
+            state.extraType = type;
+            renderExtraDetail(type);
+            updateUI();
+          });
+        });
+      }
+
+      function renderExtraDetail(typeId) {
+        const type = extraTypes.find((item) => item.id === typeId);
+        const items = extras
+          .filter((extra) => extra.type === typeId)
+          .map(
+            (extra) => `
+              <div class="extra-item">
+                <div class="flavor-icon" aria-hidden="true"></div>
+                <div>
+                  <span class="extra-name">${extra.name}</span>
+                  <span class="extra-meta">${formatCurrency(extra.price)} c/u</span>
+                </div>
+                <div class="qty-control">
+                  <button class="qty-btn" type="button" data-extra-action="decrease" data-extra-id="${extra.id}">-</button>
+                  <span class="qty-value" id="extraQty-${extra.id}">0</span>
+                  <button class="qty-btn" type="button" data-extra-action="increase" data-extra-id="${extra.id}">+</button>
+                </div>
+              </div>
+            `,
+          )
+          .join("");
+
+        refs.extrasSubview.innerHTML = `
+          <div class="extras-subheader">
+            <div>
+              <h3 class="category-title">${type.name}</h3>
+              <p class="extras-subtitle">Elige un producto y al sumarlo volvemos al menú principal de extras.</p>
+            </div>
+            <button class="ghost-btn" type="button" id="backToExtrasHub">Volver</button>
+          </div>
+          <div class="flavor-list">${items}</div>
+        `;
+
+        document.getElementById("backToExtrasHub").addEventListener("click", () => {
+          state.extraView = "hub";
+          state.extraType = null;
+          updateUI();
+        });
+
+        refs.extrasSubview.querySelectorAll("[data-extra-action]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const extraId = button.dataset.extraId;
+            const isIncrease = button.dataset.extraAction === "increase";
+            state.selectedExtras[extraId] = Math.max(
+              0,
+              state.selectedExtras[extraId] + (isIncrease ? 1 : -1),
+            );
+            state.extraView = "hub";
+            state.extraType = null;
+            updateUI();
+          });
+        });
+      }
+
+      function updateUI() {
+        refs.peopleValue.textContent = state.people;
+        updateProgress();
+        updateStepVisibility();
+        updateCardSelections();
+        updateFilterState();
+        updateFlavorState();
+        updateExtrasState();
+        updateSummary();
+        updateNavigationState();
+      }
+
+      function updateProgress() {
+        refs.progressFill.style.width = `${(state.currentStep / steps.length) * 100}%`;
+        document.querySelectorAll("[data-progress-step]").forEach((node) => {
+          const step = Number(node.dataset.progressStep);
+          node.classList.toggle("is-active", step === state.currentStep);
+          node.classList.toggle("is-done", step < state.currentStep);
+        });
+      }
+
+      function updateStepVisibility() {
+        refs.steps.forEach((stepNode) => {
+          const isCurrent = Number(stepNode.dataset.step) === state.currentStep;
+          stepNode.classList.toggle("is-active", isCurrent);
+        });
+      }
+
+      function updateCardSelections() {
+        refs.serviceCards.querySelectorAll("[data-service-id]").forEach((button) => {
+          button.classList.toggle("is-selected", button.dataset.serviceId === state.serviceId);
+        });
+
+        refs.styleCards.querySelectorAll("[data-style-id]").forEach((button) => {
+          button.classList.toggle("is-selected", button.dataset.styleId === state.styleId);
+        });
+      }
+
+      function updateFilterState() {
+        refs.filterRow.querySelectorAll("[data-filter-id]").forEach((button) => {
+          button.classList.toggle("is-active", state.filterIds.has(button.dataset.filterId));
+        });
+      }
+
+      function updateFlavorState() {
+        const selected = getSelectedFlavorCount();
+        const required = getRequiredSandwiches();
+        refs.selectionMeter.textContent = `${selected} / ${required} sándwiches`;
+        refs.selectionMeter.classList.toggle("is-invalid", selected !== required);
+
+        flavors.forEach((flavor) => {
+          const row = document.querySelector(`[data-flavor-row="${flavor.id}"]`);
+          const qty = document.getElementById(`flavorQty-${flavor.id}`);
+          const blocked = isFlavorBlocked(flavor);
+
+          qty.textContent = state.selectedFlavors[flavor.id];
+          row.classList.toggle("is-disabled", blocked);
+          row.querySelectorAll("[data-flavor-action]").forEach((button) => {
+            button.disabled = blocked;
+          });
+        });
+      }
+
+      function updateExtrasState() {
+        refs.extrasHub.hidden = state.extraView !== "hub";
+        refs.extrasSubview.classList.toggle("is-active", state.extraView === "detail");
+
+        if (state.extraView === "detail" && state.extraType) {
+          renderExtraDetail(state.extraType);
+        } else {
+          refs.extrasSubview.innerHTML = "";
+        }
+
+        extras.forEach((extra) => {
+          const qtyRef = document.getElementById(`extraQty-${extra.id}`);
+          if (qtyRef) {
+            qtyRef.textContent = state.selectedExtras[extra.id];
+          }
+        });
+      }
+
+      function updateSummary() {
+        const totals = calculateTotals();
+        refs.summaryPricePerPerson.textContent = `${formatCurrency(totals.total / state.people)}`;
+        refs.summaryTotal.textContent = `Total General ${formatCurrency(totals.total)}`;
+        refs.summaryBreakdown.innerHTML = buildSummaryBreakdown(totals);
+        refs.summaryLogistics.textContent = buildLogisticsMessage(totals.totalSandwiches);
+
+        refs.summaryConfig.innerHTML = [
+          `${state.people} personas`,
+          `${getService().name} (${getService().factor} sándwiches por persona)`,
+          `Estilo ${getStyle().name}`,
+          `${totals.totalSandwiches} sándwiches seleccionados`,
+        ].map((line) => `<li>${line}</li>`).join("");
+
+        const flavorLines = flavors
+          .filter((flavor) => state.selectedFlavors[flavor.id] > 0)
+          .map((flavor) => {
+            const qty = state.selectedFlavors[flavor.id];
+            const price = getUnitPrice(flavor, totals.totalSandwiches);
+            return `<li>${qty}x ${flavor.name} · ${formatCurrency(price)} c/u</li>`;
+          })
+          .join("");
+        refs.summaryFlavors.innerHTML = flavorLines || "<li>Sin selección todavía.</li>";
+
+        const extraLines = extras
+          .filter((extra) => state.selectedExtras[extra.id] > 0)
+          .map((extra) => {
+            const label = extra.type === "tortas" ? `Torta · ${extra.name}` : extra.name;
+            return `<li>${state.selectedExtras[extra.id]}x ${label} · ${formatCurrency(extra.price)} c/u</li>`;
+          })
+          .join("");
+        refs.summaryExtras.innerHTML = extraLines || "<li>Sin extras.</li>";
+      }
+
+      function updateNavigationState() {
+        refs.prevBtn.disabled = state.currentStep === 1;
+        refs.nextBtn.hidden = state.currentStep === 6;
+        refs.whatsappBtn.hidden = state.currentStep !== 6;
+        refs.nextBtn.disabled = !canAdvance();
+      }
+
+      function canAdvance() {
+        if (state.currentStep === 4) {
+          return getSelectedFlavorCount() >= getRequiredSandwiches();
+        }
+        return true;
+      }
+
+      function getService() {
+        return services.find((service) => service.id === state.serviceId);
+      }
+
+      function getStyle() {
+        return styles.find((style) => style.id === state.styleId);
+      }
+
+      function getRequiredSandwiches() {
+        return Math.ceil(state.people * getService().factor);
+      }
+
+      function getFlavorById(id) {
+        return flavors.find((flavor) => flavor.id === id);
+      }
+
+      function formatTags(tags) {
+        return tags.join(" · ");
+      }
+
+      function isFlavorBlocked(flavor) {
+        if (state.styleId === "vegetariano-vegano") {
+          return !flavor.tags.includes("vegetariano") && !flavor.tags.includes("vegano");
+        }
+
+        if (state.filterIds.has("vegano")) {
+          return !flavor.tags.includes("vegano");
+        }
+
+        if (state.filterIds.has("sin-cerdo") && flavor.tags.includes("cerdo")) {
+          return true;
+        }
+
+        if (state.filterIds.has("sin-pescado") && flavor.tags.includes("pescado")) {
+          return true;
+        }
+
+        return false;
+      }
+
+      function getAllowedFlavors() {
+        return flavors.filter((flavor) => !isFlavorBlocked(flavor));
+      }
+
+      function getSelectedFlavorCount() {
+        return Object.values(state.selectedFlavors).reduce((sum, qty) => sum + qty, 0);
+      }
+
+      function applyStylePreset() {
+        const totalRequired = getRequiredSandwiches();
+        const allowed = getAllowedFlavors();
+
+        Object.keys(state.selectedFlavors).forEach((id) => {
+          state.selectedFlavors[id] = 0;
+        });
+
+        if (!allowed.length) {
+          return;
+        }
+
+        const weightedEntries = allowed.map((flavor) => ({
+          id: flavor.id,
+          weight: getFlavorWeight(flavor),
+        }));
+
+        const distribution = distributeByWeight(weightedEntries, totalRequired);
+        Object.entries(distribution).forEach(([id, qty]) => {
+          state.selectedFlavors[id] = qty;
+        });
+      }
+
+      function getFlavorWeight(flavor) {
+        if (state.styleId === "vegetariano-vegano") {
+          if (flavor.tags.includes("vegano")) {
+            return 3;
+          }
+          if (flavor.tags.includes("vegetariano")) {
+            return 2;
+          }
+          return 0;
+        }
+
+        if (state.styleId === "mixto") {
+          return flavor.family === "clasico" ? 3 : 2;
+        }
+
+        if (state.styleId === "gourmet") {
+          return flavor.family === "clasico" ? 1 : 4;
+        }
+
+        return 1;
+      }
+
+      function applyFilterRedistribution() {
+        const previousTotal = getSelectedFlavorCount();
+
+        flavors.forEach((flavor) => {
+          if (isFlavorBlocked(flavor)) {
+            state.selectedFlavors[flavor.id] = 0;
+          }
+        });
+
+        const currentTotal = getSelectedFlavorCount();
+        const missing = Math.max(0, previousTotal - currentTotal);
+        if (!missing) {
+          return;
+        }
+
+        const allowed = getAllowedFlavors().map((flavor) => ({
+          id: flavor.id,
+          weight: Math.max(1, getFlavorWeight(flavor)),
+        }));
+
+        const redistribution = distributeByWeight(allowed, missing);
+        Object.entries(redistribution).forEach(([id, qty]) => {
+          state.selectedFlavors[id] += qty;
+        });
+      }
+
+      function distributeByWeight(entries, total) {
+        const result = {};
+        const valid = entries.filter((entry) => entry.weight > 0);
+        if (!valid.length) {
+          return result;
+        }
+
+        const totalWeight = valid.reduce((sum, entry) => sum + entry.weight, 0);
+        valid.forEach((entry) => {
+          result[entry.id] = Math.floor((total * entry.weight) / totalWeight);
+        });
+
+        let assigned = Object.values(result).reduce((sum, qty) => sum + qty, 0);
+        let index = 0;
+        while (assigned < total) {
+          const entry = valid[index % valid.length];
+          result[entry.id] += 1;
+          assigned += 1;
+          index += 1;
+        }
+
+        return result;
+      }
+
+      function getUnitPrice(flavor, totalSandwiches) {
+        const rate = totalSandwiches >= 12 ? pricing.catering : pricing.normal;
+        return rate[flavor.family];
+      }
+
+      function calculateTotals() {
+        const totalSandwiches = getSelectedFlavorCount();
+
+        const sandwichTotal = flavors.reduce((sum, flavor) => {
+          const qty = state.selectedFlavors[flavor.id];
+          return sum + qty * getUnitPrice(flavor, totalSandwiches);
+        }, 0);
+
+        const extrasTotal = extras.reduce((sum, extra) => {
+          return sum + state.selectedExtras[extra.id] * extra.price;
+        }, 0);
+
+        const cakeTotal = extras
+          .filter((extra) => extra.type === "tortas")
+          .reduce((sum, extra) => sum + state.selectedExtras[extra.id] * extra.price, 0);
+
+        return {
+          totalSandwiches,
+          sandwichTotal,
+          extrasTotal,
+          cakeTotal,
+          total: sandwichTotal + extrasTotal,
+        };
+      }
+
+      function buildSummaryBreakdown(totals) {
+        const sandwichPerPerson = totals.sandwichTotal / state.people;
+        const extrasPerPerson = totals.extrasTotal / state.people;
+        const cakeLabel = totals.cakeTotal > 0 ? formatCurrency(totals.cakeTotal) : "No incluida";
+
+        return `
+          <div class="summary-breakdown-line">
+            <div>
+              Sándwiches
+              <small>${totals.totalSandwiches} unidades · ${formatCurrency(sandwichPerPerson)} por persona</small>
+            </div>
+            <span>${formatCurrency(totals.sandwichTotal)}</span>
+          </div>
+          <div class="summary-breakdown-line">
+            <div>
+              Extras
+              <small>${formatCurrency(extrasPerPerson)} por persona</small>
+            </div>
+            <span>${formatCurrency(totals.extrasTotal)}</span>
+          </div>
+          <div class="summary-breakdown-line">
+            <div>
+              Torta diferenciada
+              <small>Te la mostramos aparte para que no quede mezclada con el menú.</small>
+            </div>
+            <span>${cakeLabel}</span>
+          </div>
+        `;
+      }
+
+      function buildWhatsAppMessage() {
+        const totals = calculateTotals();
+        const lines = [];
+        lines.push("¡Hola Uno de Miga! 👋");
+        lines.push("Quiero confirmar un catering desde el cotizador web.");
+        lines.push("");
+        lines.push("*Resumen general*");
+        lines.push(`*Personas:* ${state.people}`);
+        lines.push(`*Servicio:* ${getService().name}`);
+        lines.push(`*Estilo:* ${getStyle().name}`);
+        lines.push(`*Sándwiches sugeridos:* ${getRequiredSandwiches()}`);
+        lines.push(`*Sándwiches finales:* ${totals.totalSandwiches}`);
+        lines.push("");
+        lines.push("*Sabores seleccionados*");
+        flavors.forEach((flavor) => {
+          const qty = state.selectedFlavors[flavor.id];
+          if (qty > 0) {
+            lines.push(`• ${qty}x ${flavor.name}`);
+          }
+        });
+        lines.push("");
+        lines.push("*Extras*");
+        const selectedExtras = extras.filter((extra) => state.selectedExtras[extra.id] > 0);
+        if (!selectedExtras.length) {
+          lines.push("• Sin extras");
+        } else {
+          selectedExtras.forEach((extra) => {
+            lines.push(`• ${state.selectedExtras[extra.id]}x ${extra.name}`);
+          });
+        }
+        lines.push("");
+        lines.push("*Importe estimado*");
+        lines.push(`*Precio por persona:* ${formatCurrency(totals.total / state.people)}`);
+        lines.push(`*Sándwiches por persona:* ${formatCurrency(totals.sandwichTotal / state.people)}`);
+        lines.push(`*Total sándwiches:* ${formatCurrency(totals.sandwichTotal)}`);
+        lines.push(`*Total extras:* ${formatCurrency(totals.extrasTotal)}`);
+        lines.push(`*Torta diferenciada:* ${totals.cakeTotal > 0 ? formatCurrency(totals.cakeTotal) : "No incluida"}`);
+        lines.push(`*Total general:* ${formatCurrency(totals.total)}`);
+        lines.push("");
+        lines.push("🛵 Envío refrigerado gratis en Valencia");
+        lines.push(buildLogisticsMessage(totals.totalSandwiches));
+        return lines.join("\n");
+      }
+
+      function buildLogisticsMessage(totalSandwiches) {
+        const dozenBoxes = Math.max(1, Math.ceil(totalSandwiches / 12));
+        return `Ten en cuenta que debes guardarlos en la heladera. Volumen estimado del pedido: ${dozenBoxes} caja${dozenBoxes > 1 ? "s" : ""} de docena de 20 x 20 x 10 cm.`;
+      }
+
+      function formatCurrency(value) {
+        return new Intl.NumberFormat("es-ES", {
+          style: "currency",
+          currency: "EUR",
+        }).format(value);
+      }
+
+      init();
+    </script>
+  </body>
+</html>
