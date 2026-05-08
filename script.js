@@ -53,6 +53,12 @@ const filtros = [
   { id: "sin-pescado", label: "Sin pescado", tag: "pescado" },
 ];
 
+const preciosOriginales = {
+  clasicos: 3.5,
+  especiales: 3.5,
+  "de-la-casa": 3.8,
+};
+
 const saboresData = [
   { id: "jamon-queso", nombre: "Jamón y queso", categoria: "clasicos", precio: 3.5, tags: ["cerdo"] },
   { id: "pasta-oliva", nombre: "Pasta de oliva y queso", categoria: "clasicos", precio: 3.5, tags: ["vegetariano"] },
@@ -64,11 +70,62 @@ const saboresData = [
   { id: "salmon-phila", nombre: "Salmón ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
 ];
 
-const extrasData = [
-  { id: "torta-salada", nombre: "Torta salada", precio: 45, descripcion: "Formato para compartir con corte de mesa." },
-  { id: "docena-vegana", nombre: "Docena vegana", precio: 45, descripcion: "Linea vegan por encargo, ideal para sumar variedad." },
-  { id: "box-24", nombre: "Box 24 piezas", precio: 38, descripcion: "Un formato extra listo para sumar a oficinas o rodajes." },
+const extrasSections = [
+  {
+    id: "tortas",
+    nombre: "Tortas saladas o dulces",
+    descripcion: "Elegí si querés sumar una torta salada para compartir o una opción dulce.",
+    items: [
+      { id: "torta-salada", nombre: "Torta salada", precio: 45, descripcion: "Formato para compartir con corte de mesa." },
+      { id: "torta-dulce", nombre: "Torta dulce", precio: 35, descripcion: "Opción dulce para cierre de mesa o celebración." },
+    ],
+  },
+  {
+    id: "mesa-dulce",
+    nombre: "Mesa dulce",
+    descripcion: "Podés sumar piezas sueltas para armar una mesa dulce simple.",
+    items: [
+      { id: "croissant-simple", nombre: "Croissant", precio: 1, descripcion: "Unidad." },
+      { id: "croissant-ddl", nombre: "Croissant con DDL", precio: 1.1, descripcion: "Unidad." },
+      { id: "medialuna-dulce", nombre: "Medialunas", precio: 1, descripcion: "Unidad." },
+    ],
+  },
+  {
+    id: "mesa-salada",
+    nombre: "Mesa salada",
+    descripcion: "Sumá bollería salada para complementar el catering.",
+    items: [
+      { id: "medialuna-jyq", nombre: "Medialunas con jamón y queso", precio: 1.5, descripcion: "Unidad." },
+      { id: "croissant-jyq", nombre: "Croissant con jamón y queso", precio: 1.7, descripcion: "Unidad." },
+    ],
+  },
+  {
+    id: "veganos",
+    nombre: "Productos veganos",
+    descripcion: "Opciones veganas por encargo.",
+    items: [
+      { id: "docena-vegana", nombre: "Docena vegana", precio: 45, descripcion: "M?nimo una docena." },
+    ],
+  },
 ];
+
+const extrasData = extrasSections.flatMap((section) =>
+  section.items.map((item) => ({
+    ...item,
+    sectionId: section.id,
+    sectionName: section.nombre,
+  })),
+);
+
+saboresData.forEach((sabor) => {
+  if (sabor.categoria === "clasicos" || sabor.categoria === "especiales") {
+    sabor.precio = 3.1;
+  }
+
+  if (sabor.categoria === "de-la-casa") {
+    sabor.precio = 3.5;
+  }
+});
 
 const state = {
   currentStep: 1,
@@ -77,9 +134,11 @@ const state = {
   factorServicio: servicios[1].factor,
   estilo: estilos[0].id,
   filtros: new Set(),
+  selectionMemory: {},
   totalSandwiches: 0,
   saboresSeleccionados: {},
   extrasSeleccionados: {},
+  activeExtraSection: extrasSections[0].id,
   subtotalSandwiches: 0,
   subtotalExtras: 0,
   total: 0,
@@ -87,6 +146,7 @@ const state = {
 
 for (const sabor of saboresData) {
   state.saboresSeleccionados[sabor.id] = 0;
+  state.selectionMemory[sabor.id] = 0;
 }
 
 for (const extra of extrasData) {
@@ -105,6 +165,7 @@ const refs = {
   serviceOptions: document.getElementById("service-options"),
   styleOptions: document.getElementById("style-options"),
   filterOptions: document.getElementById("filter-options"),
+  resetFlavorsButton: document.getElementById("builder-reset-flavors"),
   flavorGroups: document.getElementById("flavor-groups"),
   extraOptions: document.getElementById("extra-options"),
   prevButton: document.getElementById("builder-prev"),
@@ -116,6 +177,8 @@ const refs = {
   summaryExtras: document.getElementById("summary-extras"),
   summaryPricePerPerson: document.getElementById("summary-price-per-person"),
   summaryTotalLine: document.getElementById("summary-total-line"),
+  summarySavingsLine: document.getElementById("summary-savings-line"),
+  selectionStatus: document.getElementById("builder-selection-status"),
   whatsappLink: document.getElementById("builder-whatsapp-link"),
   stepPanels: Array.from(document.querySelectorAll(".builder-step")),
   personButtons: Array.from(document.querySelectorAll("[data-person-action]")),
@@ -168,10 +231,18 @@ function bindEvents() {
     });
   });
 
+  if (refs.resetFlavorsButton) {
+    refs.resetFlavorsButton.addEventListener("click", () => {
+      applyStylePreset();
+      updateUI();
+    });
+  }
+
   refs.prevButton.addEventListener("click", () => {
     if (state.currentStep > 1) {
       state.currentStep -= 1;
       updateUI();
+      scrollBuilderToTop();
     }
   });
 
@@ -183,8 +254,16 @@ function bindEvents() {
     if (state.currentStep < steps.length) {
       state.currentStep += 1;
       updateUI();
+      scrollBuilderToTop();
     }
   });
+}
+
+function scrollBuilderToTop() {
+  const builderBody = refs.builder?.querySelector(".builder-body");
+  if (builderBody) {
+    builderBody.scrollTo({ top: 0, behavior: "smooth" });
+  }
 }
 
 function renderStepIndicators() {
@@ -277,6 +356,9 @@ function renderFilters() {
   refs.filterOptions.querySelectorAll("[data-filter-id]").forEach((button) => {
     button.addEventListener("click", () => {
       const filterId = button.dataset.filterId;
+
+      syncSelectionMemory();
+
       if (state.filtros.has(filterId)) {
         state.filtros.delete(filterId);
       } else {
@@ -346,30 +428,56 @@ function renderFlavorGroups() {
         state.saboresSeleccionados[flavorId] + (action === "increase" ? 1 : -1),
       );
 
+      syncSelectionMemory();
       updateUI();
     });
   });
 }
 
 function renderExtras() {
-  refs.extraOptions.innerHTML = extrasData
-    .map(
-      (extra) => `
-        <div class="builder-extra-row">
-          <div class="builder-extra-main">
-            <span class="builder-extra-name">${extra.nombre}</span>
-            <span class="builder-extra-meta">${extra.descripcion}</span>
-            <span class="builder-extra-meta">${formatPrice(extra.precio)}</span>
-          </div>
-          <div class="builder-extra-controls">
-            <button type="button" class="builder-qty-btn" data-extra-action="decrease" data-extra-id="${extra.id}">-</button>
-            <span class="builder-qty-value" id="extra-qty-${extra.id}">0</span>
-            <button type="button" class="builder-qty-btn" data-extra-action="increase" data-extra-id="${extra.id}">+</button>
+  refs.extraOptions.innerHTML = extrasSections
+    .map((section) => {
+      const isActive = section.id === state.activeExtraSection;
+      const items = section.items
+        .map(
+          (extra) => `
+            <div class="builder-extra-row">
+              <div class="builder-extra-main">
+                <span class="builder-extra-name">${extra.nombre}</span>
+                <span class="builder-extra-meta">${extra.descripcion}</span>
+                <span class="builder-extra-meta">${formatPrice(extra.precio)}</span>
+              </div>
+              <div class="builder-extra-controls">
+                <button type="button" class="builder-qty-btn" data-extra-action="decrease" data-extra-id="${extra.id}">-</button>
+                <span class="builder-qty-value" id="extra-qty-${extra.id}">0</span>
+                <button type="button" class="builder-qty-btn" data-extra-action="increase" data-extra-id="${extra.id}">+</button>
+              </div>
+            </div>
+          `,
+        )
+        .join("");
+
+      return `
+        <div class="builder-extra-section${isActive ? " is-open" : ""}">
+          <button type="button" class="builder-extra-section-toggle" data-extra-section="${section.id}">
+            <span class="builder-extra-section-title">${section.nombre}</span>
+            <span class="builder-extra-section-meta">${section.descripcion}</span>
+          </button>
+          <div class="builder-extra-section-body"${isActive ? "" : " hidden"}>
+            ${items}
           </div>
         </div>
-      `,
-    )
+      `;
+    })
     .join("");
+
+  refs.extraOptions.querySelectorAll("[data-extra-section]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.activeExtraSection = button.dataset.extraSection;
+      renderExtras();
+      updateExtraCounts();
+    });
+  });
 
   refs.extraOptions.querySelectorAll("[data-extra-action]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -399,6 +507,7 @@ function applyStylePreset() {
     state.saboresSeleccionados[sabor.id] = distribution[sabor.id] || 0;
   });
 
+  syncSelectionMemory();
   recalculateTotals();
 }
 
@@ -438,17 +547,38 @@ function isFlavorExcluded(sabor) {
 
 function normalizeSelections() {
   const allowed = new Set(getAllowedFlavors().map((sabor) => sabor.id));
+
   saboresData.forEach((sabor) => {
     if (!allowed.has(sabor.id)) {
+      if (state.saboresSeleccionados[sabor.id] > 0) {
+        state.selectionMemory[sabor.id] = state.saboresSeleccionados[sabor.id];
+      }
       state.saboresSeleccionados[sabor.id] = 0;
     }
   });
 
-  const selected = getSelectedFlavorCount();
+  let selected = getSelectedFlavorCount();
 
   if (selected === 0 || selected > state.totalSandwiches) {
     applyStylePreset();
     return;
+  }
+
+  const restorable = saboresData.filter(
+    (sabor) =>
+      allowed.has(sabor.id) &&
+      state.saboresSeleccionados[sabor.id] === 0 &&
+      state.selectionMemory[sabor.id] > 0,
+  );
+
+  for (const sabor of restorable) {
+    if (selected >= state.totalSandwiches) {
+      break;
+    }
+
+    const qtyToRestore = Math.min(state.selectionMemory[sabor.id], state.totalSandwiches - selected);
+    state.saboresSeleccionados[sabor.id] += qtyToRestore;
+    selected += qtyToRestore;
   }
 
   if (selected < state.totalSandwiches) {
@@ -462,7 +592,16 @@ function normalizeSelections() {
     });
   }
 
+  syncSelectionMemory();
   recalculateTotals();
+}
+
+function syncSelectionMemory() {
+  saboresData.forEach((sabor) => {
+    if (state.saboresSeleccionados[sabor.id] > 0) {
+      state.selectionMemory[sabor.id] = state.saboresSeleccionados[sabor.id];
+    }
+  });
 }
 
 function distributeByWeight(entries, total) {
@@ -506,8 +645,18 @@ function recalculateTotals() {
   state.total = state.subtotalSandwiches + state.subtotalExtras;
 }
 
+function calculateOriginalSandwichSubtotal() {
+  return saboresData.reduce((sum, sabor) => {
+    const precioOriginal = preciosOriginales[sabor.categoria] ?? sabor.precio;
+    return sum + state.saboresSeleccionados[sabor.id] * precioOriginal;
+  }, 0);
+}
+
 function updateUI() {
   recalculateTotals();
+  if (refs.selectionStatus) {
+    refs.selectionStatus.textContent = `SÃ¡ndwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
+  }
   updateStepIndicators();
   updatePanels();
   updateNavigation();
@@ -544,6 +693,10 @@ function updateNavigation() {
   refs.nextButton.disabled = state.currentStep === steps.length || !canAdvance(state.currentStep);
   refs.nextButton.textContent = "Siguiente";
   refs.nextButton.hidden = state.currentStep === steps.length;
+  if (refs.selectionStatus) {
+    refs.selectionStatus.textContent = `Sándwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
+    refs.selectionStatus.hidden = state.currentStep < 4;
+  }
 }
 
 function updatePersonCount() {
@@ -603,6 +756,7 @@ function updateSummary() {
   const servicio = servicios.find((item) => item.id === state.servicio);
   const estilo = estilos.find((item) => item.id === state.estilo);
   const pricePerPerson = state.total / state.personas;
+  const ahorroSandwiches = Math.max(0, calculateOriginalSandwichSubtotal() - state.subtotalSandwiches);
 
   refs.summaryConfig.innerHTML = [
     `${state.personas} personas`,
@@ -627,6 +781,7 @@ function updateSummary() {
   refs.summaryExtras.innerHTML = selectedExtras || "<li>Sin extras.</li>";
   refs.summaryPricePerPerson.textContent = `${formatPrice(pricePerPerson)} por persona`;
   refs.summaryTotalLine.textContent = `Total estimado ${formatPrice(state.total)}`;
+  refs.summarySavingsLine.textContent = ahorroSandwiches > 0 ? `Ahorro aplicado: ${formatPrice(ahorroSandwiches)}` : "";
 }
 
 function updateWhatsAppLink() {
@@ -642,6 +797,10 @@ function buildWhatsAppMessage() {
   message += `Servicio: ${servicio.nombre}\n`;
   message += `Estilo: ${estilo.nombre}\n`;
   message += `Total estimado: ${formatPrice(state.total)} (${formatPrice(state.total / state.personas)} por persona)\n\n`;
+  const ahorroSandwiches = Math.max(0, calculateOriginalSandwichSubtotal() - state.subtotalSandwiches);
+  if (ahorroSandwiches > 0) {
+    message += `Ahorro aplicado: ${formatPrice(ahorroSandwiches)}\n\n`;
+  }
   message += "Sabores elegidos:\n";
 
   saboresData.forEach((sabor) => {
