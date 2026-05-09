@@ -358,6 +358,13 @@ h3 {
   color: var(--orange-dark);
 }
 
+.menu-pricing-note {
+  max-width: 62ch;
+  margin: 14px 0 0;
+  color: rgba(38, 23, 18, 0.72);
+  line-height: 1.6;
+}
+
 .flavor-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2432,13 +2439,24 @@ h3 {
     grid-column: 1 / -1;
   }
 
+  .flavor-card-category-brand {
+    border-radius: 18px;
+  }
+
+  .flavor-card-veggie-detail {
+    grid-column: 1 / -1;
+    grid-template-columns: 55% 45%;
+    align-items: stretch;
+  }
+
   .flavor-image {
     aspect-ratio: 1.15 / 0.78;
     height: auto;
   }
 
   .flavor-card-veggie-detail .flavor-image {
-    aspect-ratio: 0.88 / 0.98;
+    aspect-ratio: auto;
+    height: 100%;
   }
 
   .flavor-body {
@@ -2447,6 +2465,10 @@ h3 {
 
   .flavor-card-category .flavor-body {
     padding: 14px 14px 16px;
+  }
+
+  .flavor-card-category-brand .flavor-body {
+    padding: 16px;
   }
 
   .flavor-body h3 {
@@ -2460,13 +2482,24 @@ h3 {
     min-height: 0;
   }
 
+  .flavor-card-category-brand .flavor-body h3 {
+    font-size: 0.92rem;
+    line-height: 0.98;
+  }
+
+  .flavor-card-category-brand .flavor-body p {
+    font-size: 0.71rem;
+    line-height: 1.3;
+  }
+
   .flavor-card-category-veggie .flavor-body {
     justify-content: center;
   }
 
   .flavor-card-veggie-detail .flavor-body {
     padding: 10px 10px 12px;
-    justify-content: center;
+    justify-content: space-between;
+    height: 100%;
   }
 
   .flavor-card-veggie-detail .flavor-body h3 {
@@ -2796,12 +2829,14 @@ h3 {
 }
 
 .catering-stage .builder-body {
+  flex: 1 1 auto;
   min-height: 400px;
   padding-bottom: 20px;
   overflow-y: auto;
 }
 
 .catering-stage .builder-actions {
+  flex-shrink: 0;
   padding: 10px 28px 28px;
   border-bottom-left-radius: 26px;
   border-bottom-right-radius: 26px;
@@ -2953,6 +2988,67 @@ body.has-catering-modal {
 
   .catering-label {
     font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .menu-pricing-note {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .catering-modal {
+    padding: 10px;
+  }
+
+  .catering-builder {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+    border-radius: 22px;
+  }
+
+  .catering-modal-head {
+    gap: 10px;
+    padding: 14px 14px 12px;
+  }
+
+  .catering-modal-close {
+    min-height: 34px;
+    padding: 0 12px;
+    font-size: 0.68rem;
+  }
+
+  .catering-stage .builder-progress,
+  .catering-stage .builder-body {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .catering-stage .builder-progress {
+    padding-top: 16px;
+  }
+
+  .catering-stage .builder-body {
+    min-height: 0;
+    padding-bottom: 14px;
+  }
+
+  .catering-stage .builder-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding: 10px 14px 14px;
+    background: #fffaf4;
+    box-shadow: 0 -10px 24px rgba(38, 23, 18, 0.08);
+  }
+
+  .builder-selection-status {
+    font-size: 0.72rem;
+  }
+
+  .builder-nav,
+  .builder-whatsapp {
+    min-height: 52px;
   }
 }
 
