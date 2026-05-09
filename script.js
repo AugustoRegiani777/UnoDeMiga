@@ -223,7 +223,7 @@ function bindEvents() {
   });
 
   refs.personButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+    bindFastPress(button, () => {
       const delta = button.dataset.personAction === "increase" ? 1 : -1;
       state.personas = Math.max(10, state.personas + delta);
       applyStylePreset();
@@ -256,6 +256,27 @@ function bindEvents() {
       updateUI();
       scrollBuilderToTop();
     }
+  });
+}
+
+function bindFastPress(button, handler) {
+  let lastPointerPressAt = 0;
+
+  button.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "touch") {
+      event.preventDefault();
+    }
+
+    lastPointerPressAt = Date.now();
+    handler();
+  });
+
+  button.addEventListener("click", () => {
+    if (Date.now() - lastPointerPressAt < 350) {
+      return;
+    }
+
+    handler();
   });
 }
 
@@ -414,7 +435,7 @@ function renderFlavorGroups() {
     .join("");
 
   refs.flavorGroups.querySelectorAll("[data-flavor-action]").forEach((button) => {
-    button.addEventListener("click", () => {
+    bindFastPress(button, () => {
       const flavorId = button.dataset.flavorId;
       const action = button.dataset.flavorAction;
       const currentTotal = getSelectedFlavorCount();
@@ -480,7 +501,7 @@ function renderExtras() {
   });
 
   refs.extraOptions.querySelectorAll("[data-extra-action]").forEach((button) => {
-    button.addEventListener("click", () => {
+    bindFastPress(button, () => {
       const extraId = button.dataset.extraId;
       const action = button.dataset.extraAction;
       state.extrasSeleccionados[extraId] = Math.max(

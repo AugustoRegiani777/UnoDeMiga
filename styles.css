@@ -1007,6 +1007,11 @@ h3 {
     transform 0.2s ease,
     border-color 0.2s ease,
     background-color 0.2s ease;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .builder-counter-btn:hover,
@@ -2333,6 +2338,11 @@ h3 {
     aspect-ratio: 1.2 / 1;
   }
 
+  .flavor-image img {
+    height: 100%;
+    object-position: center;
+  }
+
   .flavor-body {
     padding: 14px 13px 15px;
   }
@@ -2426,17 +2436,17 @@ h3 {
 
 @media (max-width: 410px) {
   .flavor-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 10px;
   }
 
   .flavor-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 46%) minmax(0, 54%);
     border-radius: 16px;
   }
 
   .flavor-card-category {
-    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
   }
 
   .flavor-card-category-brand {
@@ -2444,7 +2454,6 @@ h3 {
   }
 
   .flavor-card-veggie-detail {
-    grid-column: 1 / -1;
     grid-template-columns: 55% 45%;
     align-items: stretch;
   }
@@ -2457,6 +2466,11 @@ h3 {
   .flavor-card-veggie-detail .flavor-image {
     aspect-ratio: auto;
     height: 100%;
+  }
+
+  .flavor-image img {
+    height: 100%;
+    object-position: center;
   }
 
   .flavor-body {
@@ -2539,6 +2553,94 @@ h3 {
   :root {
     --frame-width: calc(100% - 14px);
     --section-width: calc(100% - 14px);
+  }
+
+  .flavor-grid {
+    gap: 9px;
+  }
+
+  .flavor-card {
+    grid-template-columns: minmax(0, 48%) minmax(0, 52%);
+    border-radius: 15px;
+  }
+
+  .flavor-card-category {
+    grid-template-columns: 1fr;
+  }
+
+  .flavor-card-veggie-detail {
+    grid-template-columns: 52% 48%;
+  }
+
+  .flavor-image {
+    aspect-ratio: 1.08 / 0.82;
+  }
+
+  .flavor-card-veggie-detail .flavor-image {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+
+  .flavor-body {
+    padding: 11px 10px 12px;
+  }
+
+  .flavor-card-category .flavor-body,
+  .flavor-card-category-brand .flavor-body {
+    padding: 14px;
+  }
+
+  .flavor-body h3 {
+    font-size: 0.78rem;
+    line-height: 1.03;
+  }
+
+  .flavor-body p {
+    font-size: 0.63rem;
+    line-height: 1.22;
+  }
+
+  .flavor-body .office-size {
+    margin-bottom: 5px;
+    font-size: 0.54rem;
+  }
+
+  .flavor-price {
+    margin-top: 8px;
+    font-size: 0.68rem;
+  }
+
+  .flavor-card-category-brand .flavor-body h3 {
+    font-size: 0.86rem;
+  }
+
+  .flavor-card-category-brand .flavor-body p {
+    font-size: 0.67rem;
+    line-height: 1.24;
+  }
+
+  .flavor-card-veggie-detail .flavor-body {
+    padding: 9px 9px 10px;
+  }
+
+  .flavor-card-veggie-detail .flavor-body h3 {
+    font-size: 0.7rem;
+  }
+
+  .veggie-flavors {
+    font-size: 0.48rem;
+    line-height: 1.04;
+  }
+
+  .veggie-actions {
+    gap: 5px;
+    padding-top: 5px;
+  }
+
+  .flavor-link-veggie {
+    min-height: 26px;
+    padding: 0 7px;
+    font-size: 0.43rem;
   }
 
   .nav {
