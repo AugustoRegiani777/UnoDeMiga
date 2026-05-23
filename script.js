@@ -103,7 +103,7 @@ const extrasSections = [
     nombre: "Mesa salada",
     descripcion: "Sumá bollería salada para complementar el catering.",
     items: [
-      { id: "medialuna-jyq", nombre: "Medialunas con jamón y queso", precio: 1.5, descripcion: "Unidad." },
+      { id: "medialuna-jyq", nombre: "Medialunas con jamón y queso", precio: 2.3, descripcion: "Unidad." },
       { id: "croissant-jyq", nombre: "Croissant con jamón y queso", precio: 1.7, descripcion: "Unidad." },
     ],
   },
