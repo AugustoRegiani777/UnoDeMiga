@@ -1,4 +1,11 @@
 const WHATSAPP_BASE_URL = "https://wa.me/34641514569";
+const NEW_FLAVORS_API_URL = "http://localhost:3000/api/nuevos-sabores";
+const VOTE_REGISTRATION_API_URL = "http://localhost:3000/api/registro-votacion";
+const VOTE_STATUS_API_URL = "http://localhost:3000/api/vote-status";
+const VOTE_PROFILE_STORAGE_KEY = "uno-de-miga-vote-profile";
+const ANONYMOUS_VOTE_ID_STORAGE_KEY = "uno-de-miga-anonymous-vote-id";
+const API_TIMEOUT_MS = 10000;
+const VOTE_CLIENT_RESET_VERSION = "vote-reset-2026-05-13-1";
 
 const steps = [
   { id: 1, label: "Personas" },
@@ -66,6 +73,7 @@ const saboresData = [
   { id: "pesto-tomate", nombre: "Pesto, tomate y queso", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "berenjena-brie", nombre: "Berenjena asada y queso brie", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "jamon-serrano", nombre: "Jamón serrano, rúcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
+  { id: "jamon-huevo", nombre: "Jamón y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
   { id: "atun-palta", nombre: "Atún, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
   { id: "salmon-phila", nombre: "Salmón ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
 ];
@@ -76,8 +84,8 @@ const extrasSections = [
     nombre: "Tortas saladas o dulces",
     descripcion: "Elegí si querés sumar una torta salada para compartir o una opción dulce.",
     items: [
-      { id: "torta-salada", nombre: "Torta salada", precio: 45, descripcion: "Formato para compartir con corte de mesa." },
-      { id: "torta-dulce", nombre: "Torta dulce", precio: 35, descripcion: "Opción dulce para cierre de mesa o celebración." },
+      { id: "torta-salada", nombre: "Torta salada", precio: 80, descripcion: "Formato para compartir con corte de mesa." },
+      { id: "torta-dulce", nombre: "Torta dulce", precio: 55, descripcion: "Opción dulce para cierre de mesa o celebración." },
     ],
   },
   {
@@ -87,7 +95,7 @@ const extrasSections = [
     items: [
       { id: "croissant-simple", nombre: "Croissant", precio: 1, descripcion: "Unidad." },
       { id: "croissant-ddl", nombre: "Croissant con DDL", precio: 1.1, descripcion: "Unidad." },
-      { id: "medialuna-dulce", nombre: "Medialunas", precio: 1, descripcion: "Unidad." },
+      { id: "medialuna-dulce", nombre: "Medialunas", precio: 2, descripcion: "Unidad." },
     ],
   },
   {
@@ -129,7 +137,7 @@ saboresData.forEach((sabor) => {
 
 const state = {
   currentStep: 1,
-  personas: 10,
+  personas: 7,
   servicio: servicios[1].id,
   factorServicio: servicios[1].factor,
   estilo: estilos[0].id,
@@ -225,7 +233,7 @@ function bindEvents() {
   refs.personButtons.forEach((button) => {
     bindFastPress(button, () => {
       const delta = button.dataset.personAction === "increase" ? 1 : -1;
-      state.personas = Math.max(10, state.personas + delta);
+      state.personas = Math.max(7, state.personas + delta);
       applyStylePreset();
       updateUI();
     });
@@ -777,7 +785,7 @@ function updateSummary() {
   const servicio = servicios.find((item) => item.id === state.servicio);
   const estilo = estilos.find((item) => item.id === state.estilo);
   const pricePerPerson = state.total / state.personas;
-  const ahorroSandwiches = Math.max(0, calculateOriginalSandwichSubtotal() - state.subtotalSandwiches);
+  const recommendationLine = buildSummaryRecommendationClean(servicio);
 
   refs.summaryConfig.innerHTML = [
     `${state.personas} personas`,
@@ -801,8 +809,48 @@ function updateSummary() {
 
   refs.summaryExtras.innerHTML = selectedExtras || "<li>Sin extras.</li>";
   refs.summaryPricePerPerson.textContent = `${formatPrice(pricePerPerson)} por persona`;
-  refs.summaryTotalLine.textContent = `Total estimado ${formatPrice(state.total)}`;
-  refs.summarySavingsLine.textContent = ahorroSandwiches > 0 ? `Ahorro aplicado: ${formatPrice(ahorroSandwiches)}` : "";
+  refs.summaryTotalLine.textContent = `${servicio.nombre} para ${state.personas} personas. Total ${formatPrice(state.total)}`;
+  refs.summarySavingsLine.textContent = recommendationLine;
+}
+
+function buildSummaryRecommendation(servicio) {
+  if (!servicio) {
+    return "";
+  }
+
+  if (servicio.id === "picoteo") {
+    return `Eligieron ${servicio.nombre.toLowerCase()} para picar entre ${state.personas}. Sugerido: agregar 1 plato fuerte y otra opción de picoteo.`;
+  }
+
+  if (servicio.id === "ligero") {
+    return `Eligieron ${servicio.nombre.toLowerCase()}, comen ${state.personas} personas por ${formatPrice(state.total)}. Sugerido: agregar 1 plato fuerte.`;
+  }
+
+  if (servicio.id === "completo") {
+    return `Eligieron ${servicio.nombre.toLowerCase()}, comen ${state.personas} personas por ${formatPrice(state.total)}. Sugerido: agregar snacks.`;
+  }
+
+  return "";
+}
+
+function buildSummaryRecommendationClean(servicio) {
+  if (!servicio) {
+    return "";
+  }
+
+  if (servicio.id === "picoteo") {
+    return "Sugerido: agregar 1 plato fuerte y otra opción de picoteo.";
+  }
+
+  if (servicio.id === "ligero") {
+    return "Sugerido: agregar 1 plato fuerte.";
+  }
+
+  if (servicio.id === "completo") {
+    return "Sugerido: agregar snacks.";
+  }
+
+  return "";
 }
 
 function updateWhatsAppLink() {
@@ -862,3 +910,1163 @@ function formatPrice(value) {
 }
 
 initBuilder();
+// initVoting();
+
+function renderVotes(container, votes) {
+  const sortedVotes = Object.entries(votes)
+    .sort(([, totalA], [, totalB]) => totalB - totalA);
+
+  if (!sortedVotes.length) {
+    container.innerHTML = '<li class="voting-result-empty">Todavía no hay votos cargados.</li>';
+    return;
+  }
+
+  container.innerHTML = sortedVotes
+    .map(
+      ([sabor, total], index) => `
+        <li class="voting-result-item">
+          <span class="voting-result-rank">#${index + 1}</span>
+          <span class="voting-result-name">${escapeHtml(capitalizeWords(sabor))}</span>
+          <strong class="voting-result-total">${total} voto(s)</strong>
+        </li>
+      `,
+    )
+    .join("");
+}
+
+function capitalizeWords(value) {
+  return value.replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function initVoting() {
+  const newFlavorForm = document.getElementById("new-flavor-form");
+  const newFlavorSelect = document.getElementById("new-flavor");
+  const newFlavorFeedback = document.getElementById("new-flavor-feedback");
+  const newFlavorsList = document.getElementById("new-flavors-list");
+  const refreshNewFlavorsButton = document.getElementById("refresh-new-flavors");
+
+  if (
+    !newFlavorForm ||
+    !newFlavorSelect ||
+    !newFlavorFeedback ||
+    !newFlavorsList
+  ) {
+    return;
+  }
+
+  function resetStoredVoteStateIfNeeded() {
+    try {
+      const resetKey = "uno-de-miga-vote-reset-version";
+      const appliedVersion = localStorage.getItem(resetKey);
+
+      if (appliedVersion === VOTE_CLIENT_RESET_VERSION) {
+        return;
+      }
+
+      localStorage.removeItem(VOTE_PROFILE_STORAGE_KEY);
+      localStorage.removeItem(ANONYMOUS_VOTE_ID_STORAGE_KEY);
+
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("uno-de-miga-vote-lock:")) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      localStorage.setItem(resetKey, VOTE_CLIENT_RESET_VERSION);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function normalizePhoneInputValue(value) {
+    return String(value || "").replace(/[^\d+]/g, "").trim();
+  }
+
+  function isValidPhoneInput(value) {
+    return /^\+?[0-9]{8,15}$/.test(normalizePhoneInputValue(value));
+  }
+
+  resetStoredVoteStateIfNeeded();
+
+  async function loadVotes(url, listElement) {
+    listElement.innerHTML = '<li class="voting-result-empty">Cargando votos...</li>';
+
+    try {
+      const result = await fetchJsonWithTimeout(url);
+
+      if (!result.ok) {
+        throw new Error("No se pudieron cargar los votos.");
+      }
+
+      const votes = result.data || {};
+      const flavors = currentVotingConfig?.flavors || [];
+
+      if (!flavors.length) {
+        await loadVotingData();
+        return;
+      }
+
+      renderVotes(listElement, flavors, votes, hasVotedThisWeek);
+    } catch (error) {
+      listElement.innerHTML = '<li class="voting-result-empty">No pudimos cargar el ranking ahora mismo.</li>';
+      console.error(error);
+    }
+  }
+
+  async function fetchJsonWithTimeout(url, options = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      const rawBody = await response.text();
+      const data = rawBody ? JSON.parse(rawBody) : {};
+
+      return {
+        ok: response.ok,
+        status: response.status,
+        data,
+      };
+    } catch (error) {
+      if (error.name === "AbortError") {
+        throw new Error("El servidor tardó demasiado en responder. Intenta otra vez.");
+      }
+
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  async function submitVote(config) {
+    const sabor = config.selectElement.value.trim();
+
+    if (!sabor) {
+      config.feedbackElement.textContent = config.emptyMessage;
+      config.feedbackElement.classList.add("is-error");
+      return;
+    }
+
+    config.feedbackElement.textContent = "Enviando voto...";
+    config.feedbackElement.classList.remove("is-error");
+
+    try {
+      const response = await fetch(config.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sabor }),
+      });
+
+      if (!response.ok) {
+        throw new Error("No se pudo registrar el voto.");
+      }
+
+      const result = await response.json();
+      config.feedbackElement.textContent = `Gracias. ${result.sabor} ahora tiene ${result.total} voto(s).`;
+      config.selectElement.value = "";
+      await config.afterSuccess();
+    } catch (error) {
+      config.feedbackElement.textContent = "No pudimos registrar tu voto. Revisa que el backend esté corriendo.";
+      config.feedbackElement.classList.add("is-error");
+      console.error(error);
+    }
+  }
+
+  votingForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    await submitVote({
+      url: VOTES_API_URL,
+      selectElement: favoriteFlavorSelect,
+      feedbackElement: votingFeedback,
+      emptyMessage: "Selecciona un sabor antes de votar.",
+      afterSuccess: () => loadVotes(VOTES_API_URL, votesList),
+    });
+  });
+
+  newFlavorForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    await submitVote({
+      url: NEW_FLAVORS_API_URL,
+      selectElement: newFlavorSelect,
+      feedbackElement: newFlavorFeedback,
+      emptyMessage: "Selecciona un nuevo sabor antes de votar.",
+      afterSuccess: () => loadVotes(NEW_FLAVORS_API_URL, newFlavorsList),
+    });
+  });
+
+  if (refreshVotesButton) {
+    refreshVotesButton.addEventListener("click", () => {
+      loadVotes(VOTES_API_URL, votesList);
+    });
+  }
+
+  if (refreshNewFlavorsButton) {
+    refreshNewFlavorsButton.addEventListener("click", () => {
+      loadVotes(NEW_FLAVORS_API_URL, newFlavorsList);
+    });
+  }
+
+  loadVotes(VOTES_API_URL, votesList);
+  loadVotes(NEW_FLAVORS_API_URL, newFlavorsList);
+}
+
+function capitalizeWords(value) {
+  return value.replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function getVotePercentage(total, grandTotal) {
+  if (!grandTotal) {
+    return 0;
+  }
+
+  return Math.round((total / grandTotal) * 100);
+}
+
+function renderVotes(container, flavors, votes, voteLocked) {
+  const sortedFlavors = [...flavors].sort((flavorA, flavorB) => {
+    const totalA = Number(votes[flavorA.id] || 0);
+    const totalB = Number(votes[flavorB.id] || 0);
+    return totalB - totalA;
+  });
+  const totalVotes = sortedFlavors.reduce((sum, flavor) => sum + Number(votes[flavor.id] || 0), 0);
+
+  container.innerHTML = sortedFlavors
+    .map((flavor, index) => {
+      const total = Number(votes[flavor.id] || 0);
+      const percentage = getVotePercentage(total, totalVotes);
+
+      return `
+        <li class="voting-result-item">
+          <span class="voting-result-rank">#${index + 1}</span>
+          <div class="voting-result-main">
+            <span class="voting-result-name">${escapeHtml(flavor.name || capitalizeWords(flavor.id))}</span>
+            <div class="voting-result-bar" aria-hidden="true">
+              <span class="voting-result-fill" style="width: ${percentage}%"></span>
+            </div>
+            <div class="voting-result-meta">
+              <span>${percentage}% del total</span>
+              <span>${total} voto(s)</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="button contact-button-primary voting-row-button"
+            data-vote-flavor="${escapeHtml(flavor.id)}"
+          >
+            Votar
+          </button>
+        </li>
+      `;
+    })
+    .join("");
+}
+
+function initVoting() {
+  const newFlavorFeedback = document.getElementById("new-flavor-feedback");
+  const newFlavorsList = document.getElementById("new-flavors-list");
+  const refreshNewFlavorsButton = document.getElementById("refresh-new-flavors");
+  const voteModal = document.getElementById("vote-modal");
+  const voteModalBackdrop = document.getElementById("vote-modal-backdrop");
+  const voteModalClose = document.getElementById("vote-modal-close");
+  const voteProfileForm = document.getElementById("vote-profile-form");
+  const voteBirthdate = document.getElementById("vote-birthdate");
+  const votePhone = document.getElementById("vote-phone");
+  const votePromosConsent = document.getElementById("vote-promos-consent");
+  const voteProfileFeedback = document.getElementById("vote-profile-feedback");
+  const votePageTitle = document.querySelector(".vote-page-title");
+  const votePageDescription = document.querySelector(".voting-copy-wide .voting-text");
+  let pendingVoteConfig = null;
+  let currentVotingConfig = null;
+  let hasVotedThisWeek = false;
+
+  if (
+    !newFlavorFeedback ||
+    !newFlavorsList ||
+    !voteModal ||
+    !voteProfileForm ||
+    !voteBirthdate ||
+    !votePhone ||
+    !votePromosConsent ||
+    !voteProfileFeedback
+  ) {
+    return;
+  }
+
+  function getStoredVoteProfile() {
+    try {
+      const rawProfile = localStorage.getItem(VOTE_PROFILE_STORAGE_KEY);
+      return rawProfile ? JSON.parse(rawProfile) : null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  function storeVoteProfile(profile) {
+    localStorage.setItem(VOTE_PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  }
+
+  function getCurrentVoteLockKey() {
+    return currentVotingConfig?.weekId
+      ? `uno-de-miga-vote-lock:${currentVotingConfig.weekId}`
+      : null;
+  }
+
+  function syncLocalVoteLock() {
+    const voteLockKey = getCurrentVoteLockKey();
+    hasVotedThisWeek = voteLockKey ? localStorage.getItem(voteLockKey) === "true" : false;
+  }
+
+  function setLocalVoteLock() {
+    const voteLockKey = getCurrentVoteLockKey();
+    if (!voteLockKey) {
+      return;
+    }
+
+    localStorage.setItem(voteLockKey, "true");
+    hasVotedThisWeek = true;
+  }
+
+  function hasCompletedVoteProfile() {
+    const profile = getStoredVoteProfile();
+
+    return Boolean(
+      profile &&
+      profile.fechaNacimiento &&
+      profile.telefono &&
+      profile.aceptaPromos === true,
+    );
+  }
+
+  function openVoteModal(prefill = null) {
+    voteModal.hidden = false;
+    document.body.classList.add("has-vote-modal");
+    voteProfileFeedback.textContent = "";
+    voteProfileFeedback.classList.remove("is-error");
+
+    if (prefill) {
+      voteBirthdate.value = prefill.fechaNacimiento || "";
+      votePhone.value = prefill.telefono || "";
+      votePromosConsent.checked = prefill.aceptaPromos === true;
+    }
+  }
+
+  function closeVoteModal() {
+    voteModal.hidden = true;
+    document.body.classList.remove("has-vote-modal");
+  }
+
+  function showPhoneCorrectionPrompt() {
+    newFlavorFeedback.innerHTML = 'El telefono no tiene un formato valido. <button type="button" class="voting-inline-action" data-fix-phone>Pulsa aqui para arreglarlo</button>';
+    newFlavorFeedback.classList.add("is-error");
+  }
+
+  function openPhoneCorrectionFlow() {
+    const profile = getStoredVoteProfile() || {};
+    openVoteModal({
+      ...profile,
+      aceptaPromos: true,
+    });
+    voteProfileFeedback.textContent = "Revisa el telefono y vuelve a intentarlo. Ejemplo: +34 641 514 569";
+    voteProfileFeedback.classList.add("is-error");
+    votePhone.focus();
+    votePhone.select?.();
+  }
+
+  function updateFeedback(message, isError = false) {
+    newFlavorFeedback.textContent = message;
+    newFlavorFeedback.classList.toggle("is-error", isError);
+  }
+
+  async function loadVotingData() {
+    newFlavorsList.innerHTML = '<li class="voting-result-empty">Cargando votos...</li>';
+
+    try {
+      const response = await fetch("http://localhost:3000/api/config-votacion");
+
+      if (!response.ok) {
+        throw new Error("No se pudo cargar la votacion.");
+      }
+
+      currentVotingConfig = await response.json();
+      syncLocalVoteLock();
+
+      if (votePageTitle && currentVotingConfig.title) {
+        votePageTitle.textContent = currentVotingConfig.title;
+      }
+
+      if (votePageDescription && currentVotingConfig.description) {
+        votePageDescription.textContent = currentVotingConfig.description;
+      }
+
+      renderVotes(
+        newFlavorsList,
+        currentVotingConfig.flavors || [],
+        currentVotingConfig.votes || {},
+        hasVotedThisWeek,
+      );
+    } catch (error) {
+      newFlavorsList.innerHTML = '<li class="voting-result-empty">No pudimos cargar el ranking ahora mismo.</li>';
+      console.error(error);
+    }
+  }
+
+  async function submitVote(config) {
+    const sabor = String(config.flavor || "").trim();
+
+    if (!sabor) {
+      updateFeedback(config.emptyMessage, true);
+      return;
+    }
+
+    if (hasVotedThisWeek) {
+      updateFeedback("Ya registramos tu voto de esta semana.", true);
+      return;
+    }
+
+    const voteProfile = getStoredVoteProfile();
+
+    if (!voteProfile) {
+      updateFeedback("Necesitamos tus datos antes de registrar el voto.", true);
+      return;
+    }
+
+    updateFeedback("Enviando voto...");
+
+    try {
+      const response = await fetch(config.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sabor,
+          telefono: voteProfile.telefono,
+          fechaNacimiento: voteProfile.fechaNacimiento,
+          aceptaPromos: voteProfile.aceptaPromos,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409 && result.alreadyVoted) {
+          setLocalVoteLock();
+          await loadVotingData();
+        }
+
+        throw new Error(result.error || "No se pudo registrar el voto.");
+      }
+
+      setLocalVoteLock();
+      updateFeedback(`Gracias. Tu voto para ${capitalizeWords(result.sabor)} ya quedo registrado.`);
+      await loadVotingData();
+    } catch (error) {
+      updateFeedback(error.message || "No pudimos registrar tu voto.", true);
+      console.error(error);
+    }
+  }
+
+  newFlavorsList.addEventListener("click", async (event) => {
+    const voteButton = event.target.closest("[data-vote-flavor]");
+
+    if (!voteButton || hasVotedThisWeek) {
+      return;
+    }
+
+    const selectedFlavor = voteButton.getAttribute("data-vote-flavor");
+
+    if (!hasCompletedVoteProfile()) {
+      pendingVoteConfig = {
+        url: NEW_FLAVORS_API_URL,
+        flavor: selectedFlavor,
+        emptyMessage: "Selecciona un nuevo sabor antes de votar.",
+      };
+      openVoteModal(getStoredVoteProfile());
+      return;
+    }
+
+    await submitVote({
+      url: NEW_FLAVORS_API_URL,
+      flavor: selectedFlavor,
+      emptyMessage: "Selecciona un nuevo sabor antes de votar.",
+    });
+  });
+
+  if (refreshNewFlavorsButton) {
+    refreshNewFlavorsButton.addEventListener("click", () => {
+      loadVotingData();
+    });
+  }
+
+  if (voteModalClose) {
+    voteModalClose.addEventListener("click", closeVoteModal);
+  }
+
+  if (voteModalBackdrop) {
+    voteModalBackdrop.addEventListener("click", closeVoteModal);
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !voteModal.hidden) {
+      closeVoteModal();
+    }
+  });
+
+  voteProfileForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const profile = {
+      fechaNacimiento: voteBirthdate.value,
+      telefono: votePhone.value.trim(),
+      aceptaPromos: votePromosConsent.checked,
+    };
+
+    if (!profile.fechaNacimiento || !profile.telefono || !profile.aceptaPromos) {
+      voteProfileFeedback.textContent = "Completa todos los datos y acepta recibir promos antes de seguir.";
+      voteProfileFeedback.classList.add("is-error");
+      return;
+    }
+
+    storeVoteProfile(profile);
+    closeVoteModal();
+
+    if (pendingVoteConfig) {
+      const config = pendingVoteConfig;
+      pendingVoteConfig = null;
+      await submitVote(config);
+    }
+  });
+
+  loadVotingData();
+}
+
+function renderVotes(container, flavors, votes, voteLocked) {
+  const safeFlavors = Array.isArray(flavors) ? flavors : [];
+  const safeVotes = votes && typeof votes === "object" ? votes : {};
+  const sortedVotes = [...safeFlavors].sort((flavorA, flavorB) => {
+    const totalA = Number(safeVotes[flavorA.id] || 0);
+    const totalB = Number(safeVotes[flavorB.id] || 0);
+    return totalB - totalA;
+  });
+  const totalVotes = sortedVotes.reduce((sum, flavor) => sum + Number(safeVotes[flavor.id] || 0), 0);
+
+  if (!sortedVotes.length) {
+    container.innerHTML = '<li class="voting-result-empty">Todavía no hay votos cargados.</li>';
+    return;
+  }
+
+  container.innerHTML = sortedVotes
+    .map((flavor, index) => {
+      const total = Number(safeVotes[flavor.id] || 0);
+      const percentage = getVotePercentage(total, totalVotes);
+
+      return `
+        <li class="voting-result-item">
+          <span class="voting-result-rank">#${index + 1}</span>
+          <div class="voting-result-main">
+            <span class="voting-result-name">${escapeHtml(flavor.name || capitalizeWords(flavor.id))}</span>
+            <div class="voting-result-bar" aria-hidden="true">
+              <span class="voting-result-fill" style="width: ${percentage}%"></span>
+            </div>
+            <div class="voting-result-meta">
+              <span>${percentage}% del total</span>
+              <span>${total} voto(s)</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="button contact-button-primary voting-row-button"
+            data-vote-flavor="${escapeHtml(flavor.id)}"
+          >
+            Votar
+          </button>
+        </li>
+      `;
+    })
+    .join("");
+}
+
+function getVotePercentage(total, grandTotal) {
+  if (!grandTotal) {
+    return 0;
+  }
+
+  return Math.round((total / grandTotal) * 100);
+}
+
+function initVoting() {
+  const newFlavorFeedback = document.getElementById("new-flavor-feedback");
+  const newFlavorsList = document.getElementById("new-flavors-list");
+  const refreshNewFlavorsButton = document.getElementById("refresh-new-flavors");
+  const voteModal = document.getElementById("vote-modal");
+  const voteModalBackdrop = document.getElementById("vote-modal-backdrop");
+  const voteModalClose = document.getElementById("vote-modal-close");
+  const voteProfileForm = document.getElementById("vote-profile-form");
+  const voteName = document.getElementById("vote-name");
+  const voteNeighborhood = document.getElementById("vote-neighborhood");
+  const voteBirthdate = document.getElementById("vote-birthdate");
+  const votePhone = document.getElementById("vote-phone");
+  const votePromosConsent = document.getElementById("vote-promos-consent");
+  const voteConsentAccept = document.getElementById("vote-consent-accept");
+  const voteConsentReject = document.getElementById("vote-consent-reject");
+  const voteProfileFeedback = document.getElementById("vote-profile-feedback");
+  const votePageTitle = document.querySelector(".vote-page-title");
+  const votePageDescription = document.querySelector(".voting-copy-wide .voting-text");
+  const voteProfileInputs = [voteName, voteNeighborhood, voteBirthdate, votePhone];
+  const voteSubmitButton = voteProfileForm.querySelector('[type="submit"]');
+  let pendingVoteConfig = null;
+  let currentVotingConfig = null;
+  let hasVotedThisWeek = false;
+  let feedbackToastTimer = null;
+
+  if (
+    !newFlavorFeedback ||
+    !newFlavorsList ||
+    !voteModal ||
+    !voteProfileForm ||
+    !voteName ||
+    !voteNeighborhood ||
+    !voteBirthdate ||
+    !votePhone ||
+    !votePromosConsent ||
+    !voteConsentAccept ||
+    !voteConsentReject ||
+    !voteProfileFeedback
+  ) {
+    return;
+  }
+
+  function updateFeedback(message, isError = false) {
+    clearTimeout(feedbackToastTimer);
+    newFlavorFeedback.hidden = false;
+    newFlavorFeedback.innerHTML = message;
+    newFlavorFeedback.classList.toggle("is-error", isError);
+    newFlavorFeedback.classList.add("is-visible");
+
+    feedbackToastTimer = setTimeout(() => {
+      newFlavorFeedback.classList.remove("is-visible");
+      setTimeout(() => {
+        if (!newFlavorFeedback.classList.contains("is-visible")) {
+          newFlavorFeedback.hidden = true;
+          newFlavorFeedback.textContent = "";
+          newFlavorFeedback.classList.remove("is-error");
+        }
+      }, 220);
+    }, isError ? 5000 : 3600);
+  }
+
+  function getCurrentVoteLockKey() {
+    return currentVotingConfig?.weekId
+      ? `uno-de-miga-vote-lock:${currentVotingConfig.weekId}`
+      : null;
+  }
+
+  function syncLocalVoteLock() {
+    const voteLockKey = getCurrentVoteLockKey();
+    hasVotedThisWeek = voteLockKey ? localStorage.getItem(voteLockKey) === "true" : false;
+  }
+
+  function setLocalVoteLock() {
+    const voteLockKey = getCurrentVoteLockKey();
+
+    if (!voteLockKey) {
+      return;
+    }
+
+    localStorage.setItem(voteLockKey, "true");
+    hasVotedThisWeek = true;
+  }
+
+  function resetStoredVoteStateIfNeeded() {
+    try {
+      const resetKey = "uno-de-miga-vote-reset-version";
+      const appliedVersion = localStorage.getItem(resetKey);
+
+      if (appliedVersion === VOTE_CLIENT_RESET_VERSION) {
+        return;
+      }
+
+      localStorage.removeItem(VOTE_PROFILE_STORAGE_KEY);
+      localStorage.removeItem(ANONYMOUS_VOTE_ID_STORAGE_KEY);
+
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("uno-de-miga-vote-lock:")) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      localStorage.setItem(resetKey, VOTE_CLIENT_RESET_VERSION);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function normalizePhoneInputValue(value) {
+    return String(value || "").replace(/[^\d+]/g, "").trim();
+  }
+
+  function isValidPhoneInput(value) {
+    return /^\+?[0-9]{8,15}$/.test(normalizePhoneInputValue(value));
+  }
+
+  function showPhoneCorrectionPrompt() {
+    updateFeedback('El telefono no tiene un formato valido. <button type="button" class="voting-inline-action" data-fix-phone>Pulsa aqui para arreglarlo</button>', true);
+  }
+
+  function openPhoneCorrectionFlow() {
+    const profile = getStoredVoteProfile() || {};
+
+    openVoteModal({
+      ...profile,
+      aceptaPromos: true,
+    });
+    voteProfileFeedback.textContent = "Revisa el telefono y vuelve a intentarlo. Ejemplo: +34 641 514 569";
+    voteProfileFeedback.classList.add("is-error");
+    votePhone.focus();
+    votePhone.select?.();
+  }
+
+  async function fetchJsonWithTimeout(url, options = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      const rawBody = await response.text();
+      const data = rawBody ? JSON.parse(rawBody) : {};
+
+      return {
+        ok: response.ok,
+        status: response.status,
+        data,
+      };
+    } catch (error) {
+      if (error.name === "AbortError") {
+        throw new Error("El servidor tardó demasiado en responder. Intenta otra vez.");
+      }
+
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  async function loadVotingData() {
+    newFlavorsList.innerHTML = '<li class="voting-result-empty">Cargando votos...</li>';
+
+    try {
+      const result = await fetchJsonWithTimeout("http://localhost:3000/api/config-votacion");
+
+      if (!result.ok) {
+        throw new Error("No se pudo cargar la votacion.");
+      }
+
+      currentVotingConfig = result.data;
+      syncLocalVoteLock();
+
+      if (votePageTitle && currentVotingConfig.title) {
+        votePageTitle.textContent = currentVotingConfig.title;
+      }
+
+      if (votePageDescription && currentVotingConfig.description) {
+        votePageDescription.textContent = currentVotingConfig.description;
+      }
+
+      renderVotes(
+        newFlavorsList,
+        currentVotingConfig.flavors || [],
+        currentVotingConfig.votes || {},
+        hasVotedThisWeek,
+      );
+    } catch (error) {
+      newFlavorsList.innerHTML = '<li class="voting-result-empty">No pudimos cargar el ranking ahora mismo.</li>';
+      console.error(error);
+    }
+  }
+
+  resetStoredVoteStateIfNeeded();
+
+  function syncConsentButtons(accepted) {
+    votePromosConsent.checked = accepted;
+    voteConsentAccept.classList.toggle("is-active", accepted);
+    voteConsentReject.classList.toggle("is-active", !accepted);
+    voteProfileForm.classList.toggle("is-locked", !accepted);
+    voteProfileInputs.forEach((input) => {
+      input.disabled = !accepted;
+      input.required = accepted;
+    });
+
+    if (voteSubmitButton) {
+      voteSubmitButton.textContent = accepted ? "Completar y votar" : "Seguir sin promos";
+    }
+  }
+
+  function getAnonymousProfile() {
+    return {
+      nombre: "",
+      barrio: "",
+      fechaNacimiento: "",
+      telefono: "",
+      aceptaPromos: false,
+      clientId: getAnonymousVoteId(),
+    };
+  }
+
+  function getStoredVoteProfile() {
+    try {
+      const rawProfile = localStorage.getItem(VOTE_PROFILE_STORAGE_KEY);
+      return rawProfile ? JSON.parse(rawProfile) : null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  function storeVoteProfile(profile) {
+    localStorage.setItem(VOTE_PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  }
+
+  function getAnonymousVoteId() {
+    const storedId = localStorage.getItem(ANONYMOUS_VOTE_ID_STORAGE_KEY);
+
+    if (storedId) {
+      return storedId;
+    }
+
+    const newId = `anon-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(ANONYMOUS_VOTE_ID_STORAGE_KEY, newId);
+    return newId;
+  }
+
+  function hasCompletedVoteProfile() {
+    const profile = getStoredVoteProfile();
+
+    if (profile?.aceptaPromos === false && profile?.clientId) {
+      return true;
+    }
+
+    return Boolean(
+      profile &&
+      profile.nombre &&
+      profile.barrio &&
+      profile.fechaNacimiento &&
+      profile.telefono,
+    );
+  }
+
+  function openVoteModal(prefill = null) {
+    voteModal.hidden = false;
+    document.body.classList.add("has-vote-modal");
+    voteProfileFeedback.textContent = "";
+    voteProfileFeedback.classList.remove("is-error");
+
+    if (prefill) {
+      voteName.value = prefill.nombre || "";
+      voteNeighborhood.value = prefill.barrio || "";
+      voteBirthdate.value = prefill.fechaNacimiento || "";
+      votePhone.value = prefill.telefono || "";
+      syncConsentButtons(prefill.aceptaPromos === true);
+      return;
+    }
+
+    voteName.value = "";
+    voteNeighborhood.value = "";
+    voteBirthdate.value = "";
+    votePhone.value = "";
+    syncConsentButtons(true);
+  }
+
+  function closeVoteModal() {
+    voteModal.hidden = true;
+    document.body.classList.remove("has-vote-modal");
+  }
+
+  async function loadVotes(url, listElement) {
+    await loadVotingData();
+  }
+
+  async function submitVote(config) {
+    const sabor = String(config.flavor || "").trim();
+
+    if (!sabor) {
+      config.feedbackElement.textContent = config.emptyMessage;
+      config.feedbackElement.classList.add("is-error");
+      return;
+    }
+
+    const voteProfile = getStoredVoteProfile();
+
+    if (!voteProfile) {
+      config.feedbackElement.textContent = "Necesitamos tus datos antes de registrar el voto.";
+      config.feedbackElement.classList.add("is-error");
+      return;
+    }
+
+    if (hasVotedThisWeek) {
+      updateFeedback("Solo puedes votar 1 vez por semana :S", true);
+      return;
+    }
+
+    config.feedbackElement.textContent = "Enviando voto...";
+    config.feedbackElement.classList.remove("is-error");
+
+    try {
+      const result = await fetchJsonWithTimeout(config.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sabor,
+          nombre: voteProfile.nombre,
+          barrio: voteProfile.barrio,
+          telefono: voteProfile.telefono,
+          fechaNacimiento: voteProfile.fechaNacimiento,
+          aceptaPromos: voteProfile.aceptaPromos === true,
+          clientId: voteProfile.clientId || null,
+        }),
+      });
+
+      if (!result.ok) {
+        throw new Error(result.data.error || "No se pudo registrar el voto.");
+      }
+
+      setLocalVoteLock();
+      config.feedbackElement.textContent = `Tu voto fue computado en ${result.data.sabor}, espero gane! ;)`;
+      if (typeof config.afterSuccess === "function") {
+        await config.afterSuccess();
+      }
+    } catch (error) {
+      if (error.message === "El telefono no tiene un formato valido.") {
+        showPhoneCorrectionPrompt();
+        openPhoneCorrectionFlow();
+        return;
+      }
+
+      config.feedbackElement.textContent = error.message || "No pudimos registrar tu voto.";
+      config.feedbackElement.classList.add("is-error");
+      console.error(error);
+    }
+  }
+
+  async function checkVoteStatus() {
+    const profile = getStoredVoteProfile() || {};
+    const params = new URLSearchParams();
+
+    if (profile.telefono) {
+      params.set("telefono", profile.telefono);
+    }
+
+    if (profile.nombre) {
+      params.set("nombre", profile.nombre);
+    }
+
+    if (profile.clientId) {
+      params.set("clientId", profile.clientId);
+    }
+
+    const result = await fetchJsonWithTimeout(`${VOTE_STATUS_API_URL}?${params.toString()}`);
+
+    if (!result.ok) {
+      throw new Error("No se pudo comprobar si ya habías votado.");
+    }
+
+    return result.data;
+  }
+
+  newFlavorsList.addEventListener("click", async (event) => {
+    const voteButton = event.target.closest("[data-vote-flavor]");
+
+    if (!voteButton) {
+      return;
+    }
+
+    const selectedFlavor = voteButton.getAttribute("data-vote-flavor");
+
+    try {
+      const voteStatus = await checkVoteStatus();
+
+      if (voteStatus.alreadyVoted) {
+        setLocalVoteLock();
+        updateFeedback("Solo puedes votar 1 vez por semana :S", true);
+        await loadVotingData();
+        return;
+      }
+    } catch (error) {
+      updateFeedback(error.message || "No pudimos comprobar tu estado de voto.", true);
+      return;
+    }
+
+    if (!hasCompletedVoteProfile()) {
+      openVoteModal(getStoredVoteProfile());
+      return;
+    }
+
+    await submitVote({
+      url: NEW_FLAVORS_API_URL,
+      flavor: selectedFlavor,
+      feedbackElement: newFlavorFeedback,
+      emptyMessage: "Selecciona un nuevo sabor antes de votar.",
+      afterSuccess: () => loadVotes(NEW_FLAVORS_API_URL, newFlavorsList),
+    });
+  });
+
+  if (refreshNewFlavorsButton) {
+    refreshNewFlavorsButton.addEventListener("click", () => {
+      loadVotes(NEW_FLAVORS_API_URL, newFlavorsList);
+    });
+  }
+
+  newFlavorFeedback.addEventListener("click", (event) => {
+    const fixPhoneButton = event.target.closest("[data-fix-phone]");
+
+    if (!fixPhoneButton) {
+      return;
+    }
+
+    openPhoneCorrectionFlow();
+  });
+
+  voteConsentAccept.addEventListener("click", () => {
+    syncConsentButtons(true);
+    voteProfileFeedback.textContent = "";
+    voteProfileFeedback.classList.remove("is-error");
+  });
+
+  voteConsentReject.addEventListener("click", () => {
+    syncConsentButtons(false);
+    voteProfileFeedback.textContent = "";
+    voteProfileFeedback.classList.remove("is-error");
+  });
+
+  if (voteModalClose) {
+    voteModalClose.addEventListener("click", closeVoteModal);
+  }
+
+  if (voteModalBackdrop) {
+    voteModalBackdrop.addEventListener("click", closeVoteModal);
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !voteModal.hidden) {
+      closeVoteModal();
+    }
+  });
+
+  voteProfileForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!votePromosConsent.checked) {
+      storeVoteProfile(getAnonymousProfile());
+      closeVoteModal();
+      updateFeedback("Registro listo. Ahora vuelve a pulsar en votar.", false);
+
+      return;
+    }
+
+    const profile = {
+      nombre: voteName.value.trim(),
+      barrio: voteNeighborhood.value.trim(),
+      fechaNacimiento: voteBirthdate.value,
+      telefono: votePhone.value.trim(),
+      aceptaPromos: votePromosConsent.checked,
+    };
+
+    if (!profile.nombre || !profile.barrio || !profile.fechaNacimiento || !profile.telefono) {
+      voteProfileFeedback.textContent = "Completa nombre, barrio, cumpleaños y teléfono antes de seguir.";
+      voteProfileFeedback.classList.add("is-error");
+      return;
+    }
+
+    if (!isValidPhoneInput(profile.telefono)) {
+      voteProfileFeedback.textContent = "El telefono no tiene un formato valido. Usa algo como +34 641 514 569.";
+      voteProfileFeedback.classList.add("is-error");
+      votePhone.focus();
+      votePhone.select?.();
+      return;
+    }
+
+    voteProfileFeedback.textContent = "Guardando registro...";
+    voteProfileFeedback.classList.remove("is-error");
+
+    let registrationResult;
+
+    try {
+      registrationResult = await fetchJsonWithTimeout(VOTE_REGISTRATION_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(profile),
+      });
+    } catch (error) {
+      voteProfileFeedback.textContent = error.message || "No se pudo guardar el registro.";
+      voteProfileFeedback.classList.add("is-error");
+      return;
+    }
+
+    if (!registrationResult.ok) {
+      voteProfileFeedback.textContent = registrationResult.data.error || "No se pudo guardar el registro.";
+      voteProfileFeedback.classList.add("is-error");
+      return;
+    }
+
+    storeVoteProfile(profile);
+    closeVoteModal();
+    updateFeedback("Registro listo. Ahora vuelve a pulsar en votar.", false);
+  });
+
+  loadVotes(NEW_FLAVORS_API_URL, newFlavorsList);
+
+  votePhone.addEventListener("input", () => {
+    if (voteProfileFeedback.classList.contains("is-error")) {
+      voteProfileFeedback.textContent = "";
+      voteProfileFeedback.classList.remove("is-error");
+    }
+  });
+}
+
+document.addEventListener("click", (event) => {
+  const closeButton = event.target.closest("#vote-modal-close");
+  const backdrop = event.target.closest("#vote-modal-backdrop");
+
+  if (closeButton || backdrop) {
+    const voteModal = document.getElementById("vote-modal");
+
+    if (voteModal) {
+      voteModal.hidden = true;
+      document.body.classList.remove("has-vote-modal");
+    }
+
+    return;
+  }
+});

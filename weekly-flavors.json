@@ -1,0 +1,23 @@
+{
+  "title": "Vota el proximo sabor",
+  "description": "Elige el sabor que deberia entrar al menu esta semana y mira cual va ganando.",
+  "weekLabel": "Sabores de esta semana",
+  "flavors": [
+    {
+      "id": "jamon y huevo",
+      "name": "Jamon y huevo"
+    },
+    {
+      "id": "jamon queso lechuga y tomate",
+      "name": "Jamon, queso, lechuga y tomate"
+    },
+    {
+      "id": "roquefort y jamon",
+      "name": "Roquefort y jamon"
+    },
+    {
+      "id": "anana y jamon",
+      "name": "Anana y jamon"
+    }
+  ]
+}
