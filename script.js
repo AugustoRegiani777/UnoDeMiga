@@ -1,7 +1,7 @@
-const WHATSAPP_BASE_URL = "https://wa.me/34641514569";
-const NEW_FLAVORS_API_URL = "http://localhost:3000/api/nuevos-sabores";
-const VOTE_REGISTRATION_API_URL = "http://localhost:3000/api/registro-votacion";
-const VOTE_STATUS_API_URL = "http://localhost:3000/api/vote-status";
+﻿const WHATSAPP_BASE_URL = "https://wa.me/34641514569";
+const NEW_FLAVORS_API_URL = "/api/nuevos-sabores";
+const VOTE_REGISTRATION_API_URL = "/api/registro-votacion";
+const VOTE_STATUS_API_URL = "/api/vote-status";
 const VOTE_PROFILE_STORAGE_KEY = "uno-de-miga-vote-profile";
 const ANONYMOUS_VOTE_ID_STORAGE_KEY = "uno-de-miga-anonymous-vote-id";
 const API_TIMEOUT_MS = 10000;
@@ -21,13 +21,13 @@ const servicios = [
     id: "picoteo",
     nombre: "Picoteo",
     factor: 1.5,
-    descripcion: "Ideal si los sándwiches acompañan otros platos.",
+    descripcion: "Ideal si los sÃ¡ndwiches acompaÃ±an otros platos.",
   },
   {
     id: "ligero",
     nombre: "Ligero",
     factor: 2.5,
-    descripcion: "La opción recomendada para almuerzos y reuniones.",
+    descripcion: "La opciÃ³n recomendada para almuerzos y reuniones.",
   },
   {
     id: "completo",
@@ -41,7 +41,7 @@ const estilos = [
   {
     id: "mixto",
     nombre: "Mixto",
-    descripcion: "Balancea clásicos y opciones más especiales.",
+    descripcion: "Balancea clÃ¡sicos y opciones mÃ¡s especiales.",
   },
   {
     id: "gourmet",
@@ -51,7 +51,7 @@ const estilos = [
   {
     id: "vegetariano",
     nombre: "Vegetariano",
-    descripcion: "Filtra el menú a opciones sin carne ni pescado.",
+    descripcion: "Filtra el menÃº a opciones sin carne ni pescado.",
   },
 ];
 
@@ -67,31 +67,31 @@ const preciosOriginales = {
 };
 
 const saboresData = [
-  { id: "jamon-queso", nombre: "Jamón y queso", categoria: "clasicos", precio: 3.5, tags: ["cerdo"] },
+  { id: "jamon-queso", nombre: "JamÃ³n y queso", categoria: "clasicos", precio: 3.5, tags: ["cerdo"] },
   { id: "pasta-oliva", nombre: "Pasta de oliva y queso", categoria: "clasicos", precio: 3.5, tags: ["vegetariano"] },
   { id: "pimiento-gouda", nombre: "Pimiento asado, gouda y Philadelphia", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "pesto-tomate", nombre: "Pesto, tomate y queso", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "berenjena-brie", nombre: "Berenjena asada y queso brie", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
-  { id: "jamon-serrano", nombre: "Jamón serrano, rúcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
-  { id: "jamon-huevo", nombre: "Jamón y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
-  { id: "atun-palta", nombre: "Atún, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
-  { id: "salmon-phila", nombre: "Salmón ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
+  { id: "jamon-serrano", nombre: "JamÃ³n serrano, rÃºcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
+  { id: "jamon-huevo", nombre: "JamÃ³n y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
+  { id: "atun-palta", nombre: "AtÃºn, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
+  { id: "salmon-phila", nombre: "SalmÃ³n ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
 ];
 
 const extrasSections = [
   {
     id: "tortas",
     nombre: "Tortas saladas o dulces",
-    descripcion: "Elegí si querés sumar una torta salada para compartir o una opción dulce.",
+    descripcion: "ElegÃ­ si querÃ©s sumar una torta salada para compartir o una opciÃ³n dulce.",
     items: [
       { id: "torta-salada", nombre: "Torta salada", precio: 80, descripcion: "Formato para compartir con corte de mesa." },
-      { id: "torta-dulce", nombre: "Torta dulce", precio: 55, descripcion: "Opción dulce para cierre de mesa o celebración." },
+      { id: "torta-dulce", nombre: "Torta dulce", precio: 55, descripcion: "OpciÃ³n dulce para cierre de mesa o celebraciÃ³n." },
     ],
   },
   {
     id: "mesa-dulce",
     nombre: "Mesa dulce",
-    descripcion: "Podés sumar piezas sueltas para armar una mesa dulce simple.",
+    descripcion: "PodÃ©s sumar piezas sueltas para armar una mesa dulce simple.",
     items: [
       { id: "croissant-simple", nombre: "Croissant", precio: 1, descripcion: "Unidad." },
       { id: "croissant-ddl", nombre: "Croissant con DDL", precio: 1.1, descripcion: "Unidad." },
@@ -101,10 +101,10 @@ const extrasSections = [
   {
     id: "mesa-salada",
     nombre: "Mesa salada",
-    descripcion: "Sumá bollería salada para complementar el catering.",
+    descripcion: "SumÃ¡ bollerÃ­a salada para complementar el catering.",
     items: [
-      { id: "medialuna-jyq", nombre: "Medialunas con jamón y queso", precio: 2.3, descripcion: "Unidad." },
-      { id: "croissant-jyq", nombre: "Croissant con jamón y queso", precio: 1.7, descripcion: "Unidad." },
+      { id: "medialuna-jyq", nombre: "Medialunas con jamÃ³n y queso", precio: 2.3, descripcion: "Unidad." },
+      { id: "croissant-jyq", nombre: "Croissant con jamÃ³n y queso", precio: 1.7, descripcion: "Unidad." },
     ],
   },
   {
@@ -124,6 +124,26 @@ const extrasData = extrasSections.flatMap((section) =>
     sectionName: section.nombre,
   })),
 );
+
+// Normalize legacy text artifacts without changing current UI structure.
+servicios[0].descripcion = "Ideal si los sÃ¡ndwiches acompaÃ±an otros platos.";
+servicios[1].descripcion = "La opciÃ³n recomendada para almuerzos y reuniones.";
+estilos[0].descripcion = "Balancea clÃ¡sicos y opciones mÃ¡s especiales.";
+estilos[2].descripcion = "Filtra el menÃº a opciones sin carne ni pescado.";
+
+saboresData[0].nombre = "JamÃ³n y queso";
+saboresData[5].nombre = "JamÃ³n serrano, rÃºcula y queso";
+saboresData[6].nombre = "JamÃ³n y huevo";
+saboresData[7].nombre = "AtÃºn, palta y queso";
+saboresData[8].nombre = "SalmÃ³n ahumado y Philadelphia";
+
+extrasSections[0].descripcion = "ElegÃ­ si querÃ©s sumar una torta salada para compartir o una opciÃ³n dulce.";
+extrasSections[0].items[1].descripcion = "OpciÃ³n dulce para cierre de mesa o celebraciÃ³n.";
+extrasSections[1].descripcion = "PodÃ©s sumar piezas sueltas para armar una mesa dulce simple.";
+extrasSections[2].descripcion = "SumÃ¡ bollerÃ­a salada para complementar el catering.";
+extrasSections[2].items[0].nombre = "Medialunas con jamÃ³n y queso";
+extrasSections[2].items[1].nombre = "Croissant con jamÃ³n y queso";
+extrasSections[3].items[0].descripcion = "MÃ­nimo una docena.";
 
 saboresData.forEach((sabor) => {
   if (sabor.categoria === "clasicos" || sabor.categoria === "especiales") {
@@ -164,6 +184,11 @@ for (const extra of extrasData) {
 const refs = {
   builder: document.getElementById("catering-builder"),
   builderModal: document.getElementById("catering-modal"),
+  confirmModal: document.getElementById("builder-confirm"),
+  confirmBackdrop: document.getElementById("builder-confirm-backdrop"),
+  confirmText: document.getElementById("builder-confirm-text"),
+  confirmAccept: document.getElementById("builder-confirm-accept"),
+  confirmCancel: document.getElementById("builder-confirm-cancel"),
   launchButton: document.getElementById("catering-launch-button"),
   modalBackdrop: document.getElementById("catering-modal-backdrop"),
   modalClose: document.getElementById("catering-modal-close"),
@@ -191,6 +216,8 @@ const refs = {
   stepPanels: Array.from(document.querySelectorAll(".builder-step")),
   personButtons: Array.from(document.querySelectorAll("[data-person-action]")),
 };
+
+let builderConfirmResolver = null;
 
 function initBuilder() {
   if (!refs.builder) {
@@ -225,6 +252,11 @@ function bindEvents() {
   }
 
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && refs.confirmModal && !refs.confirmModal.hidden) {
+      resolveBuilderConfirm(false);
+      return;
+    }
+
     if (event.key === "Escape" && refs.builderModal && !refs.builderModal.hidden) {
       closeBuilderModal();
     }
@@ -254,8 +286,30 @@ function bindEvents() {
     }
   });
 
-  refs.nextButton.addEventListener("click", () => {
+  if (refs.confirmAccept) {
+    refs.confirmAccept.addEventListener("click", () => {
+      resolveBuilderConfirm(true);
+    });
+  }
+
+  if (refs.confirmCancel) {
+    refs.confirmCancel.addEventListener("click", () => {
+      resolveBuilderConfirm(false);
+    });
+  }
+
+  if (refs.confirmBackdrop) {
+    refs.confirmBackdrop.addEventListener("click", () => {
+      resolveBuilderConfirm(false);
+    });
+  }
+
+  refs.nextButton.addEventListener("click", async () => {
     if (!canAdvance(state.currentStep)) {
+      return;
+    }
+
+    if (state.currentStep === 4 && !(await confirmFlavorSelection())) {
       return;
     }
 
@@ -316,9 +370,35 @@ function openBuilderModal() {
 }
 
 function closeBuilderModal() {
+  resolveBuilderConfirm(false);
   if (refs.builderModal) {
     refs.builderModal.hidden = true;
     document.body.classList.remove("has-catering-modal");
+  }
+}
+
+function openBuilderConfirm(message) {
+  if (!refs.confirmModal || !refs.confirmText) {
+    return Promise.resolve(window.confirm(message));
+  }
+
+  refs.confirmText.textContent = message;
+  refs.confirmModal.hidden = false;
+
+  return new Promise((resolve) => {
+    builderConfirmResolver = resolve;
+  });
+}
+
+function resolveBuilderConfirm(result) {
+  if (refs.confirmModal) {
+    refs.confirmModal.hidden = true;
+  }
+
+  if (builderConfirmResolver) {
+    const resolve = builderConfirmResolver;
+    builderConfirmResolver = null;
+    resolve(result);
   }
 }
 
@@ -328,7 +408,7 @@ function renderServiceOptions() {
       (servicio) => `
         <button type="button" class="builder-choice-card" data-service-id="${servicio.id}">
           <strong>${servicio.nombre}</strong>
-          <span>${servicio.factor} sándwiches por persona</span>
+          <span>${servicio.factor} sÃ¡ndwiches por persona</span>
           <small>${servicio.descripcion}</small>
         </button>
       `,
@@ -406,7 +486,7 @@ function renderFilters() {
 
 function renderFlavorGroups() {
   const grouped = {
-    clasicos: "Clásicos",
+    clasicos: "ClÃ¡sicos",
     especiales: "Especiales",
     "de-la-casa": "De la casa",
   };
@@ -446,11 +526,6 @@ function renderFlavorGroups() {
     bindFastPress(button, () => {
       const flavorId = button.dataset.flavorId;
       const action = button.dataset.flavorAction;
-      const currentTotal = getSelectedFlavorCount();
-
-      if (action === "increase" && currentTotal >= state.totalSandwiches) {
-        return;
-      }
 
       state.saboresSeleccionados[flavorId] = Math.max(
         0,
@@ -684,7 +759,7 @@ function calculateOriginalSandwichSubtotal() {
 function updateUI() {
   recalculateTotals();
   if (refs.selectionStatus) {
-    refs.selectionStatus.textContent = `SÃ¡ndwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
+    refs.selectionStatus.textContent = `Sándwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
   }
   updateStepIndicators();
   updatePanels();
@@ -723,7 +798,7 @@ function updateNavigation() {
   refs.nextButton.textContent = "Siguiente";
   refs.nextButton.hidden = state.currentStep === steps.length;
   if (refs.selectionStatus) {
-    refs.selectionStatus.textContent = `Sándwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
+    refs.selectionStatus.textContent = `SÃ¡ndwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
     refs.selectionStatus.hidden = state.currentStep < 4;
   }
 }
@@ -750,9 +825,9 @@ function updateFilters() {
 
 function updateFlavorCounts() {
   const selectedCount = getSelectedFlavorCount();
-  refs.flavorTarget.textContent = `${state.totalSandwiches} sándwiches`;
-  refs.flavorSelected.textContent = `${selectedCount} / ${state.totalSandwiches}`;
-  refs.flavorSelected.classList.toggle("is-invalid", selectedCount !== state.totalSandwiches);
+  refs.flavorTarget.textContent = `${state.totalSandwiches} sÃ¡ndwiches`;
+  refs.flavorSelected.textContent = `${selectedCount} seleccionados`;
+  refs.flavorSelected.classList.toggle("is-invalid", selectedCount === 0);
 
   saboresData.forEach((sabor) => {
     const qtyRef = document.getElementById(`flavor-qty-${sabor.id}`);
@@ -789,7 +864,7 @@ function updateSummary() {
 
   refs.summaryConfig.innerHTML = [
     `${state.personas} personas`,
-    `${servicio.nombre} (${servicio.factor} sándwiches por persona)`,
+    `${servicio.nombre} (${servicio.factor} sÃ¡ndwiches por persona)`,
     `Estilo ${estilo.nombre}`,
   ]
     .map((item) => `<li>${item}</li>`)
@@ -819,7 +894,7 @@ function buildSummaryRecommendation(servicio) {
   }
 
   if (servicio.id === "picoteo") {
-    return `Eligieron ${servicio.nombre.toLowerCase()} para picar entre ${state.personas}. Sugerido: agregar 1 plato fuerte y otra opción de picoteo.`;
+    return `Eligieron ${servicio.nombre.toLowerCase()} para picar entre ${state.personas}. Sugerido: agregar 1 plato fuerte y otra opciÃ³n de picoteo.`;
   }
 
   if (servicio.id === "ligero") {
@@ -839,7 +914,7 @@ function buildSummaryRecommendationClean(servicio) {
   }
 
   if (servicio.id === "picoteo") {
-    return "Sugerido: agregar 1 plato fuerte y otra opción de picoteo.";
+    return "Sugerido: agregar 1 plato fuerte y otra opciÃ³n de picoteo.";
   }
 
   if (servicio.id === "ligero") {
@@ -892,10 +967,32 @@ function buildWhatsAppMessage() {
 
 function canAdvance(step) {
   if (step === 4) {
-    return getSelectedFlavorCount() === state.totalSandwiches;
+    return getSelectedFlavorCount() > 0;
   }
 
   return step >= 1 && step <= steps.length;
+}
+
+function confirmFlavorSelection() {
+  const selected = getSelectedFlavorCount();
+  const recommended = state.totalSandwiches;
+
+  if (selected === recommended) {
+    return Promise.resolve(true);
+  }
+
+  const difference = Math.abs(selected - recommended);
+  const noun = difference === 1 ? "sÃ¡ndwich" : "sÃ¡ndwiches";
+
+  if (selected < recommended) {
+    return openBuilderConfirm(
+      `Elegiste ${difference} ${noun} menos de lo recomendado. Si te parece bien asÃ­, seguimos.`,
+    );
+  }
+
+  return openBuilderConfirm(
+    `Elegiste ${difference} ${noun} mÃ¡s de lo recomendado. Si te parece bien asÃ­, seguimos.`,
+  );
 }
 
 function getSelectedFlavorCount() {
@@ -917,7 +1014,7 @@ function renderVotes(container, votes) {
     .sort(([, totalA], [, totalB]) => totalB - totalA);
 
   if (!sortedVotes.length) {
-    container.innerHTML = '<li class="voting-result-empty">Todavía no hay votos cargados.</li>';
+    container.innerHTML = '<li class="voting-result-empty">TodavÃ­a no hay votos cargados.</li>';
     return;
   }
 
@@ -1041,7 +1138,7 @@ function initVoting() {
       };
     } catch (error) {
       if (error.name === "AbortError") {
-        throw new Error("El servidor tardó demasiado en responder. Intenta otra vez.");
+        throw new Error("El servidor tardÃ³ demasiado en responder. Intenta otra vez.");
       }
 
       throw error;
@@ -1080,7 +1177,7 @@ function initVoting() {
       config.selectElement.value = "";
       await config.afterSuccess();
     } catch (error) {
-      config.feedbackElement.textContent = "No pudimos registrar tu voto. Revisa que el backend esté corriendo.";
+      config.feedbackElement.textContent = "No pudimos registrar tu voto. Revisa que el backend estÃ© corriendo.";
       config.feedbackElement.classList.add("is-error");
       console.error(error);
     }
@@ -1307,7 +1404,7 @@ function initVoting() {
     newFlavorsList.innerHTML = '<li class="voting-result-empty">Cargando votos...</li>';
 
     try {
-      const response = await fetch("http://localhost:3000/api/config-votacion");
+      const response = await fetch("/api/config-votacion");
 
       if (!response.ok) {
         throw new Error("No se pudo cargar la votacion.");
@@ -1477,7 +1574,7 @@ function renderVotes(container, flavors, votes, voteLocked) {
   const totalVotes = sortedVotes.reduce((sum, flavor) => sum + Number(safeVotes[flavor.id] || 0), 0);
 
   if (!sortedVotes.length) {
-    container.innerHTML = '<li class="voting-result-empty">Todavía no hay votos cargados.</li>';
+    container.innerHTML = '<li class="voting-result-empty">TodavÃ­a no hay votos cargados.</li>';
     return;
   }
 
@@ -1671,7 +1768,7 @@ function initVoting() {
       };
     } catch (error) {
       if (error.name === "AbortError") {
-        throw new Error("El servidor tardó demasiado en responder. Intenta otra vez.");
+        throw new Error("El servidor tardÃ³ demasiado en responder. Intenta otra vez.");
       }
 
       throw error;
@@ -1684,7 +1781,7 @@ function initVoting() {
     newFlavorsList.innerHTML = '<li class="voting-result-empty">Cargando votos...</li>';
 
     try {
-      const result = await fetchJsonWithTimeout("http://localhost:3000/api/config-votacion");
+      const result = await fetchJsonWithTimeout("/api/config-votacion");
 
       if (!result.ok) {
         throw new Error("No se pudo cargar la votacion.");
@@ -1897,7 +1994,7 @@ function initVoting() {
     const result = await fetchJsonWithTimeout(`${VOTE_STATUS_API_URL}?${params.toString()}`);
 
     if (!result.ok) {
-      throw new Error("No se pudo comprobar si ya habías votado.");
+      throw new Error("No se pudo comprobar si ya habÃ­as votado.");
     }
 
     return result.data;
@@ -2002,7 +2099,7 @@ function initVoting() {
     };
 
     if (!profile.nombre || !profile.barrio || !profile.fechaNacimiento || !profile.telefono) {
-      voteProfileFeedback.textContent = "Completa nombre, barrio, cumpleaños y teléfono antes de seguir.";
+      voteProfileFeedback.textContent = "Completa nombre, barrio, cumpleaÃ±os y telÃ©fono antes de seguir.";
       voteProfileFeedback.classList.add("is-error");
       return;
     }
@@ -2070,3 +2167,4 @@ document.addEventListener("click", (event) => {
     return;
   }
 });
+

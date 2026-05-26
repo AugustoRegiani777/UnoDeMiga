@@ -87,6 +87,129 @@ a {
   justify-content: flex-start;
 }
 
+@media (min-width: 901px) {
+  .flavor-card.flavor-card-category {
+    display: block;
+    grid-column: 1 / -1;
+    min-height: 0;
+    margin-top: 10px;
+    padding: 22px 0 10px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    isolation: auto;
+    border-top: 1px solid rgba(38, 23, 18, 0.12);
+  }
+
+  .flavor-card.flavor-card-category::before,
+  .flavor-card.flavor-card-category::after {
+    display: none;
+  }
+
+  .flavor-card.flavor-card-category .flavor-body {
+    min-height: 0;
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(320px, 1.1fr) minmax(260px, 0.9fr);
+    align-items: start;
+    gap: 20px;
+    padding: 0;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .flavor-card.flavor-card-category .office-size {
+    display: none;
+  }
+
+  .flavor-card.flavor-card-category .flavor-body h3,
+  .flavor-card.flavor-card-category .flavor-body p,
+  .flavor-card.flavor-card-category .veggie-note,
+  .flavor-card.flavor-card-category .veggie-highlight,
+  .flavor-card.flavor-card-category .veggie-minimum {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+    min-height: 0;
+    background: transparent;
+    color: var(--text);
+  }
+
+  .flavor-card.flavor-card-category .flavor-body h3,
+  .flavor-card.flavor-card-category .veggie-highlight {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(1.85rem, 2.5vw, 2.8rem);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    grid-column: 1;
+  }
+
+  .flavor-card.flavor-card-category .flavor-body p,
+  .flavor-card.flavor-card-category .veggie-note,
+  .flavor-card.flavor-card-category .veggie-minimum {
+    grid-column: 2;
+    justify-self: end;
+    align-self: start;
+    text-align: left;
+    max-width: 34ch;
+    font-size: 0.96rem;
+    line-height: 1.45;
+    color: rgba(38, 23, 18, 0.72);
+  }
+
+  .flavor-card.flavor-card-category .veggie-highlight {
+    color: #56774f;
+  }
+
+  .flavor-card.flavor-card-category-brand .flavor-body h3 {
+    color: var(--orange-dark);
+  }
+
+  .flavor-card.flavor-card-category-premium .flavor-body h3 {
+    color: #8f260f;
+  }
+
+  .flavor-card.flavor-card-category-veggie {
+    border-top-color: rgba(86, 119, 79, 0.24);
+  }
+
+  .flavor-card.flavor-card-category-veggie .office-size {
+    background: rgba(109, 150, 97, 0.12);
+    color: #56774f;
+  }
+
+  .flavor-card.flavor-card-category-veggie .flavor-body h3 {
+    color: #56774f;
+  }
+
+  .flavor-card.flavor-card-category-veggie .veggie-note {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .flavor-card.flavor-card-category-veggie .veggie-highlight {
+    grid-column: 1;
+    justify-self: start;
+    margin-top: 8px;
+    padding: 7px 12px 6px;
+    border-radius: 999px;
+    background: rgba(109, 150, 97, 0.14);
+    font-size: 0.78rem;
+    line-height: 1;
+    letter-spacing: 0.12em;
+  }
+
+  .flavor-card.flavor-card-category-veggie .veggie-minimum {
+    grid-column: 2;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+}
+
 .nav-actions {
   display: inline-flex;
   align-items: center;
@@ -658,6 +781,98 @@ h3 {
   align-self: auto;
 }
 
+.flavor-card-veggie-info {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(109, 150, 97, 0.18) 0%, rgba(109, 150, 97, 0.04) 38%, transparent 64%),
+    linear-gradient(145deg, rgba(109, 150, 97, 0.12) 0%, rgba(247, 240, 231, 0.96) 100%);
+  border-color: rgba(86, 119, 79, 0.24);
+}
+
+.flavor-card-veggie-info::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, transparent 34%),
+    repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 32px,
+      rgba(86, 119, 79, 0.035) 32px,
+      rgba(86, 119, 79, 0.035) 33px
+    );
+  pointer-events: none;
+}
+
+.flavor-card-veggie-info .flavor-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  min-height: 100%;
+  padding: 26px 24px;
+}
+
+.flavor-card-veggie-info .office-size {
+  width: fit-content;
+  margin-bottom: 2px;
+  background: rgba(109, 150, 97, 0.14);
+  color: #56774f;
+}
+
+.flavor-card-veggie-info .flavor-body h3 {
+  margin: 0;
+  max-width: 18ch;
+  color: #486443;
+  font-size: clamp(1.3rem, 1.7vw, 1.75rem);
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+.veggie-info-lead,
+.veggie-info-copy,
+.veggie-info-meta p {
+  min-height: 0;
+  margin: 0;
+  max-width: 58ch;
+  color: rgba(38, 23, 18, 0.78);
+  text-wrap: pretty;
+}
+
+.veggie-info-lead {
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.veggie-info-copy {
+  font-size: 0.9rem;
+  line-height: 1.52;
+}
+
+.veggie-info-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(86, 119, 79, 0.16);
+}
+
+.veggie-info-meta p {
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.veggie-info-meta strong {
+  color: #486443;
+}
+
 .flavor-link-veggie {
   margin-top: 0;
   align-self: auto;
@@ -678,10 +893,13 @@ h3 {
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(circle at top right, rgba(200, 48, 16, 0.18) 0%, rgba(200, 48, 16, 0.02) 34%, transparent 58%),
-    linear-gradient(145deg, rgba(143, 38, 15, 0.16) 0%, rgba(200, 48, 16, 0.08) 46%, rgba(242, 236, 228, 0.9) 100%),
-    #f4ede5;
-  border-color: rgba(143, 38, 15, 0.24);
+    radial-gradient(circle at 14% 18%, rgba(255, 210, 168, 0.38) 0%, rgba(255, 210, 168, 0.1) 22%, transparent 40%),
+    radial-gradient(circle at 88% 16%, rgba(143, 38, 15, 0.2) 0%, rgba(143, 38, 15, 0.03) 30%, transparent 54%),
+    linear-gradient(140deg, rgba(255, 244, 233, 0.98) 0%, rgba(244, 228, 214, 0.96) 52%, rgba(239, 216, 198, 0.98) 100%);
+  border-color: rgba(143, 38, 15, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 16px 30px rgba(104, 45, 24, 0.1);
 }
 
 .flavor-card-category-premium::before {
@@ -695,7 +913,7 @@ h3 {
     "DE LA CASA.";
   position: absolute;
   inset: -4px 0 0 0;
-  color: rgba(143, 38, 15, 0.16);
+  color: rgba(143, 38, 15, 0.13);
   font-family: "Archivo Black", sans-serif;
   font-size: clamp(1.45rem, 1.75vw, 2.2rem);
   line-height: 0.84;
@@ -709,7 +927,7 @@ h3 {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(244, 237, 229, 0.22) 0%, rgba(244, 237, 229, 0.44) 100%);
+    linear-gradient(180deg, rgba(255, 250, 245, 0.08) 0%, rgba(255, 250, 245, 0.34) 100%);
   z-index: 1;
 }
 
@@ -722,10 +940,11 @@ h3 {
 .flavor-card-category-premium .office-size,
 .flavor-card-category-premium .flavor-body h3,
 .flavor-card-category-premium .flavor-body p {
-  background: rgba(244, 237, 229, 0.9);
+  background: rgba(255, 248, 241, 0.78);
   width: fit-content;
   max-width: 92%;
   padding-inline: 8px;
+  backdrop-filter: blur(3px);
 }
 
 .flavor-card-category-premium .office-size {
@@ -1848,7 +2067,7 @@ h3 {
   }
 
   .section {
-    padding: 36px 0;
+    padding: 28px 0;
   }
 
   .hero-overlay {
@@ -1864,7 +2083,7 @@ h3 {
   }
 
   .nav-side {
-    gap: 14px;
+    gap: 18px;
     justify-content: flex-end;
   }
 
@@ -2010,6 +2229,7 @@ h3 {
   .nav-side a {
     flex: 0 0 auto;
     font-size: 0.76rem;
+    padding-inline: 3px;
     letter-spacing: 0.04em;
     line-height: 1;
   }
@@ -2075,6 +2295,10 @@ h3 {
     display: block;
   }
 
+  .flavor-card-category .office-size {
+    display: none;
+  }
+
   .office-grid {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -2135,8 +2359,9 @@ h3 {
 
   .flavor-card-category-premium {
     background:
-      linear-gradient(145deg, rgba(143, 38, 15, 0.14) 0%, rgba(200, 48, 16, 0.05) 100%),
-      #f7f0e7;
+      radial-gradient(circle at top right, rgba(143, 38, 15, 0.22) 0%, transparent 38%),
+      linear-gradient(145deg, rgba(255, 236, 220, 0.99) 0%, rgba(241, 214, 191, 0.99) 100%);
+    border-color: rgba(143, 38, 15, 0.24);
   }
 
   .flavor-card-category-brand::before,
@@ -2159,6 +2384,14 @@ h3 {
 
   .flavor-card-category-premium .flavor-body {
     min-height: 0;
+  }
+
+  .flavor-card-category-premium .flavor-body h3 {
+    color: #7a2211;
+  }
+
+  .flavor-card-category-premium .flavor-body p {
+    color: rgba(122, 34, 17, 0.82);
   }
 
   .flavor-body h3 {
@@ -2288,7 +2521,7 @@ h3 {
   }
 
   .section {
-    padding: 32px 0;
+    padding: 24px 0;
   }
 }
 
@@ -2341,7 +2574,7 @@ h3 {
   }
 
   .section {
-    padding: 27px 0;
+    padding: 20px 0;
   }
 
   .hero-copy h1 {
@@ -2357,6 +2590,13 @@ h3 {
   .catering-copy h2,
   .contact-copy h2 {
     font-size: clamp(1.8rem, 10vw, 2.7rem);
+  }
+
+  .office-copy h2,
+  .catering-copy h2 {
+    font-size: clamp(1.45rem, 7.2vw, 2rem);
+    max-width: 16ch;
+    line-height: 1.02;
   }
 
   .flavor-grid {
@@ -3168,7 +3408,7 @@ h3 {
 }
 
 .catering-copy h2 {
-  max-width: 12ch;
+  max-width: 16ch;
   margin-bottom: 24px;
   font-size: clamp(2.5rem, 4vw, 3.5rem);
   line-height: 1.05;
@@ -3405,6 +3645,72 @@ h3 {
   padding: 10px 28px 28px;
   border-bottom-left-radius: 26px;
   border-bottom-right-radius: 26px;
+}
+
+.builder-confirm[hidden] {
+  display: none;
+}
+
+.builder-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.builder-confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(38, 23, 18, 0.42);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.builder-confirm-card {
+  position: relative;
+  z-index: 1;
+  width: min(460px, calc(100vw - 48px));
+  padding: 24px;
+  border: 1px solid rgba(38, 23, 18, 0.12);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(200, 48, 16, 0.1), transparent 42%),
+    #fffaf4;
+  box-shadow: 0 24px 60px rgba(38, 23, 18, 0.2);
+}
+
+.builder-confirm-kicker {
+  margin: 0 0 8px;
+  color: rgba(38, 23, 18, 0.48);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.builder-confirm-card h4 {
+  margin: 0;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.5rem;
+  line-height: 0.98;
+  color: var(--text);
+}
+
+.builder-confirm-text {
+  margin: 14px 0 0;
+  color: rgba(38, 23, 18, 0.8);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.builder-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
 }
 
 .catering-stage .builder-step-copy {
@@ -4338,7 +4644,7 @@ body.has-vote-modal {
   }
 
   .section {
-    padding: 40px 0;
+    padding: 24px 0;
   }
 
   .section-heading,
@@ -4558,9 +4864,31 @@ body.has-vote-modal {
   margin-top: auto;
 }
 
+@media (min-width: 901px) {
+  .flavor-card-veggie-info {
+    grid-column: span 2;
+    min-height: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .flavor-card-veggie-info {
+    display: none;
+  }
+
+  .flavor-card-veggie-info {
+    grid-column: auto;
+  }
+
+  .veggie-info-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 980px) {
   .flavor-card.card:not(.flavor-card-category) .flavor-body p,
-  .flavor-card-veggie-detail.card .flavor-body p {
+  .flavor-card-veggie-detail.card .flavor-body p,
+  .flavor-card-veggie-info .flavor-body p {
     font-size: 0.72rem;
     line-height: 1.24;
   }
@@ -4585,6 +4913,10 @@ body.has-vote-modal {
   .flavor-card-veggie-detail.card .flavor-body.text-container {
     width: 60%;
     padding: 16px;
+  }
+
+  .flavor-card-veggie-info .flavor-body {
+    padding: 20px 18px;
   }
 
   .flavor-card.card:not(.flavor-card-category) .flavor-body p,
@@ -4612,6 +4944,10 @@ body.has-vote-modal {
   .flavor-card.card:not(.flavor-card-category) .flavor-body.text-container,
   .flavor-card-veggie-detail.card .flavor-body.text-container {
     padding: 16px;
+  }
+
+  .flavor-card-veggie-info .flavor-body {
+    padding: 18px 16px;
   }
 }
 
@@ -4686,6 +5022,38 @@ body.has-vote-modal {
     object-position: center 52% !important;
     display: block !important;
     border-radius: 0 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .flavor-card-veggie-info {
+    display: none !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .office-points {
+    display: none;
+  }
+
+  .catering-text-detail {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .office-copy h2,
+  .catering-copy h2 {
+    font-size: clamp(1.4rem, 7vw, 1.9rem);
+    line-height: 1.02;
+  }
+
+  .catering-copy {
+    max-width: 100%;
+  }
+
+  .catering-copy h2 {
+    max-width: 18ch;
   }
 }
 

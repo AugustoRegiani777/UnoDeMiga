@@ -1,13 +1,13 @@
 {
   "name": "webunodemiga",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sitio web de Uno de Miga con menu, boxes para oficinas, catering y votacion de sabores.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "start:test": "powershell -Command \"$env:REDIS_KEY_PREFIX='test:'; $env:ALLOW_TEST_DATA_RESET='true'; node server.js\"",
     "redis:reset:test": "powershell -Command \"Invoke-RestMethod -Method Post -Uri http://localhost:3000/api/test/reset | ConvertTo-Json\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node -e \"console.log('No automated tests configured yet.')\""
   },
   "keywords": [],
   "author": "",

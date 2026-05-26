@@ -123,14 +123,14 @@ async function readWeeklyFlavorsConfig() {
     .filter((flavor) => flavor.id && flavor.name);
 
   if (!flavors.length) {
-    throw new Error("weekly-flavors.json no tiene sabores validos.");
+    throw new Error("weekly-flavors.json no tiene sabores válidos.");
   }
 
   return {
-    title: parsed.title || "Vota el proximo sabor",
+    title: parsed.title || "Vota el próximo sabor",
     description:
       parsed.description ||
-      "Elige el sabor que deberia entrar al menu esta semana.",
+      "Elige el sabor que debería entrar al menú esta semana.",
     weekLabel: parsed.weekLabel || "Semana actual",
     flavors,
   };

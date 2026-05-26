@@ -492,18 +492,6 @@
         line-height: 1.55;
       }
 
-      .delivery-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 18px;
-        padding: 10px 14px;
-        border-radius: 999px;
-        background: rgba(31, 164, 99, 0.1);
-        color: var(--success-strong);
-        font-weight: 700;
-      }
-
       .summary-panels {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -767,7 +755,6 @@
                 <div class="summary-price" id="summaryPricePerPerson">0,00 €</div>
                 <p class="summary-total" id="summaryTotal">Total general 0,00 €</p>
                 <div class="summary-breakdown" id="summaryBreakdown"></div>
-                <div class="delivery-badge">🛵 Envío refrigerado gratis en Valencia</div>
                 <p class="summary-logistics" id="summaryLogistics"></p>
               </aside>
 
@@ -969,6 +956,9 @@
 
         refs.nextBtn.addEventListener("click", () => {
           if (!canAdvance()) {
+            return;
+          }
+          if (state.currentStep === 4 && !confirmFlavorSelection()) {
             return;
           }
           if (state.currentStep < 6) {
@@ -1264,8 +1254,8 @@
       function updateFlavorState() {
         const selected = getSelectedFlavorCount();
         const required = getRequiredSandwiches();
-        refs.selectionMeter.textContent = `${selected} / ${required} sándwiches`;
-        refs.selectionMeter.classList.toggle("is-invalid", selected !== required);
+        refs.selectionMeter.textContent = `${selected} sándwiches (${required} recomendados)`;
+        refs.selectionMeter.classList.toggle("is-invalid", selected === 0);
 
         flavors.forEach((flavor) => {
           const row = document.querySelector(`[data-flavor-row="${flavor.id}"]`);
@@ -1341,7 +1331,7 @@
 
       function canAdvance() {
         if (state.currentStep === 4) {
-          return getSelectedFlavorCount() >= getRequiredSandwiches();
+          return getSelectedFlavorCount() > 0;
         }
         return true;
       }
@@ -1392,6 +1382,28 @@
 
       function getSelectedFlavorCount() {
         return Object.values(state.selectedFlavors).reduce((sum, qty) => sum + qty, 0);
+      }
+
+      function confirmFlavorSelection() {
+        const selected = getSelectedFlavorCount();
+        const required = getRequiredSandwiches();
+
+        if (selected === required) {
+          return true;
+        }
+
+        const difference = Math.abs(selected - required);
+        const noun = difference === 1 ? "sándwich" : "sándwiches";
+
+        if (selected < required) {
+          return window.confirm(
+            `Elegiste ${difference} ${noun} menos de lo recomendado. Si te parece bien así, seguimos.`,
+          );
+        }
+
+        return window.confirm(
+          `Elegiste ${difference} ${noun} más de lo recomendado. Si te parece bien así, seguimos.`,
+        );
       }
 
       function applyStylePreset() {
@@ -1563,6 +1575,7 @@
         lines.push(`*Sándwiches finales:* ${totals.totalSandwiches}`);
         lines.push("");
         lines.push("*Sabores seleccionados*");
+        lines.push(`*Cantidad total de sándwiches:* ${totals.totalSandwiches}`);
         flavors.forEach((flavor) => {
           const qty = state.selectedFlavors[flavor.id];
           if (qty > 0) {
@@ -1588,7 +1601,6 @@
         lines.push(`*Torta diferenciada:* ${totals.cakeTotal > 0 ? formatCurrency(totals.cakeTotal) : "No incluida"}`);
         lines.push(`*Total general:* ${formatCurrency(totals.total)}`);
         lines.push("");
-        lines.push("🛵 Envío refrigerado gratis en Valencia");
         lines.push(buildLogisticsMessage(totals.totalSandwiches));
         return lines.join("\n");
       }
