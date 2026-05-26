@@ -21,13 +21,13 @@ const servicios = [
     id: "picoteo",
     nombre: "Picoteo",
     factor: 1.5,
-    descripcion: "Ideal si los sÃ¡ndwiches acompaÃ±an otros platos.",
+    descripcion: "Ideal si los sándwiches acompañan otros platos.",
   },
   {
     id: "ligero",
     nombre: "Ligero",
     factor: 2.5,
-    descripcion: "La opciÃ³n recomendada para almuerzos y reuniones.",
+    descripcion: "La opción recomendada para almuerzos y reuniones.",
   },
   {
     id: "completo",
@@ -41,7 +41,7 @@ const estilos = [
   {
     id: "mixto",
     nombre: "Mixto",
-    descripcion: "Balancea clÃ¡sicos y opciones mÃ¡s especiales.",
+    descripcion: "Balancea clásicos y opciones más especiales.",
   },
   {
     id: "gourmet",
@@ -51,7 +51,7 @@ const estilos = [
   {
     id: "vegetariano",
     nombre: "Vegetariano",
-    descripcion: "Filtra el menÃº a opciones sin carne ni pescado.",
+    descripcion: "Filtra el menú a opciones sin carne ni pescado.",
   },
 ];
 
@@ -67,31 +67,31 @@ const preciosOriginales = {
 };
 
 const saboresData = [
-  { id: "jamon-queso", nombre: "JamÃ³n y queso", categoria: "clasicos", precio: 3.5, tags: ["cerdo"] },
+  { id: "jamon-queso", nombre: "Jamón y queso", categoria: "clasicos", precio: 3.5, tags: ["cerdo"] },
   { id: "pasta-oliva", nombre: "Pasta de oliva y queso", categoria: "clasicos", precio: 3.5, tags: ["vegetariano"] },
   { id: "pimiento-gouda", nombre: "Pimiento asado, gouda y Philadelphia", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "pesto-tomate", nombre: "Pesto, tomate y queso", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "berenjena-brie", nombre: "Berenjena asada y queso brie", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
-  { id: "jamon-serrano", nombre: "JamÃ³n serrano, rÃºcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
-  { id: "jamon-huevo", nombre: "JamÃ³n y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
-  { id: "atun-palta", nombre: "AtÃºn, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
-  { id: "salmon-phila", nombre: "SalmÃ³n ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
+  { id: "jamon-serrano", nombre: "Jamón serrano, rúcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
+  { id: "jamon-huevo", nombre: "Jamón y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
+  { id: "atun-palta", nombre: "Atún, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
+  { id: "salmon-phila", nombre: "Salmón ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
 ];
 
 const extrasSections = [
   {
     id: "tortas",
     nombre: "Tortas saladas o dulces",
-    descripcion: "ElegÃ­ si querÃ©s sumar una torta salada para compartir o una opciÃ³n dulce.",
+    descripcion: "Elegí si querés sumar una torta salada para compartir o una opción dulce.",
     items: [
       { id: "torta-salada", nombre: "Torta salada", precio: 80, descripcion: "Formato para compartir con corte de mesa." },
-      { id: "torta-dulce", nombre: "Torta dulce", precio: 55, descripcion: "OpciÃ³n dulce para cierre de mesa o celebraciÃ³n." },
+      { id: "torta-dulce", nombre: "Torta dulce", precio: 55, descripcion: "Opción dulce para cierre de mesa o celebración." },
     ],
   },
   {
     id: "mesa-dulce",
     nombre: "Mesa dulce",
-    descripcion: "PodÃ©s sumar piezas sueltas para armar una mesa dulce simple.",
+    descripcion: "Podés sumar piezas sueltas para armar una mesa dulce simple.",
     items: [
       { id: "croissant-simple", nombre: "Croissant", precio: 1, descripcion: "Unidad." },
       { id: "croissant-ddl", nombre: "Croissant con DDL", precio: 1.1, descripcion: "Unidad." },
@@ -101,10 +101,10 @@ const extrasSections = [
   {
     id: "mesa-salada",
     nombre: "Mesa salada",
-    descripcion: "SumÃ¡ bollerÃ­a salada para complementar el catering.",
+    descripcion: "Sumá bollería salada para complementar el catering.",
     items: [
-      { id: "medialuna-jyq", nombre: "Medialunas con jamÃ³n y queso", precio: 2.3, descripcion: "Unidad." },
-      { id: "croissant-jyq", nombre: "Croissant con jamÃ³n y queso", precio: 1.7, descripcion: "Unidad." },
+      { id: "medialuna-jyq", nombre: "Medialunas con jamón y queso", precio: 2.3, descripcion: "Unidad." },
+      { id: "croissant-jyq", nombre: "Croissant con jamón y queso", precio: 1.7, descripcion: "Unidad." },
     ],
   },
   {
@@ -124,26 +124,6 @@ const extrasData = extrasSections.flatMap((section) =>
     sectionName: section.nombre,
   })),
 );
-
-// Normalize legacy text artifacts without changing current UI structure.
-servicios[0].descripcion = "Ideal si los sÃ¡ndwiches acompaÃ±an otros platos.";
-servicios[1].descripcion = "La opciÃ³n recomendada para almuerzos y reuniones.";
-estilos[0].descripcion = "Balancea clÃ¡sicos y opciones mÃ¡s especiales.";
-estilos[2].descripcion = "Filtra el menÃº a opciones sin carne ni pescado.";
-
-saboresData[0].nombre = "JamÃ³n y queso";
-saboresData[5].nombre = "JamÃ³n serrano, rÃºcula y queso";
-saboresData[6].nombre = "JamÃ³n y huevo";
-saboresData[7].nombre = "AtÃºn, palta y queso";
-saboresData[8].nombre = "SalmÃ³n ahumado y Philadelphia";
-
-extrasSections[0].descripcion = "ElegÃ­ si querÃ©s sumar una torta salada para compartir o una opciÃ³n dulce.";
-extrasSections[0].items[1].descripcion = "OpciÃ³n dulce para cierre de mesa o celebraciÃ³n.";
-extrasSections[1].descripcion = "PodÃ©s sumar piezas sueltas para armar una mesa dulce simple.";
-extrasSections[2].descripcion = "SumÃ¡ bollerÃ­a salada para complementar el catering.";
-extrasSections[2].items[0].nombre = "Medialunas con jamÃ³n y queso";
-extrasSections[2].items[1].nombre = "Croissant con jamÃ³n y queso";
-extrasSections[3].items[0].descripcion = "MÃ­nimo una docena.";
 
 saboresData.forEach((sabor) => {
   if (sabor.categoria === "clasicos" || sabor.categoria === "especiales") {
@@ -408,7 +388,7 @@ function renderServiceOptions() {
       (servicio) => `
         <button type="button" class="builder-choice-card" data-service-id="${servicio.id}">
           <strong>${servicio.nombre}</strong>
-          <span>${servicio.factor} sÃ¡ndwiches por persona</span>
+          <span>${servicio.factor} sándwiches por persona</span>
           <small>${servicio.descripcion}</small>
         </button>
       `,
@@ -486,7 +466,7 @@ function renderFilters() {
 
 function renderFlavorGroups() {
   const grouped = {
-    clasicos: "ClÃ¡sicos",
+    clasicos: "Clásicos",
     especiales: "Especiales",
     "de-la-casa": "De la casa",
   };
@@ -798,7 +778,7 @@ function updateNavigation() {
   refs.nextButton.textContent = "Siguiente";
   refs.nextButton.hidden = state.currentStep === steps.length;
   if (refs.selectionStatus) {
-    refs.selectionStatus.textContent = `SÃ¡ndwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
+    refs.selectionStatus.textContent = `Sándwiches: ${getSelectedFlavorCount()} / ${state.totalSandwiches}`;
     refs.selectionStatus.hidden = state.currentStep < 4;
   }
 }
@@ -825,7 +805,7 @@ function updateFilters() {
 
 function updateFlavorCounts() {
   const selectedCount = getSelectedFlavorCount();
-  refs.flavorTarget.textContent = `${state.totalSandwiches} sÃ¡ndwiches`;
+  refs.flavorTarget.textContent = `${state.totalSandwiches} sándwiches`;
   refs.flavorSelected.textContent = `${selectedCount} seleccionados`;
   refs.flavorSelected.classList.toggle("is-invalid", selectedCount === 0);
 
@@ -864,7 +844,7 @@ function updateSummary() {
 
   refs.summaryConfig.innerHTML = [
     `${state.personas} personas`,
-    `${servicio.nombre} (${servicio.factor} sÃ¡ndwiches por persona)`,
+    `${servicio.nombre} (${servicio.factor} sándwiches por persona)`,
     `Estilo ${estilo.nombre}`,
   ]
     .map((item) => `<li>${item}</li>`)
@@ -883,8 +863,8 @@ function updateSummary() {
     .join("");
 
   refs.summaryExtras.innerHTML = selectedExtras || "<li>Sin extras.</li>";
-  refs.summaryPricePerPerson.textContent = `${formatPrice(pricePerPerson)} por persona`;
-  refs.summaryTotalLine.textContent = `${servicio.nombre} para ${state.personas} personas. Total ${formatPrice(state.total)}`;
+  refs.summaryPricePerPerson.textContent = formatPrice(state.total);
+  refs.summaryTotalLine.textContent = `Costo por persona ${formatPrice(pricePerPerson)}`;
   refs.summarySavingsLine.textContent = recommendationLine;
 }
 
@@ -894,7 +874,7 @@ function buildSummaryRecommendation(servicio) {
   }
 
   if (servicio.id === "picoteo") {
-    return `Eligieron ${servicio.nombre.toLowerCase()} para picar entre ${state.personas}. Sugerido: agregar 1 plato fuerte y otra opciÃ³n de picoteo.`;
+    return `Eligieron ${servicio.nombre.toLowerCase()} para picar entre ${state.personas}. Sugerido: agregar 1 plato fuerte y otra opción de picoteo.`;
   }
 
   if (servicio.id === "ligero") {
@@ -914,7 +894,7 @@ function buildSummaryRecommendationClean(servicio) {
   }
 
   if (servicio.id === "picoteo") {
-    return "Sugerido: agregar 1 plato fuerte y otra opciÃ³n de picoteo.";
+    return "Sugerido: agregar 1 plato fuerte y otra opción de picoteo.";
   }
 
   if (servicio.id === "ligero") {
@@ -982,16 +962,16 @@ function confirmFlavorSelection() {
   }
 
   const difference = Math.abs(selected - recommended);
-  const noun = difference === 1 ? "sÃ¡ndwich" : "sÃ¡ndwiches";
+  const noun = difference === 1 ? "sándwich" : "sándwiches";
 
   if (selected < recommended) {
     return openBuilderConfirm(
-      `Elegiste ${difference} ${noun} menos de lo recomendado. Si te parece bien asÃ­, seguimos.`,
+      `Elegiste ${difference} ${noun} menos de lo recomendado. Si te parece bien así, seguimos.`,
     );
   }
 
   return openBuilderConfirm(
-    `Elegiste ${difference} ${noun} mÃ¡s de lo recomendado. Si te parece bien asÃ­, seguimos.`,
+    `Elegiste ${difference} ${noun} más de lo recomendado. Si te parece bien así, seguimos.`,
   );
 }
 
