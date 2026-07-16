@@ -397,6 +397,14 @@
       }
 
       .flavor-meta,
+      .extra-copy {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.4;
+      }
+
       .extra-meta {
         display: block;
         margin-top: 6px;
@@ -735,7 +743,7 @@
           <section class="step" data-step="5">
             <div class="step-header">
               <h2>Completa con extras</h2>
-              <p>Primero elegimos si quieres sumar algo dulce, salado o alguna torta.</p>
+              <p>Podés agregar tortas para compartir o chipas y cookies como complemento.</p>
             </div>
             <div class="extras-flow">
               <div class="extras-hub" id="extrasHub"></div>
@@ -860,16 +868,16 @@
       ];
 
       const extras = [
-        { id: "croissant-dulce", type: "dulces", name: "Croissant de Dulce de Leche", price: 2.5 },
-        { id: "croissant-salado", type: "salados", name: "Croissant de Jamón y Queso", price: 3 },
-        { id: "torta-salada", type: "tortas", name: "Torta de sándwiches de miga (Salada)", price: 45 },
-        { id: "torta-dulce", type: "tortas", name: "Torta Dulce artesanal", price: 35 },
+        { id: "torta-salada", type: "tortas", name: "Torta salada de sándwiches de miga", copy: "Formato para compartir con corte de mesa.", price: 45 },
+        { id: "tarta-dulce", type: "tortas", name: "Tarta dulce artesanal", copy: "Opción dulce para cierre de mesa o celebración.", price: 35 },
+        { id: "chipa", type: "complementos", name: "Chipa", copy: "Chipas caseras recién horneadas.", price: 1.5 },
+        { id: "chipa-jamon", type: "complementos", name: "Chipa con Jamón", copy: "Chipas rellenas de jamón, crocantes por fuera.", price: 2 },
+        { id: "cookies", type: "complementos", name: "Cookies", copy: "Cookies artesanales para el cierre.", price: 2 },
       ];
 
       const extraTypes = [
-        { id: "dulces", name: "Dulces", copy: "Croissants y cierres dulces." },
-        { id: "salados", name: "Salados", copy: "Opciones saladas para reforzar el evento." },
-        { id: "tortas", name: "Tortas", copy: "Tortas saladas o dulces para compartir." },
+        { id: "tortas", name: "Tortas", copy: "Torta salada de miga o tarta dulce para compartir." },
+        { id: "complementos", name: "Complementos", copy: "Chipas y cookies para acompañar el evento." },
       ];
 
       // Precios de negocio editables.
@@ -1163,6 +1171,7 @@
                 <div class="flavor-icon" aria-hidden="true"></div>
                 <div>
                   <span class="extra-name">${extra.name}</span>
+                  ${extra.copy ? `<span class="extra-copy">${extra.copy}</span>` : ""}
                   <span class="extra-meta">${formatCurrency(extra.price)} c/u</span>
                 </div>
                 <div class="qty-control">
@@ -1315,7 +1324,7 @@
         const extraLines = extras
           .filter((extra) => state.selectedExtras[extra.id] > 0)
           .map((extra) => {
-            const label = extra.type === "tortas" ? `Torta · ${extra.name}` : extra.name;
+            const label = extra.name;
             return `<li>${state.selectedExtras[extra.id]}x ${label} · ${formatCurrency(extra.price)} c/u</li>`;
           })
           .join("");
@@ -1553,8 +1562,8 @@
           </div>
           <div class="summary-breakdown-line">
             <div>
-              Torta diferenciada
-              <small>Te la mostramos aparte para que no quede mezclada con el menú.</small>
+              Torta / Tarta
+              <small>Se muestra aparte para que no quede mezclada con el menú.</small>
             </div>
             <span>${cakeLabel}</span>
           </div>
@@ -1598,7 +1607,7 @@
         lines.push(`*Sándwiches por persona:* ${formatCurrency(totals.sandwichTotal / state.people)}`);
         lines.push(`*Total sándwiches:* ${formatCurrency(totals.sandwichTotal)}`);
         lines.push(`*Total extras:* ${formatCurrency(totals.extrasTotal)}`);
-        lines.push(`*Torta diferenciada:* ${totals.cakeTotal > 0 ? formatCurrency(totals.cakeTotal) : "No incluida"}`);
+        lines.push(`*Torta / Tarta:* ${totals.cakeTotal > 0 ? formatCurrency(totals.cakeTotal) : "No incluida"}`);
         lines.push(`*Total general:* ${formatCurrency(totals.total)}`);
         lines.push("");
         lines.push(buildLogisticsMessage(totals.totalSandwiches));
