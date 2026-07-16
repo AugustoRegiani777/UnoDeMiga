@@ -1919,6 +1919,30 @@ h3 {
   flex-wrap: wrap;
 }
 
+.contact-hours {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(0.78rem, 1vw, 1rem);
+  text-transform: uppercase;
+  color: var(--cream);
+  line-height: 1.2;
+}
+
+.contact-hours li span:last-child {
+  color: rgba(242, 236, 228, 0.72);
+}
+
 .contact-item-inline .contact-label {
   margin-bottom: 0;
 }

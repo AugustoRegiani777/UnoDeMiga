@@ -648,9 +648,13 @@
               </a>
             </div>
 
-            <div class="contact-item contact-item-inline">
-              <span class="contact-label">Horarios:</span>
-              <p>Todos los días de 8:30 a 21:30 hs</p>
+            <div class="contact-item">
+              <span class="contact-label">Horarios</span>
+              <ul class="contact-hours">
+                <li><span>Lunes</span><span>10:00 – 14:00</span></li>
+                <li><span>Mar – Jue</span><span>9:00 – 21:00</span></li>
+                <li><span>Vie, Sáb y Dom</span><span>9:00 – 21:30</span></li>
+              </ul>
             </div>
           </div>
         </div>
@@ -702,16 +706,20 @@
         "openingHoursSpecification": [
           {
             "@type": "OpeningHoursSpecification",
-            "dayOfWeek": [
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday"
-            ],
-            "opens": "08:30",
+            "dayOfWeek": ["Monday"],
+            "opens": "10:00",
+            "closes": "14:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Tuesday", "Wednesday", "Thursday"],
+            "opens": "09:00",
+            "closes": "21:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Friday", "Saturday", "Sunday"],
+            "opens": "09:00",
             "closes": "21:30"
           }
         ],
