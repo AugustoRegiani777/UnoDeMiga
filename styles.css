@@ -3643,7 +3643,7 @@ h3 {
 
 .catering-stage .builder-body {
   flex: 1 1 auto;
-  min-height: 400px;
+  min-height: 0;
   padding-bottom: 20px;
   overflow-y: auto;
 }
