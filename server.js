@@ -17,6 +17,10 @@ const WEEKLY_FLAVORS_FILE = path.join(__dirname, "weekly-flavors.json");
 
 const client = createClient({
   url: REDIS_URL,
+  socket: {
+    reconnectStrategy: (retries) => (retries < 3 ? 500 : false),
+    connectTimeout: 3000,
+  },
 });
 
 client.on("error", (error) => {
@@ -500,22 +504,21 @@ app.post("/api/test/reset", async (_req, res) => {
 });
 
 async function startServer() {
-  try {
-    if (!REDIS_URL) {
-      throw new Error("Falta la variable de entorno REDIS_URL.");
+  if (REDIS_URL) {
+    try {
+      await client.connect();
+      console.log("Conectado a Redis.");
+      console.log(`Prefijo Redis activo: ${REDIS_KEY_PREFIX || "(sin prefijo)"}`);
+    } catch (error) {
+      console.warn("Redis no disponible — el sitio corre sin funciones de votación.", error.message);
     }
-
-    await client.connect();
-    console.log("Conectado a Redis.");
-    console.log(`Prefijo Redis activo: ${REDIS_KEY_PREFIX || "(sin prefijo)"}`);
-
-    app.listen(PORT, () => {
-      console.log(`Servidor escuchando en http://localhost:${PORT}`);
-    });
-  } catch (error) {
-    console.error("No se pudo iniciar el servidor:", error);
-    process.exit(1);
+  } else {
+    console.warn("REDIS_URL no configurada — el sitio corre sin funciones de votación.");
   }
+
+  app.listen(PORT, () => {
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  });
 }
 
 startServer();
