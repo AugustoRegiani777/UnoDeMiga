@@ -84,8 +84,8 @@ const extrasSections = [
     nombre: "Tortas saladas o dulces",
     descripcion: "Elegí si querés sumar una torta salada para compartir o una opción dulce.",
     items: [
-      { id: "torta-salada", nombre: "Torta salada", precio: 80, descripcion: "Formato para compartir con corte de mesa." },
-      { id: "torta-dulce", nombre: "Torta dulce", precio: 55, descripcion: "Opción dulce para cierre de mesa o celebración." },
+      { id: "torta-salada", nombre: "Torta salada de sándwiches de miga", precio: 67, descripcion: "Formato para compartir con corte de mesa." },
+      { id: "tarta-dulce", nombre: "Tarta dulce", precio: 55, descripcion: "Opción dulce para cierre de mesa o celebración." },
     ],
   },
   {
@@ -93,18 +93,16 @@ const extrasSections = [
     nombre: "Mesa dulce",
     descripcion: "Podés sumar piezas sueltas para armar una mesa dulce simple.",
     items: [
-      { id: "croissant-simple", nombre: "Croissant", precio: 1, descripcion: "Unidad." },
-      { id: "croissant-ddl", nombre: "Croissant con DDL", precio: 1.1, descripcion: "Unidad." },
-      { id: "medialuna-dulce", nombre: "Medialunas", precio: 2, descripcion: "Unidad." },
+      { id: "cookies-ddl", nombre: "Cookies de dulce de leche", precio: 3, descripcion: "Unidad." },
     ],
   },
   {
     id: "mesa-salada",
     nombre: "Mesa salada",
-    descripcion: "Sumá bollería salada para complementar el catering.",
+    descripcion: "Sumá opciones saladas para complementar el catering.",
     items: [
-      { id: "medialuna-jyq", nombre: "Medialunas con jamón y queso", precio: 2.3, descripcion: "Unidad." },
-      { id: "croissant-jyq", nombre: "Croissant con jamón y queso", precio: 1.7, descripcion: "Unidad." },
+      { id: "chipa-queso", nombre: "Chipa de queso", precio: 1, descripcion: "Unidad." },
+      { id: "chipa-jamon", nombre: "Chipa de jamón", precio: 1, descripcion: "Unidad." },
     ],
   },
   {
@@ -2147,4 +2145,260 @@ document.addEventListener("click", (event) => {
     return;
   }
 });
+
+// ── Box Office Selector ──────────────────────────────────────────────────────
+
+const BOX_CONFIGS = {
+  daily:     { name: "Box Daily",     price: 38,  total: 12, clasicos: 6,  especiales: 4, delaCasa: 2 },
+  meeting:   { name: "Box Meeting",   price: 74,  total: 24, clasicos: 12, especiales: 8, delaCasa: 4 },
+  executive: { name: "Box Executive", price: 146, total: 48, clasicos: 24, especiales: 16, delaCasa: 8 },
+};
+
+const BOX_FLAVORS = {
+  clasicos: [
+    { id: "jamon-queso",  name: "Jamón y queso" },
+    { id: "pasta-oliva",  name: "Pasta de oliva y queso" },
+  ],
+  especiales: [
+    { id: "pimiento",  name: "Pimiento asado, queso gouda y Philadelphia" },
+    { id: "pesto",     name: "Pesto, tomate y queso" },
+    { id: "berenjena", name: "Berenjena asada y queso brie" },
+    { id: "serrano",   name: "Jamón serrano, rúcula y queso" },
+  ],
+  delaCasa: [
+    { id: "atun-palta",      name: "Atún, palta y queso" },
+    { id: "huevo-queso",     name: "Huevo y queso" },
+    { id: "huevo-jamon",     name: "Huevo y jamón" },
+    { id: "especial-semana", name: "Especial de la semana" },
+  ],
+};
+
+const BSX_STEPS = [
+  { id: "clasicos",   label: "Clásicos",   flavorKey: "clasicos",   quotaKey: "clasicos" },
+  { id: "especiales", label: "Especiales", flavorKey: "especiales", quotaKey: "especiales" },
+  { id: "de-la-casa", label: "De la casa", flavorKey: "delaCasa",   quotaKey: "delaCasa" },
+  { id: "opciones",   label: "Opciones",   flavorKey: null,          quotaKey: null },
+  { id: "resumen",    label: "Resumen",    flavorKey: null,          quotaKey: null },
+];
+
+const boxSel = {
+  state: {
+    box: null,
+    step: 0,
+    selections: { clasicos: {}, especiales: {}, delaCasa: {} },
+    mitades: false,
+    dia: "",
+  },
+
+  refs: {},
+
+  init() {
+    const modal = document.getElementById("box-selector-modal");
+    if (!modal) return;
+
+    this.refs = {
+      modal,
+      backdrop: document.getElementById("box-selector-backdrop"),
+      close:    document.getElementById("box-selector-close"),
+      title:    document.getElementById("box-selector-title"),
+      body:     document.getElementById("box-selector-body"),
+      counter:  document.getElementById("box-selector-counter"),
+      prev:     document.getElementById("box-selector-prev"),
+      next:     document.getElementById("box-selector-next"),
+    };
+
+    document.querySelectorAll("[data-box]").forEach((btn) => {
+      btn.addEventListener("click", () => this.open(btn.dataset.box));
+    });
+
+    this.refs.backdrop.addEventListener("click", () => this.close());
+    this.refs.close.addEventListener("click",    () => this.close());
+    this.refs.prev.addEventListener("click",     () => this.goTo(this.state.step - 1));
+    this.refs.next.addEventListener("click",     () => this.advance());
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !this.refs.modal.hidden) this.close();
+    });
+  },
+
+  open(boxId) {
+    const config = BOX_CONFIGS[boxId];
+    if (!config) return;
+    this.state = {
+      box: config,
+      step: 0,
+      selections: { clasicos: {}, especiales: {}, delaCasa: {} },
+      mitades: false,
+      dia: "",
+    };
+    this.refs.title.textContent = config.name;
+    this.refs.modal.hidden = false;
+    document.body.classList.add("has-box-modal");
+    this.render();
+  },
+
+  close() {
+    this.refs.modal.hidden = true;
+    document.body.classList.remove("has-box-modal");
+  },
+
+  quota(step) {
+    const s = BSX_STEPS[step];
+    return s.quotaKey ? this.state.box[s.quotaKey] : null;
+  },
+
+  selected(step) {
+    const key = BSX_STEPS[step].flavorKey;
+    if (!key) return 0;
+    return Object.values(this.state.selections[key]).reduce((a, b) => a + b, 0);
+  },
+
+  advance() {
+    const { step } = this.state;
+    const q = this.quota(step);
+    if (q !== null && this.selected(step) < q) return;
+    if (step === BSX_STEPS.length - 1) { this.sendToWhatsApp(); return; }
+    this.goTo(step + 1);
+  },
+
+  goTo(step) {
+    if (step < 0 || step >= BSX_STEPS.length) return;
+    this.state.step = step;
+    this.render();
+  },
+
+  render() {
+    const { step } = this.state;
+    const q = this.quota(step);
+    this.refs.counter.textContent = q !== null ? `${this.selected(step)} / ${q} sándwiches` : "";
+    this.refs.prev.hidden = step === 0;
+    this.refs.next.textContent = step === BSX_STEPS.length - 1 ? "Confirmar por WhatsApp" : "Siguiente";
+
+    if (step <= 2)      this.renderFlavors(step);
+    else if (step === 3) this.renderOpciones();
+    else                 this.renderResumen();
+  },
+
+  renderFlavors(step) {
+    const stepDef  = BSX_STEPS[step];
+    const flavors  = BOX_FLAVORS[stepDef.flavorKey];
+    const quota    = this.quota(step);
+    const sel      = this.state.selections[stepDef.flavorKey];
+    const done     = this.selected(step);
+    const labels   = ["Clásicos", "Especiales", "De la casa"];
+
+    const items = flavors.map((f) => {
+      const qty    = sel[f.id] || 0;
+      const canAdd = done < quota;
+      return `
+        <li class="bsx-flavor-item">
+          <span class="bsx-flavor-name">${f.name}</span>
+          <div class="bsx-counter">
+            <button class="bsx-counter-btn" type="button" data-action="dec" data-cat="${stepDef.flavorKey}" data-id="${f.id}" ${qty === 0 ? "disabled" : ""}>−</button>
+            <span class="bsx-counter-val">${qty}</span>
+            <button class="bsx-counter-btn" type="button" data-action="inc" data-cat="${stepDef.flavorKey}" data-id="${f.id}" ${!canAdd ? "disabled" : ""}>+</button>
+          </div>
+        </li>`;
+    }).join("");
+
+    this.refs.body.innerHTML = `
+      <div class="bsx-step-header">
+        <p class="bsx-step-label">${labels[step]}</p>
+        <p class="bsx-step-hint">Seleccioná ${quota} sándwiches</p>
+      </div>
+      <ul class="bsx-flavor-list">${items}</ul>`;
+
+    this.refs.body.querySelectorAll(".bsx-counter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const { action, cat, id } = btn.dataset;
+        const cur = this.state.selections[cat][id] || 0;
+        const tot = Object.values(this.state.selections[cat]).reduce((a, b) => a + b, 0);
+        if (action === "inc" && tot < quota) this.state.selections[cat][id] = cur + 1;
+        if (action === "dec" && cur > 0)     this.state.selections[cat][id] = cur - 1;
+        this.render();
+      });
+    });
+  },
+
+  renderOpciones() {
+    this.refs.body.innerHTML = `
+      <div class="bsx-step-header">
+        <p class="bsx-step-label">Opciones de entrega</p>
+      </div>
+      <div class="bsx-opciones">
+        <label class="bsx-option-row">
+          <input type="checkbox" id="bsx-mitades" ${this.state.mitades ? "checked" : ""}>
+          <span>Quiero los sándwiches cortados a la mitad</span>
+        </label>
+        <div class="bsx-option-field">
+          <label for="bsx-dia">Día de entrega</label>
+          <input type="text" id="bsx-dia" placeholder="Ej: Martes 22 de julio" value="${this.state.dia}">
+        </div>
+      </div>`;
+
+    document.getElementById("bsx-mitades").addEventListener("change", (e) => { this.state.mitades = e.target.checked; });
+    document.getElementById("bsx-dia").addEventListener("input",    (e) => { this.state.dia = e.target.value; });
+  },
+
+  renderResumen() {
+    const { box, selections, mitades, dia } = this.state;
+
+    const flavorGroups = [
+      { key: "clasicos",   label: "Clásicos" },
+      { key: "especiales", label: "Especiales" },
+      { key: "delaCasa",   label: "De la casa" },
+    ].map(({ key, label }) => {
+      const lines = Object.entries(selections[key])
+        .filter(([, q]) => q > 0)
+        .map(([id, q]) => {
+          const f = BOX_FLAVORS[key].find((x) => x.id === id);
+          return `<li>${q}× ${f ? f.name : id}</li>`;
+        }).join("");
+      return lines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">${label}</p><ul>${lines}</ul></div>` : "";
+    }).join("");
+
+    this.refs.body.innerHTML = `
+      <div class="bsx-step-header">
+        <p class="bsx-step-label">Resumen del pedido</p>
+      </div>
+      <div class="bsx-summary">
+        <p class="bsx-summary-box">${box.name} — ${box.price} €</p>
+        ${flavorGroups}
+        <p class="bsx-summary-extra">${mitades ? "✂ Cortados a la mitad" : "Enteros"}</p>
+        ${dia ? `<p class="bsx-summary-extra">Entrega: ${dia}</p>` : ""}
+      </div>`;
+  },
+
+  buildMessage() {
+    const { box, selections, mitades, dia } = this.state;
+    const lines = [`¡Hola! Quiero pedir el ${box.name} (${box.price} €).`, ""];
+
+    [
+      { key: "clasicos",   label: "Clásicos" },
+      { key: "especiales", label: "Especiales" },
+      { key: "delaCasa",   label: "De la casa" },
+    ].forEach(({ key, label }) => {
+      const entries = Object.entries(selections[key]).filter(([, q]) => q > 0);
+      if (!entries.length) return;
+      lines.push(`*${label}*`);
+      entries.forEach(([id, q]) => {
+        const f = BOX_FLAVORS[key].find((x) => x.id === id);
+        lines.push(`• ${q}× ${f ? f.name : id}`);
+      });
+      lines.push("");
+    });
+
+    lines.push(mitades ? "Los quiero cortados a la mitad." : "Los quiero enteros.");
+    if (dia) lines.push(`Día de entrega: ${dia}`);
+    return lines.join("\n");
+  },
+
+  sendToWhatsApp() {
+    const url = `https://wa.me/34641514569?text=${encodeURIComponent(this.buildMessage())}`;
+    window.open(url, "_blank", "noreferrer");
+    this.close();
+  },
+};
+
+document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
 

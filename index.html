@@ -293,10 +293,9 @@
               rodajes y encuentros especiales.
             </p>
             <p class="catering-text catering-text-detail">
-              Además de sándwiches de miga, podemos sumar tortas saladas y
-              formatos pensados para compartir. Contanos cuántas personas son,
-              la fecha y el tipo de evento, y te preparamos un presupuesto a
-              medida.
+              Además de sándwiches de miga, tenemos <strong>torta salada de sándwiches de miga</strong>
+              y <strong>tarta dulce artesanal</strong> para compartir. Contanos cuántas personas son,
+              la fecha y el tipo de evento, y te preparamos un presupuesto a medida.
             </p>
             </div>
 
@@ -305,8 +304,8 @@
             <div class="catering-panel catering-panel-intro">
               <p class="catering-label">COTIZÁ TU EVENTO</p>
               <p class="catering-note">
-                Respuesta personalizada según cantidad de personas, formatos,
-                sabores y opciones que tenemos disponibles para tu evento.
+                Sándwiches de miga, torta salada de sándwiches y tarta dulce artesanal.
+                Armamos el presupuesto según la cantidad de personas y el tipo de evento.
               </p>
               <button type="button" class="button primary catering-launch-button" id="catering-launch-button">
                 Calcular presupuesto
@@ -516,14 +515,9 @@
                   <strong>¿Picoteo grupal?</strong> Pedilo cortado en mitades (24 piezas) y rinde para 8.
                 </p>
                 <span class="office-price">38 €</span>
-                <a
-                  class="office-link"
-                  href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20el%20Box%20Daily%20de%2012%20unidades%20por%2038%20Euros."
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <button class="office-link" type="button" data-box="daily">
                   Pedir este formato
-                </a>
+                </button>
               </div>
             </article>
 
@@ -539,14 +533,9 @@
                   <strong>Pedilo cortado en mitades</strong> (48 piezas) y se convierte en picoteo para 16.
                 </p>
                 <span class="office-price">74 €</span>
-                <a
-                  class="office-link"
-                  href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20el%20Box%20Meeting%20de%2024%20unidades%20por%2074%20Euros."
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <button class="office-link" type="button" data-box="meeting">
                   Pedir este formato
-                </a>
+                </button>
               </div>
             </article>
 
@@ -562,14 +551,9 @@
                   Para eventos grandes, <strong>pedilo cortado en mitades</strong> (96 piezas) y llega a 32 en plan picoteo.
                 </p>
                 <span class="office-price">146 €</span>
-                <a
-                  class="office-link"
-                  href="https://wa.me/34641514569?text=Hola%21%20Quiero%20pedir%20el%20Box%20Executive%20de%2048%20unidades%20por%20146%20Euros."
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <button class="office-link" type="button" data-box="executive">
                   Pedir este formato
-                </a>
+                </button>
               </div>
             </article>
           </div>
@@ -725,6 +709,28 @@
         ]
       }
     </script>
+    <!-- Box Office Selector Modal -->
+    <div class="box-selector-modal" id="box-selector-modal" hidden>
+      <button class="box-selector-backdrop" id="box-selector-backdrop" aria-label="Cerrar"></button>
+      <div class="box-selector-dialog" role="dialog" aria-modal="true" aria-labelledby="box-selector-title">
+        <div class="box-selector-head">
+          <div>
+            <p class="box-selector-kicker">Armá tu pedido</p>
+            <p class="box-selector-title" id="box-selector-title"></p>
+          </div>
+          <button class="box-selector-close" id="box-selector-close" type="button">Cerrar</button>
+        </div>
+        <div class="box-selector-body" id="box-selector-body"></div>
+        <div class="box-selector-footer">
+          <span class="box-selector-counter" id="box-selector-counter"></span>
+          <div class="box-selector-actions">
+            <button class="button secondary" id="box-selector-prev" type="button">Anterior</button>
+            <button class="button primary" id="box-selector-next" type="button">Siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="./script.js"></script>
   </body>
 </html>
