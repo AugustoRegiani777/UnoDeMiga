@@ -2149,53 +2149,61 @@ document.addEventListener("click", (event) => {
 // ── Box Office Selector ──────────────────────────────────────────────────────
 
 const BOX_CONFIGS = {
-  daily:     { name: "Box Daily",     price: 38,  total: 12, clasicos: 6,  especiales: 4, delaCasa: 2 },
-  meeting:   { name: "Box Meeting",   price: 74,  total: 24, clasicos: 12, especiales: 8, delaCasa: 4 },
-  executive: { name: "Box Executive", price: 146, total: 48, clasicos: 24, especiales: 16, delaCasa: 8 },
+  daily:     { name: "Box Daily",     price: 38,  total: 12 },
+  meeting:   { name: "Box Meeting",   price: 74,  total: 24 },
+  executive: { name: "Box Executive", price: 146, total: 48 },
 };
 
-const BOX_FLAVORS = {
-  clasicos: [
-    { id: "jamon-queso",  name: "Jamón y queso" },
-    { id: "pasta-oliva",  name: "Pasta de oliva y queso" },
-  ],
-  especiales: [
-    { id: "pimiento",  name: "Pimiento asado, queso gouda y Philadelphia" },
-    { id: "pesto",     name: "Pesto, tomate y queso" },
-    { id: "berenjena", name: "Berenjena asada y queso brie" },
-    { id: "serrano",   name: "Jamón serrano, rúcula y queso" },
-  ],
-  delaCasa: [
-    { id: "atun-palta",      name: "Atún, palta y queso" },
-    { id: "huevo-queso",     name: "Huevo y queso" },
-    { id: "huevo-jamon",     name: "Huevo y jamón" },
-    { id: "especial-semana", name: "Especial de la semana" },
-  ],
+// Preset amounts for Box Daily (×1). Meeting = ×2, Executive = ×4.
+const BOX_REGULAR_PRESET = {
+  "jamon-queso": 4,
+  "pasta-oliva": 2,
+  "pimiento":    2,
+  "pesto":       2,
+  "berenjena":   1,
+  "serrano":     1,
 };
 
-const BSX_STEPS = [
-  { id: "clasicos",   label: "Clásicos",   flavorKey: "clasicos",   quotaKey: "clasicos" },
-  { id: "especiales", label: "Especiales", flavorKey: "especiales", quotaKey: "especiales" },
-  { id: "de-la-casa", label: "De la casa", flavorKey: "delaCasa",   quotaKey: "delaCasa" },
-  { id: "opciones",   label: "Opciones",   flavorKey: null,          quotaKey: null },
-  { id: "resumen",    label: "Resumen",    flavorKey: null,          quotaKey: null },
+const BOX_REGULAR_FLAVORS = [
+  { id: "jamon-queso", name: "Jamón y queso" },
+  { id: "pasta-oliva", name: "Pasta de oliva y queso" },
+  { id: "pimiento",    name: "Pimiento asado, queso gouda y Philadelphia" },
+  { id: "pesto",       name: "Pesto, tomate y queso" },
+  { id: "berenjena",   name: "Berenjena asada y queso brie" },
+  { id: "serrano",     name: "Jamón serrano, rúcula y queso" },
 ];
 
-const boxSel = {
-  state: {
-    box: null,
-    step: 0,
-    selections: { clasicos: {}, especiales: {}, delaCasa: {} },
-    mitades: false,
-    dia: "",
-  },
+const BOX_DELACASA_FLAVORS = [
+  { id: "atun-palta",      name: "Atún, palta y queso" },
+  { id: "huevo-queso",     name: "Huevo y queso" },
+  { id: "huevo-jamon",     name: "Huevo y jamón" },
+  { id: "especial-semana", name: "Especial de la semana" },
+];
 
+const BSX_STEPS = [
+  { id: "sabores",  label: "Sabores" },
+  { id: "opciones", label: "Opciones" },
+  { id: "resumen",  label: "Resumen" },
+];
+
+function bsxBuildPreset(box) {
+  const scale = box.total / 12;
+  const regular = {};
+  BOX_REGULAR_FLAVORS.forEach((f) => {
+    regular[f.id] = (BOX_REGULAR_PRESET[f.id] || 0) * scale;
+  });
+  const delaCasa = {};
+  BOX_DELACASA_FLAVORS.forEach((f) => { delaCasa[f.id] = 0; });
+  return { regular, delaCasa };
+}
+
+const boxSel = {
+  state: { box: null, step: 0, regular: {}, delaCasa: {}, mitades: false, dia: "" },
   refs: {},
 
   init() {
     const modal = document.getElementById("box-selector-modal");
     if (!modal) return;
-
     this.refs = {
       modal,
       backdrop: document.getElementById("box-selector-backdrop"),
@@ -2206,16 +2214,13 @@ const boxSel = {
       prev:     document.getElementById("box-selector-prev"),
       next:     document.getElementById("box-selector-next"),
     };
-
     document.querySelectorAll("[data-box]").forEach((btn) => {
       btn.addEventListener("click", () => this.open(btn.dataset.box));
     });
-
     this.refs.backdrop.addEventListener("click", () => this.close());
     this.refs.close.addEventListener("click",    () => this.close());
     this.refs.prev.addEventListener("click",     () => this.goTo(this.state.step - 1));
     this.refs.next.addEventListener("click",     () => this.advance());
-
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && !this.refs.modal.hidden) this.close();
     });
@@ -2224,13 +2229,8 @@ const boxSel = {
   open(boxId) {
     const config = BOX_CONFIGS[boxId];
     if (!config) return;
-    this.state = {
-      box: config,
-      step: 0,
-      selections: { clasicos: {}, especiales: {}, delaCasa: {} },
-      mitades: false,
-      dia: "",
-    };
+    const preset = bsxBuildPreset(config);
+    this.state = { box: config, step: 0, regular: preset.regular, delaCasa: preset.delaCasa, mitades: false, dia: "" };
     this.refs.title.textContent = config.name;
     this.refs.modal.hidden = false;
     document.body.classList.add("has-box-modal");
@@ -2242,21 +2242,15 @@ const boxSel = {
     document.body.classList.remove("has-box-modal");
   },
 
-  quota(step) {
-    const s = BSX_STEPS[step];
-    return s.quotaKey ? this.state.box[s.quotaKey] : null;
-  },
-
-  selected(step) {
-    const key = BSX_STEPS[step].flavorKey;
-    if (!key) return 0;
-    return Object.values(this.state.selections[key]).reduce((a, b) => a + b, 0);
-  },
+  totalRegular()  { return Object.values(this.state.regular).reduce((a, b) => a + b, 0); },
+  totalDelaCasa() { return Object.values(this.state.delaCasa).reduce((a, b) => a + b, 0); },
+  totalAll()      { return this.totalRegular() + this.totalDelaCasa(); },
+  extraCost()     { return this.totalDelaCasa() * 0.30; },
+  finalPrice()    { return this.state.box.price + this.extraCost(); },
 
   advance() {
     const { step } = this.state;
-    const q = this.quota(step);
-    if (q !== null && this.selected(step) < q) return;
+    if (step === 0 && this.totalAll() < this.state.box.total) return;
     if (step === BSX_STEPS.length - 1) { this.sendToWhatsApp(); return; }
     this.goTo(step + 1);
   },
@@ -2268,53 +2262,75 @@ const boxSel = {
   },
 
   render() {
-    const { step } = this.state;
-    const q = this.quota(step);
-    this.refs.counter.textContent = q !== null ? `${this.selected(step)} / ${q} sándwiches` : "";
+    const { step, box } = this.state;
+    const total = this.totalAll();
+    const remaining = box.total - total;
+    const finalPrice = this.finalPrice();
+    const priceStr = finalPrice % 1 === 0 ? `${finalPrice}` : finalPrice.toFixed(2).replace(".", ",");
+    this.refs.counter.textContent = step === 0
+      ? remaining > 0
+        ? `${total} sándwiches, faltan ${remaining} · ${priceStr} €`
+        : `${total} sándwiches · ${priceStr} €`
+      : "";
     this.refs.prev.hidden = step === 0;
     this.refs.next.textContent = step === BSX_STEPS.length - 1 ? "Confirmar por WhatsApp" : "Siguiente";
 
-    if (step <= 2)      this.renderFlavors(step);
-    else if (step === 3) this.renderOpciones();
+    if (step === 0)      this.renderSabores();
+    else if (step === 1) this.renderOpciones();
     else                 this.renderResumen();
   },
 
-  renderFlavors(step) {
-    const stepDef  = BSX_STEPS[step];
-    const flavors  = BOX_FLAVORS[stepDef.flavorKey];
-    const quota    = this.quota(step);
-    const sel      = this.state.selections[stepDef.flavorKey];
-    const done     = this.selected(step);
-    const labels   = ["Clásicos", "Especiales", "De la casa"];
+  renderSabores() {
+    const { box, regular, delaCasa } = this.state;
+    const total = this.totalAll();
+    const canAdd = total < box.total;
 
-    const items = flavors.map((f) => {
-      const qty    = sel[f.id] || 0;
-      const canAdd = done < quota;
+    const regularItems = BOX_REGULAR_FLAVORS.map((f) => {
+      const qty = regular[f.id] || 0;
       return `
         <li class="bsx-flavor-item">
           <span class="bsx-flavor-name">${f.name}</span>
           <div class="bsx-counter">
-            <button class="bsx-counter-btn" type="button" data-action="dec" data-cat="${stepDef.flavorKey}" data-id="${f.id}" ${qty === 0 ? "disabled" : ""}>−</button>
+            <button class="bsx-counter-btn" type="button" data-action="dec" data-cat="regular" data-id="${f.id}" ${qty === 0 ? "disabled" : ""}>−</button>
             <span class="bsx-counter-val">${qty}</span>
-            <button class="bsx-counter-btn" type="button" data-action="inc" data-cat="${stepDef.flavorKey}" data-id="${f.id}" ${!canAdd ? "disabled" : ""}>+</button>
+            <button class="bsx-counter-btn" type="button" data-action="inc" data-cat="regular" data-id="${f.id}" ${!canAdd ? "disabled" : ""}>+</button>
+          </div>
+        </li>`;
+    }).join("");
+
+    const delaCasaItems = BOX_DELACASA_FLAVORS.map((f) => {
+      const qty = delaCasa[f.id] || 0;
+      return `
+        <li class="bsx-flavor-item">
+          <span class="bsx-flavor-name">${f.name}</span>
+          <div class="bsx-counter">
+            <button class="bsx-counter-btn" type="button" data-action="dec" data-cat="delaCasa" data-id="${f.id}" ${qty === 0 ? "disabled" : ""}>−</button>
+            <span class="bsx-counter-val">${qty}</span>
+            <button class="bsx-counter-btn" type="button" data-action="inc" data-cat="delaCasa" data-id="${f.id}" ${!canAdd ? "disabled" : ""}>+</button>
           </div>
         </li>`;
     }).join("");
 
     this.refs.body.innerHTML = `
       <div class="bsx-step-header">
-        <p class="bsx-step-label">${labels[step]}</p>
-        <p class="bsx-step-hint">Seleccioná ${quota} sándwiches</p>
+        <p class="bsx-step-label">Elegí tus sabores</p>
+        <p class="bsx-step-hint">Modificá la selección a tu gusto. Total: ${box.total} sándwiches.</p>
       </div>
-      <ul class="bsx-flavor-list">${items}</ul>`;
+      <ul class="bsx-flavor-list">${regularItems}</ul>
+      <div class="bsx-delacasa-header">
+        <p class="bsx-delacasa-label">De la casa</p>
+        <span class="bsx-delacasa-badge">+0,30 € por unidad</span>
+      </div>
+      <ul class="bsx-flavor-list">${delaCasaItems}</ul>`;
 
     this.refs.body.querySelectorAll(".bsx-counter-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         const { action, cat, id } = btn.dataset;
-        const cur = this.state.selections[cat][id] || 0;
-        const tot = Object.values(this.state.selections[cat]).reduce((a, b) => a + b, 0);
-        if (action === "inc" && tot < quota) this.state.selections[cat][id] = cur + 1;
-        if (action === "dec" && cur > 0)     this.state.selections[cat][id] = cur - 1;
+        const sel = cat === "regular" ? this.state.regular : this.state.delaCasa;
+        const cur = sel[id] || 0;
+        const tot = this.totalAll();
+        if (action === "inc" && tot < box.total) sel[id] = cur + 1;
+        if (action === "dec" && cur > 0)         sel[id] = cur - 1;
         this.render();
       });
     });
@@ -2335,58 +2351,73 @@ const boxSel = {
           <input type="text" id="bsx-dia" placeholder="Ej: Martes 22 de julio" value="${this.state.dia}">
         </div>
       </div>`;
-
     document.getElementById("bsx-mitades").addEventListener("change", (e) => { this.state.mitades = e.target.checked; });
     document.getElementById("bsx-dia").addEventListener("input",    (e) => { this.state.dia = e.target.value; });
   },
 
   renderResumen() {
-    const { box, selections, mitades, dia } = this.state;
+    const { box, regular, delaCasa, mitades, dia } = this.state;
+    const extraCost = this.extraCost();
+    const finalPrice = this.finalPrice();
 
-    const flavorGroups = [
-      { key: "clasicos",   label: "Clásicos" },
-      { key: "especiales", label: "Especiales" },
-      { key: "delaCasa",   label: "De la casa" },
-    ].map(({ key, label }) => {
-      const lines = Object.entries(selections[key])
-        .filter(([, q]) => q > 0)
-        .map(([id, q]) => {
-          const f = BOX_FLAVORS[key].find((x) => x.id === id);
-          return `<li>${q}× ${f ? f.name : id}</li>`;
-        }).join("");
-      return lines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">${label}</p><ul>${lines}</ul></div>` : "";
-    }).join("");
+    const regularLines = Object.entries(regular)
+      .filter(([, q]) => q > 0)
+      .map(([id, q]) => {
+        const f = BOX_REGULAR_FLAVORS.find((x) => x.id === id);
+        return `<li>${q}× ${f ? f.name : id}</li>`;
+      }).join("");
+
+    const delaCasaLines = Object.entries(delaCasa)
+      .filter(([, q]) => q > 0)
+      .map(([id, q]) => {
+        const f = BOX_DELACASA_FLAVORS.find((x) => x.id === id);
+        return `<li>${q}× ${f ? f.name : id}</li>`;
+      }).join("");
+
+    const priceBreakdown = extraCost > 0
+      ? `<p class="bsx-summary-extra">${box.price} € + ${extraCost.toFixed(2).replace(".", ",")} € (de la casa)</p>`
+      : "";
 
     this.refs.body.innerHTML = `
       <div class="bsx-step-header">
         <p class="bsx-step-label">Resumen del pedido</p>
       </div>
       <div class="bsx-summary">
-        <p class="bsx-summary-box">${box.name} — ${box.price} €</p>
-        ${flavorGroups}
+        <p class="bsx-summary-box">${box.name}</p>
+        ${regularLines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">Sándwiches</p><ul>${regularLines}</ul></div>` : ""}
+        ${delaCasaLines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">De la casa (+0,30 €)</p><ul>${delaCasaLines}</ul></div>` : ""}
         <p class="bsx-summary-extra">${mitades ? "✂ Cortados a la mitad" : "Enteros"}</p>
         ${dia ? `<p class="bsx-summary-extra">Entrega: ${dia}</p>` : ""}
+        ${priceBreakdown}
+        <p class="bsx-summary-price">${finalPrice % 1 === 0 ? finalPrice : finalPrice.toFixed(2).replace(".", ",")} €</p>
       </div>`;
   },
 
   buildMessage() {
-    const { box, selections, mitades, dia } = this.state;
-    const lines = [`¡Hola! Quiero pedir el ${box.name} (${box.price} €).`, ""];
+    const { box, regular, delaCasa, mitades, dia } = this.state;
+    const finalPrice = this.finalPrice();
+    const priceStr = finalPrice % 1 === 0 ? `${finalPrice}` : finalPrice.toFixed(2).replace(".", ",");
+    const lines = [`¡Hola! Quiero pedir el ${box.name} — ${priceStr} €.`, ""];
 
-    [
-      { key: "clasicos",   label: "Clásicos" },
-      { key: "especiales", label: "Especiales" },
-      { key: "delaCasa",   label: "De la casa" },
-    ].forEach(({ key, label }) => {
-      const entries = Object.entries(selections[key]).filter(([, q]) => q > 0);
-      if (!entries.length) return;
-      lines.push(`*${label}*`);
-      entries.forEach(([id, q]) => {
-        const f = BOX_FLAVORS[key].find((x) => x.id === id);
+    const regularEntries = Object.entries(regular).filter(([, q]) => q > 0);
+    if (regularEntries.length) {
+      lines.push("*Sabores*");
+      regularEntries.forEach(([id, q]) => {
+        const f = BOX_REGULAR_FLAVORS.find((x) => x.id === id);
         lines.push(`• ${q}× ${f ? f.name : id}`);
       });
       lines.push("");
-    });
+    }
+
+    const delaCasaEntries = Object.entries(delaCasa).filter(([, q]) => q > 0);
+    if (delaCasaEntries.length) {
+      lines.push("*De la casa (+0,30 € c/u)*");
+      delaCasaEntries.forEach(([id, q]) => {
+        const f = BOX_DELACASA_FLAVORS.find((x) => x.id === id);
+        lines.push(`• ${q}× ${f ? f.name : id}`);
+      });
+      lines.push("");
+    }
 
     lines.push(mitades ? "Los quiero cortados a la mitad." : "Los quiero enteros.");
     if (dia) lines.push(`Día de entrega: ${dia}`);

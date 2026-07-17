@@ -5364,3 +5364,34 @@ body.has-box-modal { overflow: hidden; }
   color: rgba(38, 23, 18, 0.66);
 }
 
+.bsx-delacasa-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 10px;
+}
+
+.bsx-delacasa-label {
+  margin: 0;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.bsx-delacasa-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--orange-dark);
+  background: rgba(200, 48, 16, 0.08);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.bsx-summary-price {
+  margin: 4px 0 0;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.3rem;
+  color: var(--orange-dark);
+}
+
