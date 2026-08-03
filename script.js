@@ -2149,29 +2149,18 @@ document.addEventListener("click", (event) => {
 // ── Box Office Selector ──────────────────────────────────────────────────────
 
 const BOX_CONFIGS = {
-  mini:      { name: "Media Docena",  price: 19,  total: 6  },
-  daily:     { name: "Box Daily",     price: 34,  total: 12 },
-  meeting:   { name: "Box Meeting",   price: 68,  total: 24 },
-  executive: { name: "Box Executive", price: 136, total: 48 },
+  daily:     { name: "Box Daily",     price: 38,  total: 12 },
+  meeting:   { name: "Box Meeting",   price: 74,  total: 24 },
+  executive: { name: "Box Executive", price: 146, total: 48 },
 };
 
-// Preset for Daily (×1). Meeting = ×2, Executive = ×4.
+// Preset amounts for Box Daily (×1). Meeting = ×2, Executive = ×4.
 const BOX_REGULAR_PRESET = {
   "jamon-queso": 4,
   "pasta-oliva": 2,
   "pimiento":    2,
   "pesto":       2,
   "berenjena":   1,
-  "serrano":     1,
-};
-
-// Preset específico para la media docena (6 sándwiches)
-const BOX_MINI_PRESET = {
-  "jamon-queso": 2,
-  "pasta-oliva": 1,
-  "pimiento":    1,
-  "pesto":       1,
-  "berenjena":   0,
   "serrano":     1,
 };
 
@@ -2198,12 +2187,10 @@ const BSX_STEPS = [
 ];
 
 function bsxBuildPreset(box) {
-  const isMini = box.total === 6;
-  const basePreset = isMini ? BOX_MINI_PRESET : BOX_REGULAR_PRESET;
-  const scale = isMini ? 1 : box.total / 12;
+  const scale = box.total / 12;
   const regular = {};
   BOX_REGULAR_FLAVORS.forEach((f) => {
-    regular[f.id] = (basePreset[f.id] || 0) * scale;
+    regular[f.id] = (BOX_REGULAR_PRESET[f.id] || 0) * scale;
   });
   const delaCasa = {};
   BOX_DELACASA_FLAVORS.forEach((f) => { delaCasa[f.id] = 0; });
