@@ -2149,9 +2149,9 @@ document.addEventListener("click", (event) => {
 // ── Box Office Selector ──────────────────────────────────────────────────────
 
 const BOX_CONFIGS = {
-  daily:     { name: "Box Daily",     price: 38,  total: 12 },
-  meeting:   { name: "Box Meeting",   price: 74,  total: 24 },
-  executive: { name: "Box Executive", price: 146, total: 48 },
+  daily:     { name: "Box Daily",     price: 34,  total: 12 },
+  meeting:   { name: "Box Meeting",   price: 68,  total: 24 },
+  executive: { name: "Box Executive", price: 136, total: 48 },
 };
 
 // Preset amounts for Box Daily (×1). Meeting = ×2, Executive = ×4.

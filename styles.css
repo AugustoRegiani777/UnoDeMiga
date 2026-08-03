@@ -1126,6 +1126,20 @@ h3 {
   color: rgba(38, 23, 18, 0.82);
 }
 
+.office-price-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  align-self: flex-end;
+  margin-top: 8px;
+}
+
+.office-price-old {
+  font-size: 0.8rem;
+  color: rgba(38, 23, 18, 0.38);
+  text-decoration: line-through;
+}
+
 .office-price {
   align-self: flex-end;
   margin-top: 8px;
