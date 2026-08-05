@@ -2468,3 +2468,14 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
 
   startTimer();
 })();
+
+(function initMenuGroups() {
+  document.querySelectorAll(".menu-group-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      const body = document.getElementById(btn.getAttribute("aria-controls"));
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      body.hidden = isOpen;
+    });
+  });
+})();

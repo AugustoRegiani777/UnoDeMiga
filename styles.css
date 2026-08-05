@@ -647,6 +647,96 @@ h3 {
   line-height: 1.6;
 }
 
+/* ─── Menu groups accordion ───────────────────────────────────────────────── */
+.menu-groups {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.menu-group {
+  border-bottom: 1px solid rgba(38, 23, 18, 0.12);
+}
+
+.menu-group:first-child {
+  border-top: 1px solid rgba(38, 23, 18, 0.12);
+}
+
+.menu-group-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: opacity 0.2s;
+}
+
+.menu-group-toggle:hover .menu-group-title {
+  color: var(--orange);
+}
+
+.menu-group-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-group-title {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--text);
+  line-height: 1.1;
+  transition: color 0.2s;
+}
+
+.menu-group-sub {
+  font-size: 0.84rem;
+  color: rgba(38, 23, 18, 0.5);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.menu-group-chevron {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(38, 23, 18, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s;
+}
+
+.menu-group-chevron::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--text);
+  border-bottom: 2px solid var(--text);
+  transform: rotate(45deg);
+  margin-top: -4px;
+}
+
+.menu-group-toggle[aria-expanded="true"] .menu-group-chevron {
+  transform: rotate(180deg);
+  border-color: var(--orange);
+}
+
+.menu-group-toggle[aria-expanded="true"] .menu-group-chevron::after {
+  border-color: var(--orange);
+}
+
+.menu-group-body {
+  padding-bottom: 40px;
+}
+
+/* ─── Flavor grid ─────────────────────────────────────────────────────────── */
 .flavor-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
