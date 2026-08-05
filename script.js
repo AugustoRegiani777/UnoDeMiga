@@ -123,13 +123,17 @@ const extrasData = extrasSections.flatMap((section) =>
   })),
 );
 
+const PRECIO_CATERING_DOCENA = 34;
+const PRECIO_CATERING_BASE = PRECIO_CATERING_DOCENA / 12;
+const PRECIO_CATERING_DELACASA_EXTRA = 0.30;
+
 saboresData.forEach((sabor) => {
   if (sabor.categoria === "clasicos" || sabor.categoria === "especiales") {
-    sabor.precio = 3.1;
+    sabor.precio = PRECIO_CATERING_BASE;
   }
 
   if (sabor.categoria === "de-la-casa") {
-    sabor.precio = 3.5;
+    sabor.precio = PRECIO_CATERING_BASE + PRECIO_CATERING_DELACASA_EXTRA;
   }
 });
 
@@ -2149,9 +2153,9 @@ document.addEventListener("click", (event) => {
 // ── Box Office Selector ──────────────────────────────────────────────────────
 
 const BOX_CONFIGS = {
-  daily:     { name: "Box Daily",     price: 34,  total: 12 },
-  meeting:   { name: "Box Meeting",   price: 68,  total: 24 },
-  executive: { name: "Box Executive", price: 136, total: 48 },
+  daily:     { name: "Box Daily",     price: 19,  total: 6  },
+  meeting:   { name: "Box Meeting",   price: 34,  total: 12 },
+  executive: { name: "Box Executive", price: 67,  total: 24 },
 };
 
 // Preset amounts for Box Daily (×1). Meeting = ×2, Executive = ×4.
