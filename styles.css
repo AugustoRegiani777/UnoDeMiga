@@ -535,6 +535,24 @@ h3 {
   border-color: #f5b08a;
 }
 
+.hero-news-cta-glovo {
+  margin-top: 14px;
+  background: #ffc244;
+  color: #1a4a2e;
+  border: none;
+  border-radius: 20px;
+  padding: 7px 16px 6px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.hero-news-cta-glovo:hover {
+  background: #ffd166;
+  color: #1a4a2e;
+  border-color: transparent;
+}
+
 .hero-news-nav {
   display: flex;
   gap: 6px;
