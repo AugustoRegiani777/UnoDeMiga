@@ -34,14 +34,26 @@ a {
   position: sticky;
   top: 0;
   z-index: 30;
-  padding: 11px 16px;
+  padding: 11px 0;
   background: var(--orange-dark);
   color: var(--cream);
-  text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-size: 0.72rem;
   font-weight: 700;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.topbar-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: topbar-scroll 36s linear infinite;
+}
+
+@keyframes topbar-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .site-header {
@@ -409,6 +421,13 @@ h3 {
 
 .hero-copy {
   color: var(--cream);
+}
+
+.hero-copy h1 {
+  font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+  line-height: 1.04;
+  max-width: 13ch;
+  text-wrap: balance;
 }
 
 .hero-text {
