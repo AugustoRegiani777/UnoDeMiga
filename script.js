@@ -74,6 +74,7 @@ const saboresData = [
   { id: "berenjena-brie", nombre: "Berenjena asada y queso brie", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "jamon-serrano", nombre: "Jamón serrano, rúcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
   { id: "jamon-huevo", nombre: "Jamón y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
+  { id: "huevo-queso", nombre: "Huevo y queso", categoria: "de-la-casa", precio: 3.8, tags: ["vegetariano"] },
   { id: "atun-palta", nombre: "Atún, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
   { id: "salmon-phila", nombre: "Salmón ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
 ];
@@ -2437,3 +2438,33 @@ const boxSel = {
 
 document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
 
+
+(function initHeroNews() {
+  const news = document.getElementById("hero-news");
+  if (!news) return;
+  const track = document.getElementById("hero-news-slides");
+  const dots  = Array.from(document.querySelectorAll(".hero-news-dot"));
+  const total = dots.length;
+  let current = 0;
+  let timer;
+
+  function goTo(index) {
+    current = (index + total) % total;
+    track.style.transform = `translateX(-${current * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle("is-active", i === current));
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(current + 1), 5000);
+  }
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      goTo(Number(dot.dataset.dot));
+      startTimer();
+    });
+  });
+
+  startTimer();
+})();
