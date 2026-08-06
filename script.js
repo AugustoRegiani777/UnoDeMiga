@@ -2524,6 +2524,7 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
 
     if      (state === "visible")   tl.play();
     else if (state === "exit-top")  tl.reverse();
+    else if (state === "below")     tl.pause(0); // reset invisible → listo para volver a animar
   }
 
   function setup() {
