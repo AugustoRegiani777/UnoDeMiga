@@ -111,7 +111,7 @@ const extrasSections = [
     nombre: "Productos veganos",
     descripcion: "Opciones veganas por encargo.",
     items: [
-      { id: "docena-vegana", nombre: "Docena vegana", precio: 45, descripcion: "M?nimo una docena." },
+      { id: "docena-vegana", nombre: "Docena vegana", precio: 40, descripcion: "Mínimo media docena." },
     ],
   },
 ];
@@ -2192,11 +2192,16 @@ const BSX_STEPS = [
 ];
 
 function bsxBuildPreset(box) {
-  const scale = box.total / 12;
   const regular = {};
-  BOX_REGULAR_FLAVORS.forEach((f) => {
-    regular[f.id] = (BOX_REGULAR_PRESET[f.id] || 0) * scale;
-  });
+  if (box.total === 6) {
+    // Box Daily: 1 de cada sabor clásico (6 total, sin fracciones)
+    BOX_REGULAR_FLAVORS.forEach((f) => { regular[f.id] = 1; });
+  } else {
+    const scale = box.total / 12;
+    BOX_REGULAR_FLAVORS.forEach((f) => {
+      regular[f.id] = (BOX_REGULAR_PRESET[f.id] || 0) * scale;
+    });
+  }
   const delaCasa = {};
   BOX_DELACASA_FLAVORS.forEach((f) => { delaCasa[f.id] = 0; });
   return { regular, delaCasa };
@@ -2466,6 +2471,13 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
     });
   });
 
+  // Tap anywhere on the card to advance to next slide (not on CTA links)
+  track.addEventListener("click", (e) => {
+    if (e.target.closest("a")) return;
+    goTo(current + 1);
+    startTimer();
+  });
+
   startTimer();
 })();
 
@@ -2488,15 +2500,37 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
 
   if (!banner || !inner || !wheel || typeof gsap === "undefined") return;
 
-  let tl       = null;
-  let observer = null;
+  let tl = null;
+  let scrollState = null;
+
+  function onScroll() {
+    if (!tl) return;
+    const rect = banner.getBoundingClientRect();
+    const vh   = window.innerHeight;
+
+    // 'visible'  → banner entrando desde abajo, play
+    // 'exit-top' → banner saliendo por arriba (top < 0), reverse
+    // 'above'    → ya sobre el viewport, no tocar
+    // 'below'    → todavía bajo el viewport, no tocar
+    let state;
+    const earlyTrigger = banner.offsetHeight + 40;
+    if      (rect.bottom <= 0)         state = "above";
+    else if (rect.top >= vh)           state = "below";
+    else if (rect.top < earlyTrigger)  state = "exit-top";
+    else                               state = "visible";
+
+    if (state === scrollState) return;
+    scrollState = state;
+
+    if      (state === "visible")   tl.play();
+    else if (state === "exit-top")  tl.reverse();
+  }
 
   function setup() {
-    if (observer) observer.disconnect();
     if (tl) tl.kill();
     gsap.set([wheel, text], { clearProps: "all" });
-    // Centrado vertical del texto vía GSAP (CSS top:50% + yPercent:-50)
     gsap.set(text, { yPercent: -50 });
+    scrollState = null;
 
     const travelX  = inner.offsetWidth - wheel.offsetWidth - 16;
     const radius   = wheel.offsetWidth / 2;
@@ -2515,15 +2549,13 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
         duration * 0.5
       );
 
-    observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) tl.play(); else tl.reverse();
-    }, { threshold: 0 });
-    observer.observe(banner);
+    onScroll(); // evalúa posición inicial sin esperar un scroll
   }
 
   setup();
 
-  // Al cambiar el viewport: limpia GSAP y recalcula con los nuevos valores CSS
+  window.addEventListener("scroll", onScroll, { passive: true });
+
   let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);

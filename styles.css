@@ -5811,3 +5811,35 @@ body.has-box-modal { overflow: hidden; }
   color: var(--orange-dark);
 }
 
+/* ── Box selector: bottom sheet en mobile ─────────────────────────────────── */
+@media (max-width: 540px) {
+  .box-selector-modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .box-selector-dialog {
+    width: 100%;
+    max-height: 90dvh;
+    border-radius: 20px 20px 0 0;
+  }
+  .box-selector-head {
+    padding: 16px 18px 14px;
+  }
+  .box-selector-body {
+    padding: 16px 16px;
+  }
+  .box-selector-footer {
+    padding: 12px 16px;
+  }
+  .bsx-flavor-item {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .bsx-flavor-name {
+    font-size: 0.82rem;
+  }
+  .bsx-counter {
+    gap: 8px;
+  }
+}
+
