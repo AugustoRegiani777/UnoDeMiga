@@ -2479,3 +2479,54 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
     });
   });
 })();
+
+(function initCookieBanner() {
+  const banner = document.getElementById("cookie-banner");
+  const inner  = document.getElementById("cookie-inner");
+  const wheel  = document.getElementById("cookie-wheel");
+  const text   = document.getElementById("cookie-text");
+
+  if (!banner || !inner || !wheel || typeof gsap === "undefined") return;
+
+  let tl       = null;
+  let observer = null;
+
+  function setup() {
+    if (observer) observer.disconnect();
+    if (tl) tl.kill();
+    gsap.set([wheel, text], { clearProps: "all" });
+    // Centrado vertical del texto vía GSAP (CSS top:50% + yPercent:-50)
+    gsap.set(text, { yPercent: -50 });
+
+    const travelX  = inner.offsetWidth - wheel.offsetWidth - 16;
+    const radius   = wheel.offsetWidth / 2;
+    const rotation = (travelX / (2 * Math.PI * radius)) * 360;
+    const duration = Math.max(0.9, travelX / 580);
+
+    tl = gsap.timeline({ paused: true });
+    tl.fromTo(wheel,
+        { x: 0, rotation: 0 },
+        { x: travelX, rotation, ease: "power1.inOut", duration },
+        0
+      )
+      .fromTo(text,
+        { opacity: 0, yPercent: -50 },
+        { opacity: 1, yPercent: -50, ease: "power1.out", duration: duration * 0.5 },
+        duration * 0.5
+      );
+
+    observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) tl.play(); else tl.reverse();
+    }, { threshold: 0 });
+    observer.observe(banner);
+  }
+
+  setup();
+
+  // Al cambiar el viewport: limpia GSAP y recalcula con los nuevos valores CSS
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(setup, 200);
+  });
+})();

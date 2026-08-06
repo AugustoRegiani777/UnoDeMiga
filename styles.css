@@ -365,10 +365,18 @@ a {
 .hero-inner {
   position: relative;
   z-index: 2;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
   min-height: calc(72vh - 104px);
   padding: 74px 0 58px;
   width: var(--frame-width);
+}
+
+.hero-copy {
+  flex: 1;
+  min-width: 0;
 }
 
 .kicker {
@@ -441,7 +449,8 @@ h3 {
 
 /* ─── Hero news panel slider ──────────────────────────────────────────────── */
 .hero-news {
-  margin-top: 36px;
+  flex-shrink: 0;
+  margin-top: 0;
   max-width: 320px;
   background: rgba(20, 10, 5, 0.55);
   border: 1px solid rgba(242, 236, 228, 0.1);
@@ -2221,6 +2230,140 @@ h3 {
   max-width: 28ch;
 }
 
+/* ─── Cookie banner scrollytelling ───────────────────────────────────────── */
+.cookie-banner {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  background: var(--cream);
+  border-top: 3px solid var(--orange);
+  border-bottom: 3px solid var(--orange);
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.cookie-banner.is-dismissed {
+  display: none;
+}
+
+.cookie-inner {
+  width: var(--section-width);
+  margin: 0 auto;
+  position: relative;
+  height: 100%;
+}
+
+.cookie-wheel {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -80px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5.5rem;
+  line-height: 1;
+  will-change: transform;
+}
+
+.cookie-text {
+  position: absolute;
+  left: 20px;
+  right: 180px;
+  top: 50%;
+  z-index: 2;
+  opacity: 0;
+  will-change: opacity, transform;
+  text-align: left;
+}
+
+.cookie-text h3 {
+  margin: 0 0 4px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 0.95rem;
+  color: var(--orange-dark, #8f260f);
+  line-height: 1.2;
+}
+
+.cookie-text p {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.cookie-price-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 18px;
+  background: var(--orange);
+  color: var(--cream);
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+}
+
+.cookie-price-tag:hover {
+  background: var(--orange-dark);
+}
+
+/* Tablet / iPad (≤1024px) */
+@media (max-width: 1024px) {
+  .cookie-banner { height: 128px; }
+  .cookie-wheel {
+    width: 130px;
+    height: 130px;
+    left: 0;
+    margin-top: -65px;
+    font-size: 4.4rem;
+  }
+  .cookie-text { left: 20px; right: 148px; }
+  .cookie-text h3 { font-size: 0.9rem; }
+  .cookie-text p  { font-size: 0.74rem; }
+}
+
+/* Móvil grande (≤767px) */
+@media (max-width: 767px) {
+  .cookie-banner { height: 120px; }
+  .cookie-wheel {
+    width: 90px;
+    height: 90px;
+    left: 0;
+    margin-top: -45px;
+    font-size: 3rem;
+  }
+  .cookie-text { left: 16px; right: 110px; }
+  .cookie-text h3 { font-size: 0.85rem; }
+  .cookie-text p  { font-size: 0.72rem; margin-bottom: 6px; }
+  .cookie-price-tag { font-size: 0.92rem; padding: 4px 14px; }
+}
+
+/* Móvil chico (≤480px) — sin descripción */
+@media (max-width: 480px) {
+  .cookie-banner { height: 90px; }
+  .cookie-wheel {
+    width: 72px;
+    height: 72px;
+    left: 0;
+    margin-top: -36px;
+    font-size: 2.4rem;
+  }
+  .cookie-text { left: 14px; right: 92px; }
+  .cookie-text h3 { font-size: 0.8rem; }
+  .cookie-text p  { display: none; }
+  .cookie-price-tag { font-size: 0.88rem; padding: 3px 12px; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 .floating-whatsapp {
   position: fixed;
   right: 16px;
@@ -2348,7 +2491,6 @@ h3 {
     --section-width: min(1120px, calc(100% - 28px));
   }
 
-  .hero-inner,
   .split-layout,
   .office-layout,
   .catering-cta,
@@ -2357,8 +2499,15 @@ h3 {
   }
 
   .hero-inner {
+    flex-direction: column;
+    align-items: flex-start;
     padding-top: 36px;
-    gap: 16px;
+    gap: 24px;
+  }
+
+  .hero-news {
+    width: 100%;
+    max-width: 360px;
   }
 
   .section {
