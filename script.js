@@ -76,7 +76,6 @@ const saboresData = [
   { id: "jamon-huevo", nombre: "Jamón y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
   { id: "huevo-queso", nombre: "Huevo y queso", categoria: "de-la-casa", precio: 3.8, tags: ["vegetariano"] },
   { id: "atun-palta", nombre: "Atún, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
-  { id: "salmon-phila", nombre: "Salmón ahumado y Philadelphia", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
 ];
 
 const extrasSections = [
@@ -85,8 +84,8 @@ const extrasSections = [
     nombre: "Tortas saladas o dulces",
     descripcion: "Elegí si querés sumar una torta salada para compartir o una opción dulce.",
     items: [
-      { id: "torta-salada", nombre: "Torta salada de sándwiches de miga", precio: 67, descripcion: "Formato para compartir con corte de mesa." },
-      { id: "tarta-dulce", nombre: "Tarta dulce", precio: 55, descripcion: "Opción dulce para cierre de mesa o celebración." },
+      { id: "torta-salada", nombre: "Torta salada de sándwiches de miga", precio: 50, descripcion: "Formato para compartir con corte de mesa." },
+      { id: "tarta-dulce", nombre: "Tarta dulce", precio: 50, descripcion: "Torta dulce para cierre de mesa o celebración." },
     ],
   },
   {
@@ -111,7 +110,8 @@ const extrasSections = [
     nombre: "Productos veganos",
     descripcion: "Opciones veganas por encargo.",
     items: [
-      { id: "docena-vegana", nombre: "Docena vegana", precio: 40, descripcion: "Mínimo media docena." },
+      { id: "docena-vegana", nombre: "Docena veggie", precio: 40, descripcion: "12 sándwiches veganos." },
+      { id: "media-docena-vegana", nombre: "Media docena veggie", precio: 20, descripcion: "6 sándwiches veganos." },
     ],
   },
 ];
@@ -190,7 +190,9 @@ const refs = {
   flavorSelected: document.getElementById("flavor-selected"),
   summaryConfig: document.getElementById("summary-config"),
   summaryFlavors: document.getElementById("summary-flavors"),
+  summaryFlavorsSubtotal: document.getElementById("summary-flavors-subtotal"),
   summaryExtras: document.getElementById("summary-extras"),
+  summaryExtrasSubtotal: document.getElementById("summary-extras-subtotal"),
   summaryPricePerPerson: document.getElementById("summary-price-per-person"),
   summaryTotalLine: document.getElementById("summary-total-line"),
   summarySavingsLine: document.getElementById("summary-savings-line"),
@@ -859,6 +861,8 @@ function updateSummary() {
     .join("");
 
   refs.summaryFlavors.innerHTML = selectedFlavors || "<li>Sin sabores seleccionados.</li>";
+  refs.summaryFlavorsSubtotal.textContent = `Subtotal sándwiches: ${formatPrice(state.subtotalSandwiches)}`;
+  refs.summaryFlavorsSubtotal.hidden = !selectedFlavors;
 
   const selectedExtras = extrasData
     .filter((extra) => state.extrasSeleccionados[extra.id] > 0)
@@ -866,6 +870,8 @@ function updateSummary() {
     .join("");
 
   refs.summaryExtras.innerHTML = selectedExtras || "<li>Sin extras.</li>";
+  refs.summaryExtrasSubtotal.textContent = `Subtotal extras: ${formatPrice(state.subtotalExtras)}`;
+  refs.summaryExtrasSubtotal.hidden = !selectedExtras;
   refs.summaryPricePerPerson.textContent = formatPrice(state.total);
   refs.summaryTotalLine.textContent = `Costo por persona ${formatPrice(pricePerPerson)}`;
   refs.summarySavingsLine.textContent = recommendationLine;
@@ -2492,74 +2498,75 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
   });
 })();
 
-(function initCookieBanner() {
-  const banner = document.getElementById("cookie-banner");
-  const inner  = document.getElementById("cookie-inner");
-  const wheel  = document.getElementById("cookie-wheel");
-  const text   = document.getElementById("cookie-text");
+(function initPromoBanners() {
+  const items = Array.from(document.querySelectorAll(".cookie-banner"))
+    .map((banner) => ({
+      banner,
+      inner: banner.querySelector(".cookie-inner"),
+      wheel: banner.querySelector(".cookie-wheel"),
+      text:  banner.querySelector(".cookie-text"),
+      rtl:   banner.dataset.direction === "rtl",
+      tl:    null,
+      shown: null,
+    }))
+    .filter((item) => item.inner && item.wheel && item.text);
 
-  if (!banner || !inner || !wheel || typeof gsap === "undefined") return;
+  if (!items.length || typeof gsap === "undefined") return;
 
-  let tl = null;
-  let scrollState = null;
-
-  function onScroll() {
-    if (!tl) return;
-    const rect = banner.getBoundingClientRect();
+  function syncItem(item, animate) {
+    if (!item.tl) return;
+    const rect = item.banner.getBoundingClientRect();
     const vh   = window.innerHeight;
+    const shouldShow = rect.top < vh;
 
-    // 'visible'  → banner entrando desde abajo, play
-    // 'exit-top' → banner saliendo por arriba (top < 0), reverse
-    // 'above'    → ya sobre el viewport, no tocar
-    // 'below'    → todavía bajo el viewport, no tocar
-    let state;
-    const earlyTrigger = banner.offsetHeight + 40;
-    if      (rect.bottom <= 0)         state = "above";
-    else if (rect.top >= vh)           state = "below";
-    else if (rect.top < earlyTrigger)  state = "exit-top";
-    else                               state = "visible";
+    if (shouldShow === item.shown) return;
+    item.shown = shouldShow;
 
-    if (state === scrollState) return;
-    scrollState = state;
-
-    if      (state === "visible")   tl.play();
-    else if (state === "exit-top")  tl.reverse();
-    else if (state === "below")     tl.pause(0); // reset invisible → listo para volver a animar
+    if (animate) {
+      shouldShow ? item.tl.play() : item.tl.reverse();
+    } else {
+      item.tl.progress(shouldShow ? 1 : 0);
+    }
   }
 
-  function setup() {
-    if (tl) tl.kill();
-    gsap.set([wheel, text], { clearProps: "all" });
-    gsap.set(text, { yPercent: -50 });
-    scrollState = null;
+  function onScroll() {
+    items.forEach((item) => syncItem(item, true));
+  }
 
-    const travelX  = inner.offsetWidth - wheel.offsetWidth - 16;
-    const radius   = wheel.offsetWidth / 2;
-    const rotation = (travelX / (2 * Math.PI * radius)) * 360;
+  function setup(item) {
+    if (item.tl) item.tl.kill();
+    gsap.set([item.wheel, item.text], { clearProps: "all" });
+    gsap.set(item.text, { yPercent: -50 });
+
+    const dir      = item.rtl ? -1 : 1;
+    const travelX  = item.inner.offsetWidth - item.wheel.offsetWidth - 16;
+    const radius   = item.wheel.offsetWidth / 2;
+    const rotation = dir * (travelX / (2 * Math.PI * radius)) * 360;
     const duration = Math.max(0.9, travelX / 580);
 
-    tl = gsap.timeline({ paused: true });
-    tl.fromTo(wheel,
+    item.tl = gsap.timeline({ paused: true });
+    item.tl.fromTo(item.wheel,
         { x: 0, rotation: 0 },
-        { x: travelX, rotation, ease: "power1.inOut", duration },
+        { x: dir * travelX, rotation, ease: "power1.inOut", duration },
         0
       )
-      .fromTo(text,
+      .fromTo(item.text,
         { opacity: 0, yPercent: -50 },
         { opacity: 1, yPercent: -50, ease: "power1.out", duration: duration * 0.5 },
         duration * 0.5
       );
 
-    onScroll(); // evalúa posición inicial sin esperar un scroll
+    item.shown = null;
+    syncItem(item, false); // sincroniza con la posición actual sin animar (carga inicial / resize)
   }
 
-  setup();
+  items.forEach(setup);
 
   window.addEventListener("scroll", onScroll, { passive: true });
 
   let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(setup, 200);
+    resizeTimer = setTimeout(() => items.forEach(setup), 200);
   });
 })();

@@ -320,10 +320,10 @@
       </section>
 
     <!-- Cookie banner — bloque en flujo entre menú y office -->
-    <div class="cookie-banner" id="cookie-banner">
-      <div class="cookie-inner" id="cookie-inner">
-        <div class="cookie-wheel" id="cookie-wheel" aria-hidden="true">🍪</div>
-        <div class="cookie-text" id="cookie-text">
+    <div class="cookie-banner" data-direction="ltr">
+      <div class="cookie-inner">
+        <div class="cookie-wheel" aria-hidden="true">🍪</div>
+        <div class="cookie-text">
           <h3>Cookies de Dulce de Leche</h3>
           <p>Usamos cookies para mejorar la web. Pero las que de verdad tenés que probar son las nuestras — masa crocante, relleno generoso, sabor que te vuelve a buscar. 😜</p>
           <span class="cookie-price-tag">3 €</span>
@@ -553,10 +553,12 @@
                           <div class="builder-summary-block">
                             <h4>Sabores elegidos</h4>
                             <ul id="summary-flavors"></ul>
+                            <p class="builder-summary-subtotal" id="summary-flavors-subtotal" hidden></p>
                           </div>
                           <div class="builder-summary-block">
                             <h4>Extras</h4>
                             <ul id="summary-extras"></ul>
+                            <p class="builder-summary-subtotal" id="summary-extras-subtotal" hidden></p>
                           </div>
                         </div>
                         <div class="builder-summary-footer">
