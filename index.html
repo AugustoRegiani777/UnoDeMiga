@@ -3,28 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Uno de Miga | Sándwiches de miga en Valencia</title>
+    <title>Uno de Miga | Sándwiches de Miga y Bocatas en Valencia</title>
     <meta
       name="description"
-      content="Uno de Miga, sandwichería de miga en Valencia. Menú, boxes para oficinas, catering y pedidos por WhatsApp."
+      content="Uno de Miga, sandwichería especializada en sándwiches de miga artesanales en Valencia — también conocidos como bocatas o bocadillos de miga. Menú, boxes para oficinas, catering y pedidos por WhatsApp."
+    />
+    <meta
+      name="keywords"
+      content="sándwiches de miga, sandwich de miga Valencia, sándwich de miga España, bocadillos de miga, bocatas de miga, sandwichería Valencia, catering sándwiches Valencia, boxes de sándwiches para oficinas"
     />
     <meta name="robots" content="index,follow" />
     <meta name="theme-color" content="#c83010" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="restaurant.restaurant" />
     <meta property="og:locale" content="es_ES" />
-    <meta property="og:title" content="Uno de Miga | Sándwiches de miga en Valencia" />
+    <meta property="og:site_name" content="Uno de Miga" />
+    <meta property="og:title" content="Uno de Miga | Sándwiches de Miga y Bocatas en Valencia" />
     <meta
       property="og:description"
-      content="Menú de sándwiches de miga, boxes para oficinas, catering y pedidos por WhatsApp en Valencia."
+      content="Sándwiches de miga artesanales (bocatas/bocadillos) en Valencia. Menú, boxes para oficinas, catering y pedidos por WhatsApp."
     />
     <meta property="og:image" content="./assets/img/logo-sin-fondo.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Uno de Miga | Sándwiches de miga en Valencia" />
+    <meta name="twitter:title" content="Uno de Miga | Sándwiches de Miga y Bocatas en Valencia" />
     <meta
       name="twitter:description"
-      content="Menú de sándwiches de miga, boxes para oficinas, catering y pedidos por WhatsApp en Valencia."
+      content="Sándwiches de miga artesanales (bocatas/bocadillos) en Valencia. Menú, boxes para oficinas, catering y pedidos por WhatsApp."
     />
     <meta name="twitter:image" content="./assets/img/logo-sin-fondo.png" />
+    <meta name="geo.placename" content="Valencia, España" />
+    <meta name="geo.region" content="ES-V" />
     <link rel="icon" type="image/png" href="./assets/img/logo-sin-fondo.png" />
     <link rel="apple-touch-icon" href="./assets/img/logo-sin-fondo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -82,6 +89,7 @@
           <div class="hero-slide slide-1"></div>
           <div class="hero-slide slide-2"></div>
           <div class="hero-slide slide-3"></div>
+          <div class="hero-slide slide-4"></div>
         </div>
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-inner">
@@ -187,17 +195,6 @@
                 </article>
                 <article class="flavor-card card">
                   <div class="flavor-image image-container">
-                    <img src="./assets/img/berenjenas.png" alt="Sándwich de berenjena asada y queso brie" />
-                  </div>
-                  <div class="flavor-body text-container">
-                    <span class="office-size">Especiales</span>
-                    <h3>Berenjena asada y queso brie</h3>
-                    <p>Berenjena asada y queso brie para un sabor más delicado.</p>
-                    <p class="flavor-price">3,50 €</p>
-                  </div>
-                </article>
-                <article class="flavor-card card">
-                  <div class="flavor-image image-container">
                     <img src="./assets/img/jamonSerrano.jpg" alt="Sándwich de jamón serrano, rúcula y queso" />
                   </div>
                   <div class="flavor-body text-container">
@@ -246,6 +243,17 @@
                 </article>
                 <article class="flavor-card card">
                   <div class="flavor-image image-container">
+                    <img src="./assets/img/1.jpg" alt="Sándwich de mortadela, pesto y queso" />
+                  </div>
+                  <div class="flavor-body text-container">
+                    <span class="office-size">De la casa</span>
+                    <h3>Mortadela, pesto y queso</h3>
+                    <p>Mortadela italiana, pesto y queso — sabor intenso con un toque gourmet.</p>
+                    <p class="flavor-price">3,80 EUR</p>
+                  </div>
+                </article>
+                <article class="flavor-card card">
+                  <div class="flavor-image image-container">
                     <img src="./assets/img/img-63.jpg" alt="Especial de la semana de Uno de Miga" />
                   </div>
                   <div class="flavor-body text-container">
@@ -276,11 +284,10 @@
                   </div>
                   <div class="flavor-body text-container">
                     <span class="office-size">Bajo encargo</span>
-                    <h3>6 sabores disponibles</h3>
+                    <h3>4 sabores disponibles</h3>
                     <p class="veggie-flavors">
-                      Jamón y queso, pasta de aceituna y queso, berenjenas asadas y queso,
-                      morrones asados y queso, pesto con queso y tomate, y berenjena con
-                      morrones sin queso.
+                      Jamón y queso, pasta de aceituna y queso, morrones asados y queso,
+                      y pesto con queso y tomate.
                     </p>
                     <div class="veggie-actions">
                       <p class="flavor-price">40 €</p>
@@ -319,14 +326,63 @@
         </div>
       </section>
 
-    <!-- Cookie banner — bloque en flujo entre menú y office -->
+    <!-- Promo banners — scrollytelling, cada uno se despliega una vez al bajar -->
     <div class="cookie-banner" data-direction="ltr">
       <div class="cookie-inner">
-        <div class="cookie-wheel" aria-hidden="true">🍪</div>
+        <div class="cookie-wheel cookie-wheel--coin" aria-hidden="true">
+          <img src="./assets/img/cookies-dulce-leche.png" alt="" />
+        </div>
         <div class="cookie-text">
-          <h3>Cookies de Dulce de Leche</h3>
-          <p>Usamos cookies para mejorar la web. Pero las que de verdad tenés que probar son las nuestras — masa crocante, relleno generoso, sabor que te vuelve a buscar. 😜</p>
-          <span class="cookie-price-tag">3 €</span>
+          <div class="cookie-text-full">
+            <h3>Cookies de Dulce de Leche</h3>
+            <p>Usamos cookies para mejorar la web. Pero las que de verdad tenés que probar son las nuestras — masa crocante, relleno generoso, sabor que te vuelve a buscar. 😜 Por encargo desde 1/2 Docena.</p>
+            <span class="cookie-price-tag">3 € c/u</span>
+          </div>
+          <div class="cookie-text-mobile">
+            <h3>Media docena por encargo</h3>
+            <p>Por encargo media docena 😜</p>
+            <span class="cookie-price-tag">3 € c/u</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cookie-banner cookie-banner--rtl" data-direction="rtl">
+      <div class="cookie-inner">
+        <div class="cookie-wheel cookie-wheel--coin" aria-hidden="true">
+          <img src="./assets/img/chipa.png" alt="" />
+        </div>
+        <div class="cookie-text">
+          <div class="cookie-text-full">
+            <h3>Chipa</h3>
+            <p>Pan de queso esponjoso, calentito y con ese sabor que solo el buen queso da. Ideal para picar en cualquier momento. 🧀 Compralo por encargo, o congelados, 10 min al horno y listo! 10 euros la docena.</p>
+            <span class="cookie-price-tag">1 € c/u</span>
+          </div>
+          <div class="cookie-text-mobile">
+            <h3>Chipa</h3>
+            <p>Chipa de queso y de jamón, pedí o encargá, cocinados o congelados, 10 min al horno y listo! 10 euros la docena. 🧀</p>
+            <span class="cookie-price-tag">1 € c/u</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cookie-banner" data-direction="ltr">
+      <div class="cookie-inner">
+        <div class="cookie-wheel cookie-wheel--coin" aria-hidden="true">
+          <img src="./assets/img/medialuna.png" alt="" />
+        </div>
+        <div class="cookie-text">
+          <div class="cookie-text-full">
+            <h3>Medialunas</h3>
+            <p>Tiernas, dulces y recién horneadas — el clásico infaltable para arrancar el día con onda. ☕ Docena por encargo 24 €.</p>
+            <span class="cookie-price-tag">2,20 € c/u</span>
+          </div>
+          <div class="cookie-text-mobile">
+            <h3>Medialunas</h3>
+            <p>Docena por encargo 24 €.</p>
+            <span class="cookie-price-tag">2,20 € c/u</span>
+          </div>
         </div>
       </div>
     </div>
@@ -726,17 +782,25 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Restaurant",
+        "@type": ["Restaurant", "FastFoodRestaurant"],
         "name": "Uno de Miga",
-        "description": "Sandwichería de miga en Valencia con menú, boxes para oficinas y catering por encargo.",
+        "alternateName": "Uno de Miga Valencia",
+        "description": "Sandwichería especializada en sándwiches de miga artesanales en Valencia — también conocidos como bocatas o bocadillos de miga. Menú, boxes para oficinas y catering por encargo.",
         "telephone": "+34641514569",
-        "servesCuisine": "Sandwichería",
+        "servesCuisine": ["Sandwichería", "Sándwiches de miga", "Bocatas", "Comida española"],
+        "keywords": "sándwiches de miga, sandwich de miga Valencia, sándwich de miga España, bocadillos de miga, bocatas de miga, catering sándwiches, boxes de oficina",
         "priceRange": "€€",
+        "hasMap": "https://www.google.com/maps/dir/?api=1&destination=Calle%20Llop%201%2C%20Valencia",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Calle Llop 1",
           "addressLocality": "Valencia",
+          "addressRegion": "Valencia",
           "addressCountry": "ES"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "Valencia"
         },
         "openingHoursSpecification": [
           {
@@ -758,6 +822,7 @@
             "closes": "21:30"
           }
         ],
+        "menu": "#menu",
         "sameAs": [
           "https://www.instagram.com/unodemigavalencia?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
         ]

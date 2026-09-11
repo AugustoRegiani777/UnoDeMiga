@@ -71,11 +71,11 @@ const saboresData = [
   { id: "pasta-oliva", nombre: "Pasta de oliva y queso", categoria: "clasicos", precio: 3.5, tags: ["vegetariano"] },
   { id: "pimiento-gouda", nombre: "Pimiento asado, gouda y Philadelphia", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "pesto-tomate", nombre: "Pesto, tomate y queso", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
-  { id: "berenjena-brie", nombre: "Berenjena asada y queso brie", categoria: "especiales", precio: 3.5, tags: ["vegetariano"] },
   { id: "jamon-serrano", nombre: "Jamón serrano, rúcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
   { id: "jamon-huevo", nombre: "Jamón y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
   { id: "huevo-queso", nombre: "Huevo y queso", categoria: "de-la-casa", precio: 3.8, tags: ["vegetariano"] },
   { id: "atun-palta", nombre: "Atún, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
+  { id: "mortadela-pesto", nombre: "Mortadela, pesto y queso", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
 ];
 
 const extrasSections = [
@@ -84,7 +84,9 @@ const extrasSections = [
     nombre: "Tortas saladas o dulces",
     descripcion: "Elegí si querés sumar una torta salada para compartir o una opción dulce.",
     items: [
-      { id: "torta-salada", nombre: "Torta salada de sándwiches de miga", precio: 50, descripcion: "Formato para compartir con corte de mesa." },
+      { id: "torta-salada-5-2", nombre: "Torta salada (5 personas, 2 gustos)", precio: 45, descripcion: "Formato para compartir con corte de mesa." },
+      { id: "torta-salada-10-2", nombre: "Torta salada (10 personas, 2 gustos)", precio: 60, descripcion: "Formato para compartir con corte de mesa." },
+      { id: "torta-salada-10-3", nombre: "Torta salada (10 personas, 3 gustos)", precio: 70, descripcion: "Formato para compartir con corte de mesa." },
       { id: "tarta-dulce", nombre: "Tarta dulce", precio: 50, descripcion: "Torta dulce para cierre de mesa o celebración." },
     ],
   },
@@ -2165,14 +2167,13 @@ const BOX_CONFIGS = {
   executive: { name: "Box Executive", price: 67,  total: 24 },
 };
 
-// Preset amounts for Box Daily (×1). Meeting = ×2, Executive = ×4.
+// Preset amounts para Docena (12). Se escala proporcional al total de la box.
 const BOX_REGULAR_PRESET = {
   "jamon-queso": 4,
   "pasta-oliva": 2,
   "pimiento":    2,
   "pesto":       2,
-  "berenjena":   1,
-  "serrano":     1,
+  "serrano":     2,
 };
 
 const BOX_REGULAR_FLAVORS = [
@@ -2180,7 +2181,6 @@ const BOX_REGULAR_FLAVORS = [
   { id: "pasta-oliva", name: "Pasta de oliva y queso" },
   { id: "pimiento",    name: "Pimiento asado, queso gouda y Philadelphia" },
   { id: "pesto",       name: "Pesto, tomate y queso" },
-  { id: "berenjena",   name: "Berenjena asada y queso brie" },
   { id: "serrano",     name: "Jamón serrano, rúcula y queso" },
 ];
 
@@ -2188,6 +2188,7 @@ const BOX_DELACASA_FLAVORS = [
   { id: "atun-palta",      name: "Atún, palta y queso" },
   { id: "huevo-queso",     name: "Huevo y queso" },
   { id: "huevo-jamon",     name: "Huevo y jamón" },
+  { id: "mortadela-pesto", name: "Mortadela, pesto y queso" },
   { id: "especial-semana", name: "Especial de la semana" },
 ];
 
@@ -2199,15 +2200,10 @@ const BSX_STEPS = [
 
 function bsxBuildPreset(box) {
   const regular = {};
-  if (box.total === 6) {
-    // Box Daily: 1 de cada sabor clásico (6 total, sin fracciones)
-    BOX_REGULAR_FLAVORS.forEach((f) => { regular[f.id] = 1; });
-  } else {
-    const scale = box.total / 12;
-    BOX_REGULAR_FLAVORS.forEach((f) => {
-      regular[f.id] = (BOX_REGULAR_PRESET[f.id] || 0) * scale;
-    });
-  }
+  const scale = box.total / 12;
+  BOX_REGULAR_FLAVORS.forEach((f) => {
+    regular[f.id] = (BOX_REGULAR_PRESET[f.id] || 0) * scale;
+  });
   const delaCasa = {};
   BOX_DELACASA_FLAVORS.forEach((f) => { delaCasa[f.id] = 0; });
   return { regular, delaCasa };
@@ -2536,23 +2532,21 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
   function setup(item) {
     if (item.tl) item.tl.kill();
     gsap.set([item.wheel, item.text], { clearProps: "all" });
-    gsap.set(item.text, { yPercent: -50 });
+    gsap.set(item.wheel, { yPercent: -50 });
 
     const dir      = item.rtl ? -1 : 1;
     const travelX  = item.inner.offsetWidth - item.wheel.offsetWidth - 16;
-    const radius   = item.wheel.offsetWidth / 2;
-    const rotation = dir * (travelX / (2 * Math.PI * radius)) * 360;
     const duration = Math.max(0.9, travelX / 580);
 
     item.tl = gsap.timeline({ paused: true });
     item.tl.fromTo(item.wheel,
-        { x: 0, rotation: 0 },
-        { x: dir * travelX, rotation, ease: "power1.inOut", duration },
+        { x: 0 },
+        { x: dir * travelX, ease: "power1.inOut", duration },
         0
       )
       .fromTo(item.text,
-        { opacity: 0, yPercent: -50 },
-        { opacity: 1, yPercent: -50, ease: "power1.out", duration: duration * 0.5 },
+        { opacity: 0 },
+        { opacity: 1, ease: "power1.out", duration: duration * 0.5 },
         duration * 0.5
       );
 
@@ -2561,6 +2555,19 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
   }
 
   items.forEach(setup);
+
+  // El ancho del wheel depende de la imagen ya cargada (width:auto según su propia
+  // relación de aspecto). Si todavía no cargó cuando corrió el setup inicial, el
+  // travelX queda mal calculado y la animación se pasa de largo. Recalcular apenas
+  // cada imagen termine de cargar.
+  items.forEach((item) => {
+    const img = item.wheel.querySelector("img");
+    if (img && !img.complete) {
+      const resetup = () => setup(item);
+      img.addEventListener("load", resetup, { once: true });
+      img.addEventListener("error", resetup, { once: true });
+    }
+  });
 
   window.addEventListener("scroll", onScroll, { passive: true });
 
