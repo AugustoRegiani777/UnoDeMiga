@@ -74,7 +74,7 @@ const saboresData = [
   { id: "jamon-serrano", nombre: "Jamón serrano, rúcula y queso", categoria: "especiales", precio: 3.5, tags: ["cerdo"] },
   { id: "jamon-huevo", nombre: "Jamón y huevo", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
   { id: "huevo-queso", nombre: "Huevo y queso", categoria: "de-la-casa", precio: 3.8, tags: ["vegetariano"] },
-  { id: "atun-palta", nombre: "Atún, palta y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
+  { id: "atun-palta", nombre: "Atún, aguacate y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
   { id: "mortadela-pesto", nombre: "Mortadela, pesto y queso", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
 ];
 
@@ -126,19 +126,12 @@ const extrasData = extrasSections.flatMap((section) =>
   })),
 );
 
+// Precios de catering — igual que la caja física (Miga POS). `sabor.precio`
+// queda en precio de lista (igual a `preciosOriginales`); el descuento no es
+// un precio por unidad distinto, se aplica por paquete en recalculateTotals().
 const PRECIO_CATERING_DOCENA = 34;
-const PRECIO_CATERING_BASE = PRECIO_CATERING_DOCENA / 12;
-const PRECIO_CATERING_DELACASA_EXTRA = 0.30;
-
-saboresData.forEach((sabor) => {
-  if (sabor.categoria === "clasicos" || sabor.categoria === "especiales") {
-    sabor.precio = PRECIO_CATERING_BASE;
-  }
-
-  if (sabor.categoria === "de-la-casa") {
-    sabor.precio = PRECIO_CATERING_BASE + PRECIO_CATERING_DELACASA_EXTRA;
-  }
-});
+const PRECIO_CATERING_MEDIA_DOCENA = 19;
+const PRECIO_CATERING_PREMIUM_EXTRA = 0.30;
 
 const state = {
   currentStep: 1,
@@ -723,10 +716,42 @@ function distributeByWeight(entries, total) {
 }
 
 function recalculateTotals() {
-  state.subtotalSandwiches = saboresData.reduce(
-    (sum, sabor) => sum + state.saboresSeleccionados[sabor.id] * sabor.precio,
-    0,
-  );
+  // Replica la lógica de precios de la caja física (Miga POS): la cantidad
+  // total de sándwiches N se arma en docenas completas (34€), después una
+  // media docena si sobra (19€), y lo que no entra en ningún paquete se
+  // cobra suelto a precio de lista (`sabor.precio`). Cada sándwich "de la
+  // casa" (premium) que cae DENTRO de una docena o media docena suma +0,30€;
+  // si queda suelto ya paga su propio precio de lista más alto y no lleva
+  // el extra.
+  //
+  // El cotizador no tiene "orden de agregado" real (se elige una cantidad
+  // por sabor en una lista, no se van sumando unidades una por una). Para
+  // decidir qué unidades entran en el paquete y cuáles quedan sueltas se usa
+  // el orden en que están definidos los sabores en `saboresData` (arriba del
+  // archivo): todas las unidades del primer sabor, después las del segundo,
+  // etc.
+  const unidadesSandwich = saboresData.flatMap((sabor) => {
+    const cantidad = state.saboresSeleccionados[sabor.id] || 0;
+    return Array.from({ length: cantidad }, () => ({
+      precio: sabor.precio,
+      premium: sabor.categoria === "de-la-casa",
+    }));
+  });
+
+  const n = unidadesSandwich.length;
+  const docenas = Math.floor(n / 12);
+  const resto = n - docenas * 12;
+  const medias = Math.floor(resto / 6);
+  const enCombo = docenas * 12 + medias * 6;
+
+  const premiumEnCombo = unidadesSandwich.slice(0, enCombo).filter((u) => u.premium).length;
+  const sueltosTotal = unidadesSandwich.slice(enCombo).reduce((sum, u) => sum + u.precio, 0);
+
+  state.subtotalSandwiches =
+    docenas * PRECIO_CATERING_DOCENA +
+    medias * PRECIO_CATERING_MEDIA_DOCENA +
+    premiumEnCombo * PRECIO_CATERING_PREMIUM_EXTRA +
+    sueltosTotal;
 
   state.subtotalExtras = extrasData.reduce(
     (sum, extra) => sum + state.extrasSeleccionados[extra.id] * extra.precio,
@@ -2185,7 +2210,7 @@ const BOX_REGULAR_FLAVORS = [
 ];
 
 const BOX_DELACASA_FLAVORS = [
-  { id: "atun-palta",      name: "Atún, palta y queso" },
+  { id: "atun-palta",      name: "Atún, aguacate y queso" },
   { id: "huevo-queso",     name: "Huevo y queso" },
   { id: "huevo-jamon",     name: "Huevo y jamón" },
   { id: "mortadela-pesto", name: "Mortadela, pesto y queso" },
@@ -2490,6 +2515,40 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
       const body = document.getElementById(btn.getAttribute("aria-controls"));
       btn.setAttribute("aria-expanded", String(!isOpen));
       body.hidden = isOpen;
+    });
+  });
+})();
+
+(function initAnchorScroll() {
+  // El topbar + nav son sticky y tapan la parte de arriba de la pantalla.
+  // El salto nativo del navegador (href="#seccion") no sabe restarle ese
+  // espacio, así que la sección queda escondida detrás. Acá medimos la
+  // altura real del header en el momento del click (cambia según el ancho
+  // de pantalla) y scrolleamos exactamente hasta que el título de la
+  // sección quede visible justo debajo.
+  const header = document.querySelector(".site-header");
+  const links = document.querySelectorAll('a[href^="#"]:not([href="#"])');
+  if (!header || !links.length) return;
+
+  links.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      const id = link.getAttribute("href").slice(1);
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      event.preventDefault();
+      // Apuntamos al primer elemento de título dentro de la sección (el
+      // "kicker" tipo CATERING/OFFICE, o si no hay, el h1/h2), no al
+      // contenedor entero: en layouts de dos columnas el título a veces
+      // queda centrado verticalmente y no arranca en el borde superior de
+      // la sección. El kicker a veces va antes del h2 y a veces después
+      // según la sección, así que se usa el que aparezca primero en el DOM.
+      const heading = target.querySelector(".kicker, h1, h2") || target;
+      const headerBottom = header.getBoundingClientRect().bottom;
+      const targetTop = heading.getBoundingClientRect().top + window.scrollY;
+      const offset = targetTop - headerBottom - 12;
+      window.scrollTo({ top: Math.max(0, offset), behavior: "smooth" });
+      history.pushState(null, "", `#${id}`);
     });
   });
 })();
