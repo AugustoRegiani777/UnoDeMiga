@@ -2636,3 +2636,56 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
     resizeTimer = setTimeout(() => items.forEach(setup), 200);
   });
 })();
+
+(function initAnalyticsConsent() {
+  // Google Analytics solo se carga si el usuario acepta las cookies
+  // (RGPD/LSSI). La decisión queda guardada en localStorage para no
+  // volver a preguntar en visitas futuras.
+  const GA_MEASUREMENT_ID = "G-7QKHPSL7RF";
+  const STORAGE_KEY = "uno-de-miga-cookie-consent"; // "accepted" | "rejected"
+
+  const banner = document.getElementById("cookie-consent-banner");
+  const acceptBtn = document.getElementById("cookie-consent-accept");
+  const rejectBtn = document.getElementById("cookie-consent-reject");
+  if (!banner || !acceptBtn || !rejectBtn) return;
+
+  function loadGoogleAnalytics() {
+    if (window.gaLoaded) return;
+    window.gaLoaded = true;
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag("js", new Date());
+    gtag("config", GA_MEASUREMENT_ID);
+  }
+
+  let storedChoice;
+  try {
+    storedChoice = localStorage.getItem(STORAGE_KEY);
+  } catch (e) {
+    storedChoice = null;
+  }
+
+  if (storedChoice === "accepted") {
+    loadGoogleAnalytics();
+  } else if (storedChoice !== "rejected") {
+    banner.hidden = false;
+  }
+
+  acceptBtn.addEventListener("click", () => {
+    try { localStorage.setItem(STORAGE_KEY, "accepted"); } catch (e) { /* noop */ }
+    banner.hidden = true;
+    loadGoogleAnalytics();
+  });
+
+  rejectBtn.addEventListener("click", () => {
+    try { localStorage.setItem(STORAGE_KEY, "rejected"); } catch (e) { /* noop */ }
+    banner.hidden = true;
+  });
+})();

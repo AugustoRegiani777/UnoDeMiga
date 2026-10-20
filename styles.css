@@ -2463,6 +2463,63 @@ h3 {
   fill: #fff;
 }
 
+.cookie-consent-banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 18px 22px;
+  border-radius: 18px;
+  background: var(--text);
+  color: var(--cream);
+  box-shadow: var(--shadow);
+}
+
+.cookie-consent-banner[hidden] {
+  display: none;
+}
+
+.cookie-consent-text {
+  margin: 0;
+  flex: 1 1 260px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.cookie-consent-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .cookie-consent-banner {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .cookie-consent-actions {
+    justify-content: center;
+  }
+
+  .cookie-consent-actions .button {
+    flex: 1 1 0;
+  }
+}
+
 .floating-maps {
   position: fixed;
   right: 16px;
