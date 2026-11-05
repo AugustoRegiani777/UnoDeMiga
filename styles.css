@@ -524,6 +524,11 @@ h3 {
   color: rgba(242, 236, 228, 0.7);
 }
 
+.hero-promo-label small {
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
 .hero-promo-price {
   font-family: "Archivo Black", sans-serif;
   font-size: 0.88rem;
@@ -2506,17 +2511,30 @@ h3 {
     right: 10px;
     bottom: 10px;
     padding: 16px;
+    gap: 12px;
+    border-radius: 16px;
     flex-direction: column;
     align-items: stretch;
     text-align: center;
   }
 
+  .cookie-consent-text {
+    /* En fila, flex-basis reserva ancho; en columna (acá) el mismo valor
+       se vuelve alto mínimo y el banner queda gigante — hay que anularlo. */
+    flex: none;
+    font-size: 0.8rem;
+  }
+
   .cookie-consent-actions {
     justify-content: center;
+    gap: 8px;
   }
 
   .cookie-consent-actions .button {
     flex: 1 1 0;
+    min-height: 40px;
+    padding: 0 10px;
+    font-size: 0.74rem;
   }
 }
 
