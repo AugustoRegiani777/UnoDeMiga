@@ -2400,16 +2400,18 @@ const boxSel = {
     const priceHtml = listPrice > finalPrice
       ? `<span class="office-price-old">${formatEUR(listPrice)} €</span> ${formatEUR(finalPrice)} €`
       : `${formatEUR(finalPrice)} €`;
-    // En el paso de sabores el conteo y el desglose ya se muestran arriba,
-    // fijos, en la cabecera de la lista — acá solo hace falta avisar si
-    // todavía no se llegó al mínimo.
+    // En sabores el desglose ya se muestra arriba, fijo, y en resumen el
+    // precio final ya se muestra en el cuerpo — repetirlo acá abajo es
+    // redundante. Solo hace falta avisar si todavía falta para el mínimo.
     this.refs.counter.innerHTML = stepId === "sabores"
       ? remaining > 0
         ? remaining === 1
           ? "Falta 1 sándwich para el descuento"
           : `Faltan ${remaining} sándwiches para el descuento`
         : ""
-      : priceHtml;
+      : stepId === "resumen"
+        ? ""
+        : priceHtml;
     this.refs.prev.hidden = step === 0;
     this.refs.next.textContent = step === BSX_STEPS.length - 1 ? "Confirmar por WhatsApp" : "Siguiente";
 
@@ -2450,17 +2452,26 @@ const boxSel = {
         </li>`;
     }).join("");
 
+    // El número grande solo hace falta mientras no hay ninguna fila de
+    // descuento todavía (si ya hay filas, repetirían el mismo conteo).
+    const cartRows = this.cartRowsHtml();
+    const liveCount = cartRows ? "" : `
+      <div class="bsx-live-count">
+        <span class="bsx-live-count-number">${total}</span>
+        <span class="bsx-live-count-label">sándwiches<br>en tu pedido</span>
+      </div>`;
+    const hint = box.extendable
+      ? cartRows
+        ? "Podés seguir sumando: cada 6 o 12 más entran en otro paquete con descuento."
+        : `Elegí al menos ${box.total} para activar el descuento.`
+      : `Elegí tus ${box.total} sándwiches a gusto.`;
+
     this.refs.body.innerHTML = `
       <div class="bsx-step-header bsx-step-header-sticky">
-        <div class="bsx-live-count">
-          <span class="bsx-live-count-number">${total}</span>
-          <span class="bsx-live-count-label">sándwiches<br>en tu pedido</span>
-        </div>
-        ${this.cartRowsHtml()}
+        ${liveCount}
+        ${cartRows}
         <p class="bsx-step-label">Elegí tus sabores</p>
-        <p class="bsx-step-hint">${box.extendable
-          ? `Mínimo ${box.total} sándwiches para el descuento. Podés sumar más: cada 6 o 12 extra entran en otro paquete con descuento.`
-          : `Modificá la selección a tu gusto. Total: ${box.total} sándwiches.`}</p>
+        <p class="bsx-step-hint">${hint}</p>
       </div>
       <ul class="bsx-flavor-list">${regularItems}</ul>
       <div class="bsx-delacasa-header">

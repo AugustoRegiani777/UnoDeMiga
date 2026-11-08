@@ -4341,6 +4341,8 @@ h3 {
 }
 
 .promo-modal-price {
+  flex-shrink: 0;
+  white-space: nowrap;
   font-family: "Archivo Black", sans-serif;
   color: var(--orange-dark);
 }
@@ -6053,7 +6055,7 @@ body.has-box-modal { overflow: hidden; }
 
 .promo-cart-row-label { font-weight: 700; color: var(--text); }
 
-.promo-cart-row-price { font-family: "Archivo Black", sans-serif; color: var(--orange-dark); }
+.promo-cart-row-price { flex-shrink: 0; white-space: nowrap; font-family: "Archivo Black", sans-serif; color: var(--orange-dark); }
 
 .promo-cart-row-loose {
   background: transparent;
