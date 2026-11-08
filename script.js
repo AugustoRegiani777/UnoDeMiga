@@ -2189,7 +2189,7 @@ document.addEventListener("click", (event) => {
 const BOX_CONFIGS = {
   daily:     { name: "Box Daily",     price: 19,  total: 6  },
   meeting:   { name: "Box Meeting",   price: 34,  total: 12 },
-  executive: { name: "Box Executive", price: 67,  total: 24 },
+  executive: { name: "Box Executive", price: 68,  total: 24 },
 };
 
 // Preset amounts para Docena (12). Se escala proporcional al total de la box.
