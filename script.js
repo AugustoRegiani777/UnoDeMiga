@@ -715,21 +715,64 @@ function distributeByWeight(entries, total) {
   return distribution;
 }
 
+// Replica la lógica de precios de la caja física (Miga POS): la cantidad
+// total de sándwiches N se arma en docenas completas (34€), después una
+// media docena si sobra (19€), y lo que no entra en ningún paquete se
+// cobra suelto a precio de lista (`unidad.precio`). Cada sándwich "de la
+// casa" (premium) que cae DENTRO de una docena o media docena suma +0,30€;
+// si queda suelto ya paga su propio precio de lista más alto y no lleva
+// el extra.
+//
+// No hay "orden de agregado" real (se elige una cantidad por sabor en una
+// lista, no se van sumando unidades una por una). Para decidir qué unidades
+// entran en el paquete y cuáles quedan sueltas se usa el orden en que están
+// definidos los sabores en la lista de origen: todas las unidades del
+// primer sabor, después las del segundo, etc.
+// Devuelve el desglose en paquetes (para mostrarlo como líneas de carrito,
+// cada una con su propio precio de lista tachado) además del total. Mantiene
+// la misma matemática que antes: el total da exactamente igual.
+function computeSandwichBucketBreakdown(unidadesSandwich) {
+  const n = unidadesSandwich.length;
+  const docenas = Math.floor(n / 12);
+  const resto = n - docenas * 12;
+  const medias = Math.floor(resto / 6);
+  const sueltosCount = resto - medias * 6;
+
+  let docenaRow = null;
+  if (docenas > 0) {
+    const slice = unidadesSandwich.slice(0, docenas * 12);
+    const premium = slice.filter((u) => u.premium).length;
+    docenaRow = {
+      count: docenas * 12,
+      listPrice: slice.reduce((sum, u) => sum + u.precio, 0),
+      price: docenas * PRECIO_CATERING_DOCENA + premium * PRECIO_CATERING_PREMIUM_EXTRA,
+    };
+  }
+
+  let mediaRow = null;
+  if (medias > 0) {
+    const slice = unidadesSandwich.slice(docenas * 12, docenas * 12 + 6);
+    const premium = slice.filter((u) => u.premium).length;
+    mediaRow = {
+      count: 6,
+      listPrice: slice.reduce((sum, u) => sum + u.precio, 0),
+      price: PRECIO_CATERING_MEDIA_DOCENA + premium * PRECIO_CATERING_PREMIUM_EXTRA,
+    };
+  }
+
+  const sueltosUnidades = unidadesSandwich.slice(docenas * 12 + medias * 6);
+  const sueltosTotal = sueltosUnidades.reduce((sum, u) => sum + u.precio, 0);
+
+  const total = (docenaRow ? docenaRow.price : 0) + (mediaRow ? mediaRow.price : 0) + sueltosTotal;
+
+  return { docenaRow, mediaRow, sueltosCount, sueltosTotal, total };
+}
+
+function computeSandwichBucketPrice(unidadesSandwich) {
+  return computeSandwichBucketBreakdown(unidadesSandwich).total;
+}
+
 function recalculateTotals() {
-  // Replica la lógica de precios de la caja física (Miga POS): la cantidad
-  // total de sándwiches N se arma en docenas completas (34€), después una
-  // media docena si sobra (19€), y lo que no entra en ningún paquete se
-  // cobra suelto a precio de lista (`sabor.precio`). Cada sándwich "de la
-  // casa" (premium) que cae DENTRO de una docena o media docena suma +0,30€;
-  // si queda suelto ya paga su propio precio de lista más alto y no lleva
-  // el extra.
-  //
-  // El cotizador no tiene "orden de agregado" real (se elige una cantidad
-  // por sabor en una lista, no se van sumando unidades una por una). Para
-  // decidir qué unidades entran en el paquete y cuáles quedan sueltas se usa
-  // el orden en que están definidos los sabores en `saboresData` (arriba del
-  // archivo): todas las unidades del primer sabor, después las del segundo,
-  // etc.
   const unidadesSandwich = saboresData.flatMap((sabor) => {
     const cantidad = state.saboresSeleccionados[sabor.id] || 0;
     return Array.from({ length: cantidad }, () => ({
@@ -738,20 +781,7 @@ function recalculateTotals() {
     }));
   });
 
-  const n = unidadesSandwich.length;
-  const docenas = Math.floor(n / 12);
-  const resto = n - docenas * 12;
-  const medias = Math.floor(resto / 6);
-  const enCombo = docenas * 12 + medias * 6;
-
-  const premiumEnCombo = unidadesSandwich.slice(0, enCombo).filter((u) => u.premium).length;
-  const sueltosTotal = unidadesSandwich.slice(enCombo).reduce((sum, u) => sum + u.precio, 0);
-
-  state.subtotalSandwiches =
-    docenas * PRECIO_CATERING_DOCENA +
-    medias * PRECIO_CATERING_MEDIA_DOCENA +
-    premiumEnCombo * PRECIO_CATERING_PREMIUM_EXTRA +
-    sueltosTotal;
+  state.subtotalSandwiches = computeSandwichBucketPrice(unidadesSandwich);
 
   state.subtotalExtras = extrasData.reduce(
     (sum, extra) => sum + state.extrasSeleccionados[extra.id] * extra.precio,
@@ -2202,23 +2232,33 @@ const BOX_REGULAR_PRESET = {
 };
 
 const BOX_REGULAR_FLAVORS = [
-  { id: "jamon-queso", name: "Jamón y queso" },
-  { id: "pasta-oliva", name: "Pasta de oliva y queso" },
-  { id: "pimiento",    name: "Pimiento asado, queso gouda y Philadelphia" },
-  { id: "pesto",       name: "Pesto, tomate y queso" },
-  { id: "serrano",     name: "Jamón serrano, rúcula y queso" },
+  { id: "jamon-queso", name: "Jamón y queso",                               precio: 3.5 },
+  { id: "pasta-oliva", name: "Pasta de oliva y queso",                      precio: 3.5 },
+  { id: "pimiento",    name: "Pimiento asado, queso gouda y Philadelphia",  precio: 3.5 },
+  { id: "pesto",       name: "Pesto, tomate y queso",                       precio: 3.5 },
+  { id: "serrano",     name: "Jamón serrano, rúcula y queso",               precio: 3.5 },
 ];
 
 const BOX_DELACASA_FLAVORS = [
-  { id: "atun-palta",      name: "Atún, aguacate y queso" },
-  { id: "huevo-queso",     name: "Huevo y queso" },
-  { id: "huevo-jamon",     name: "Huevo y jamón" },
-  { id: "mortadela-pesto", name: "Mortadela, pesto y queso" },
-  { id: "especial-semana", name: "Especial de la semana" },
+  { id: "atun-palta",      name: "Atún, aguacate y queso",   precio: 3.8 },
+  { id: "huevo-queso",     name: "Huevo y queso",            precio: 3.8 },
+  { id: "huevo-jamon",     name: "Huevo y jamón",            precio: 3.8 },
+  { id: "mortadela-pesto", name: "Mortadela, pesto y queso", precio: 3.8 },
+  { id: "especial-semana", name: "Especial de la semana",    precio: 3.8 },
+];
+
+// Complementos que se pueden sumar al pedido de sándwiches, después de
+// elegir los sabores. No tienen descuento por cantidad.
+const BOX_EXTRAS = [
+  { id: "chipa",      name: "Chipá",            precio: 1   },
+  { id: "chocotorta", name: "Chocotorta",       precio: 3.5 },
+  { id: "alfajor",    name: "Alfajor Havanna",  precio: 3   },
+  { id: "bebida",     name: "Bebida",           precio: 2   },
 ];
 
 const BSX_STEPS = [
   { id: "sabores",  label: "Sabores" },
+  { id: "extras",   label: "Complementos" },
   { id: "opciones", label: "Opciones" },
   { id: "resumen",  label: "Resumen" },
 ];
@@ -2231,11 +2271,13 @@ function bsxBuildPreset(box) {
   });
   const delaCasa = {};
   BOX_DELACASA_FLAVORS.forEach((f) => { delaCasa[f.id] = 0; });
-  return { regular, delaCasa };
+  const extras = {};
+  BOX_EXTRAS.forEach((e) => { extras[e.id] = 0; });
+  return { regular, delaCasa, extras };
 }
 
 const boxSel = {
-  state: { box: null, step: 0, regular: {}, delaCasa: {}, mitades: false, dia: "" },
+  state: { box: null, step: 0, regular: {}, delaCasa: {}, extras: {}, mitades: false, dia: "" },
   refs: {},
 
   init() {
@@ -2263,11 +2305,11 @@ const boxSel = {
     });
   },
 
-  open(boxId) {
-    const config = BOX_CONFIGS[boxId];
+  open(boxOrId) {
+    const config = typeof boxOrId === "string" ? BOX_CONFIGS[boxOrId] : boxOrId;
     if (!config) return;
     const preset = bsxBuildPreset(config);
-    this.state = { box: config, step: 0, regular: preset.regular, delaCasa: preset.delaCasa, mitades: false, dia: "" };
+    this.state = { box: config, step: 0, regular: preset.regular, delaCasa: preset.delaCasa, extras: preset.extras, mitades: false, dia: "" };
     this.refs.title.textContent = config.name;
     this.refs.modal.hidden = false;
     document.body.classList.add("has-box-modal");
@@ -2283,7 +2325,57 @@ const boxSel = {
   totalDelaCasa() { return Object.values(this.state.delaCasa).reduce((a, b) => a + b, 0); },
   totalAll()      { return this.totalRegular() + this.totalDelaCasa(); },
   extraCost()     { return this.totalDelaCasa() * 0.30; },
-  finalPrice()    { return this.state.box.price + this.extraCost(); },
+
+  // En modo "extendable" (Docena/Media docena por encargo) no hay un precio
+  // de box fijo: se puede seguir agregando de a 1, a precio de lista, hasta
+  // completar otra media docena o docena y volver a entrar en descuento —
+  // misma lógica de paquetes que el cotizador de catering.
+  unidadesSandwich() {
+    const { regular, delaCasa } = this.state;
+    const regUnits = BOX_REGULAR_FLAVORS.flatMap((f) =>
+      Array.from({ length: regular[f.id] || 0 }, () => ({ precio: f.precio, premium: false })),
+    );
+    const casaUnits = BOX_DELACASA_FLAVORS.flatMap((f) =>
+      Array.from({ length: delaCasa[f.id] || 0 }, () => ({ precio: f.precio, premium: true })),
+    );
+    return [...regUnits, ...casaUnits];
+  },
+
+  breakdown() { return computeSandwichBucketBreakdown(this.unidadesSandwich()); },
+
+  extrasTotal() {
+    return Object.entries(this.state.extras).reduce((sum, [id, qty]) => {
+      const extra = BOX_EXTRAS.find((e) => e.id === id);
+      return sum + qty * (extra ? extra.precio : 0);
+    }, 0);
+  },
+
+  finalPrice() {
+    const base = this.state.box.extendable
+      ? this.breakdown().total
+      : this.state.box.price + this.extraCost();
+    return base + this.extrasTotal();
+  },
+
+  // Precio de lista de lo elegido (sin descuento) — vale tanto para los
+  // packs fijos de Office como para Docena/Media docena, para mostrar el
+  // precio tachado cuando hay descuento. Los complementos no tienen
+  // descuento, así que suman igual a ambos lados.
+  listPrice() {
+    return this.unidadesSandwich().reduce((sum, u) => sum + u.precio, 0) + this.extrasTotal();
+  },
+
+  // Filas de carrito: una por paquete de descuento alcanzado, más los
+  // sueltos que todavía no completaron el próximo paquete.
+  cartRowsHtml() {
+    if (!this.state.box.extendable) return "";
+    const { docenaRow, mediaRow, sueltosCount, sueltosTotal } = this.breakdown();
+    const rows = [];
+    if (docenaRow) rows.push(cartRowHtml(`${docenaRow.count} sándwiches`, docenaRow.listPrice, docenaRow.price));
+    if (mediaRow)  rows.push(cartRowHtml(`${mediaRow.count} sándwiches`, mediaRow.listPrice, mediaRow.price));
+    if (sueltosCount > 0) rows.push(cartLooseRowHtml(`+${sueltosCount} suelto${sueltosCount > 1 ? "s" : ""}`, sueltosTotal));
+    return rows.length ? `<ul class="promo-cart-rows">${rows.join("")}</ul>` : "";
+  },
 
   advance() {
     const { step } = this.state;
@@ -2300,27 +2392,37 @@ const boxSel = {
 
   render() {
     const { step, box } = this.state;
+    const stepId = BSX_STEPS[step].id;
     const total = this.totalAll();
     const remaining = box.total - total;
     const finalPrice = this.finalPrice();
-    const priceStr = finalPrice % 1 === 0 ? `${finalPrice}` : finalPrice.toFixed(2).replace(".", ",");
-    this.refs.counter.textContent = step === 0
+    const listPrice = this.listPrice();
+    const priceHtml = listPrice > finalPrice
+      ? `<span class="office-price-old">${formatEUR(listPrice)} €</span> ${formatEUR(finalPrice)} €`
+      : `${formatEUR(finalPrice)} €`;
+    // En el paso de sabores el conteo y el desglose ya se muestran arriba,
+    // fijos, en la cabecera de la lista — acá solo hace falta avisar si
+    // todavía no se llegó al mínimo.
+    this.refs.counter.innerHTML = stepId === "sabores"
       ? remaining > 0
-        ? `${total} sándwiches, faltan ${remaining} · ${priceStr} €`
-        : `${total} sándwiches · ${priceStr} €`
-      : "";
+        ? remaining === 1
+          ? "Falta 1 sándwich para el descuento"
+          : `Faltan ${remaining} sándwiches para el descuento`
+        : ""
+      : priceHtml;
     this.refs.prev.hidden = step === 0;
     this.refs.next.textContent = step === BSX_STEPS.length - 1 ? "Confirmar por WhatsApp" : "Siguiente";
 
-    if (step === 0)      this.renderSabores();
-    else if (step === 1) this.renderOpciones();
-    else                 this.renderResumen();
+    if (stepId === "sabores")       this.renderSabores();
+    else if (stepId === "extras")   this.renderExtras();
+    else if (stepId === "opciones") this.renderOpciones();
+    else                             this.renderResumen();
   },
 
   renderSabores() {
     const { box, regular, delaCasa } = this.state;
     const total = this.totalAll();
-    const canAdd = total < box.total;
+    const canAdd = box.extendable || total < box.total;
 
     const regularItems = BOX_REGULAR_FLAVORS.map((f) => {
       const qty = regular[f.id] || 0;
@@ -2349,9 +2451,16 @@ const boxSel = {
     }).join("");
 
     this.refs.body.innerHTML = `
-      <div class="bsx-step-header">
+      <div class="bsx-step-header bsx-step-header-sticky">
+        <div class="bsx-live-count">
+          <span class="bsx-live-count-number">${total}</span>
+          <span class="bsx-live-count-label">sándwiches<br>en tu pedido</span>
+        </div>
+        ${this.cartRowsHtml()}
         <p class="bsx-step-label">Elegí tus sabores</p>
-        <p class="bsx-step-hint">Modificá la selección a tu gusto. Total: ${box.total} sándwiches.</p>
+        <p class="bsx-step-hint">${box.extendable
+          ? `Mínimo ${box.total} sándwiches para el descuento. Podés sumar más: cada 6 o 12 extra entran en otro paquete con descuento.`
+          : `Modificá la selección a tu gusto. Total: ${box.total} sándwiches.`}</p>
       </div>
       <ul class="bsx-flavor-list">${regularItems}</ul>
       <div class="bsx-delacasa-header">
@@ -2366,8 +2475,41 @@ const boxSel = {
         const sel = cat === "regular" ? this.state.regular : this.state.delaCasa;
         const cur = sel[id] || 0;
         const tot = this.totalAll();
-        if (action === "inc" && tot < box.total) sel[id] = cur + 1;
+        if (action === "inc" && (box.extendable || tot < box.total)) sel[id] = cur + 1;
         if (action === "dec" && cur > 0)         sel[id] = cur - 1;
+        this.render();
+      });
+    });
+  },
+
+  renderExtras() {
+    const { extras } = this.state;
+    const items = BOX_EXTRAS.map((e) => {
+      const qty = extras[e.id] || 0;
+      return `
+        <li class="bsx-flavor-item">
+          <span class="bsx-flavor-name">${e.name} <span class="bsx-extra-price">${formatEUR(e.precio)} € c/u</span></span>
+          <div class="bsx-counter">
+            <button class="bsx-counter-btn" type="button" data-extra="${e.id}" data-action="dec" ${qty === 0 ? "disabled" : ""}>−</button>
+            <span class="bsx-counter-val">${qty}</span>
+            <button class="bsx-counter-btn" type="button" data-extra="${e.id}" data-action="inc">+</button>
+          </div>
+        </li>`;
+    }).join("");
+
+    this.refs.body.innerHTML = `
+      <div class="bsx-step-header">
+        <p class="bsx-step-label">¿Sumás algún complemento?</p>
+        <p class="bsx-step-hint">Chipá, chocotorta, alfajores o bebidas — se suman al pedido sin descuento.</p>
+      </div>
+      <ul class="bsx-flavor-list">${items}</ul>`;
+
+    this.refs.body.querySelectorAll("[data-extra]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const { extra: id, action } = btn.dataset;
+        const cur = extras[id] || 0;
+        if (action === "inc") extras[id] = cur + 1;
+        if (action === "dec" && cur > 0) extras[id] = cur - 1;
         this.render();
       });
     });
@@ -2393,7 +2535,7 @@ const boxSel = {
   },
 
   renderResumen() {
-    const { box, regular, delaCasa, mitades, dia } = this.state;
+    const { box, regular, delaCasa, extras, mitades, dia } = this.state;
     const extraCost = this.extraCost();
     const finalPrice = this.finalPrice();
 
@@ -2411,9 +2553,21 @@ const boxSel = {
         return `<li>${q}× ${f ? f.name : id}</li>`;
       }).join("");
 
-    const priceBreakdown = extraCost > 0
+    const extrasLines = Object.entries(extras)
+      .filter(([, q]) => q > 0)
+      .map(([id, q]) => {
+        const e = BOX_EXTRAS.find((x) => x.id === id);
+        return `<li>${q}× ${e ? e.name : id} — ${formatEUR((e ? e.precio : 0) * q)} €</li>`;
+      }).join("");
+
+    const priceBreakdown = !box.extendable && extraCost > 0
       ? `<p class="bsx-summary-extra">${box.price} € + ${extraCost.toFixed(2).replace(".", ",")} € (de la casa)</p>`
       : "";
+
+    const listPrice = this.listPrice();
+    const priceHtml = listPrice > finalPrice
+      ? `<span class="office-price-old">${formatEUR(listPrice)} €</span> ${formatEUR(finalPrice)} €`
+      : `${formatEUR(finalPrice)} €`;
 
     this.refs.body.innerHTML = `
       <div class="bsx-step-header">
@@ -2421,20 +2575,22 @@ const boxSel = {
       </div>
       <div class="bsx-summary">
         <p class="bsx-summary-box">${box.name}</p>
+        ${this.cartRowsHtml()}
         ${regularLines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">Sándwiches</p><ul>${regularLines}</ul></div>` : ""}
         ${delaCasaLines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">De la casa (+0,30 €)</p><ul>${delaCasaLines}</ul></div>` : ""}
+        ${extrasLines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">Complementos</p><ul>${extrasLines}</ul></div>` : ""}
         <p class="bsx-summary-extra">${mitades ? "✂ Cortados a la mitad" : "Enteros"}</p>
         ${dia ? `<p class="bsx-summary-extra">Entrega: ${dia}</p>` : ""}
         ${priceBreakdown}
-        <p class="bsx-summary-price">${finalPrice % 1 === 0 ? finalPrice : finalPrice.toFixed(2).replace(".", ",")} €</p>
+        <p class="bsx-summary-price">${priceHtml}</p>
       </div>`;
   },
 
   buildMessage() {
-    const { box, regular, delaCasa, mitades, dia } = this.state;
+    const { box, regular, delaCasa, extras, mitades, dia } = this.state;
     const finalPrice = this.finalPrice();
-    const priceStr = finalPrice % 1 === 0 ? `${finalPrice}` : finalPrice.toFixed(2).replace(".", ",");
-    const lines = [`¡Hola! Quiero pedir el ${box.name} — ${priceStr} €.`, ""];
+    const priceStr = formatEUR(finalPrice);
+    const lines = [`¡Hola! Quiero pedir ${box.name} — ${priceStr} €.`, ""];
 
     const regularEntries = Object.entries(regular).filter(([, q]) => q > 0);
     if (regularEntries.length) {
@@ -2456,6 +2612,16 @@ const boxSel = {
       lines.push("");
     }
 
+    const extrasEntries = Object.entries(extras).filter(([, q]) => q > 0);
+    if (extrasEntries.length) {
+      lines.push("*Complementos*");
+      extrasEntries.forEach(([id, q]) => {
+        const e = BOX_EXTRAS.find((x) => x.id === id);
+        lines.push(`• ${q}× ${e ? e.name : id} — ${formatEUR((e ? e.precio : 0) * q)} €`);
+      });
+      lines.push("");
+    }
+
     lines.push(mitades ? "Los quiero cortados a la mitad." : "Los quiero enteros.");
     if (dia) lines.push(`Día de entrega: ${dia}`);
     return lines.join("\n");
@@ -2469,6 +2635,110 @@ const boxSel = {
 };
 
 document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
+
+const PRICE_MEDIALUNA_UNIT = 2.5;
+const PRICE_MEDIALUNA_DOCENA = 24;
+
+function formatEUR(n) { return n % 1 === 0 ? `${n}` : n.toFixed(2).replace(".", ","); }
+
+// Fila de carrito compartida entre el selector de sándwiches y el de
+// medialunas: un paquete con descuento (precio de lista tachado) o un
+// renglón de sueltos sin descuento todavía.
+function cartRowHtml(label, listPrice, price) {
+  const priceHtml = listPrice > price
+    ? `<span class="office-price-old">${formatEUR(listPrice)} €</span> ${formatEUR(price)} €`
+    : `${formatEUR(price)} €`;
+  return `
+    <li class="promo-cart-row">
+      <span class="promo-cart-row-label">${label}</span>
+      <span class="promo-cart-row-price">${priceHtml}</span>
+    </li>`;
+}
+
+function cartLooseRowHtml(label, total) {
+  return `
+    <li class="promo-cart-row promo-cart-row-loose">
+      <span class="promo-cart-row-label">${label}</span>
+      <span class="promo-cart-row-price">${formatEUR(total)} €</span>
+    </li>`;
+}
+
+const medialunaSel = {
+  state: { count: 12 },
+  refs: {},
+
+  init() {
+    const modal = document.getElementById("medialuna-modal");
+    if (!modal) return;
+    this.refs = {
+      modal,
+      backdrop: document.getElementById("medialuna-modal-backdrop"),
+      close:    document.getElementById("medialuna-modal-close"),
+      dec:      document.getElementById("medialuna-dec"),
+      inc:      document.getElementById("medialuna-inc"),
+      count:    document.getElementById("medialuna-count"),
+      cartRows: document.getElementById("medialuna-cart-rows"),
+      confirm:  document.getElementById("medialuna-confirm"),
+    };
+    this.refs.backdrop.addEventListener("click", () => this.close());
+    this.refs.close.addEventListener("click",    () => this.close());
+    this.refs.dec.addEventListener("click", () => this.setCount(this.state.count - 1));
+    this.refs.inc.addEventListener("click", () => this.setCount(this.state.count + 1));
+    this.refs.confirm.addEventListener("click", () => this.sendToWhatsApp());
+  },
+
+  open() {
+    this.state.count = 12;
+    this.refs.modal.hidden = false;
+    document.body.classList.add("has-promo-modal");
+    this.render();
+  },
+
+  close() {
+    this.refs.modal.hidden = true;
+    document.body.classList.remove("has-promo-modal");
+  },
+
+  setCount(n) {
+    this.state.count = Math.max(1, n);
+    this.render();
+  },
+
+  // Cada bloque de 12 paga precio de docena; el resto, precio por unidad.
+  breakdown() {
+    const n = this.state.count;
+    const docenas = Math.floor(n / 12);
+    const sueltosCount = n - docenas * 12;
+    const docenaRow = docenas > 0
+      ? { count: docenas * 12, listPrice: docenas * 12 * PRICE_MEDIALUNA_UNIT, price: docenas * PRICE_MEDIALUNA_DOCENA }
+      : null;
+    const sueltosTotal = sueltosCount * PRICE_MEDIALUNA_UNIT;
+    return { docenaRow, sueltosCount, sueltosTotal };
+  },
+
+  price() {
+    const { docenaRow, sueltosTotal } = this.breakdown();
+    return (docenaRow ? docenaRow.price : 0) + sueltosTotal;
+  },
+
+  render() {
+    this.refs.count.textContent = this.state.count;
+    const { docenaRow, sueltosCount, sueltosTotal } = this.breakdown();
+    const rows = [];
+    if (docenaRow) rows.push(cartRowHtml(`${docenaRow.count} medialunas`, docenaRow.listPrice, docenaRow.price));
+    if (sueltosCount > 0) rows.push(cartLooseRowHtml(`+${sueltosCount} suelta${sueltosCount > 1 ? "s" : ""}`, sueltosTotal));
+    this.refs.cartRows.innerHTML = rows.join("");
+  },
+
+  sendToWhatsApp() {
+    const priceStr = formatEUR(this.price());
+    const text = `¡Hola! Quiero pedir ${this.state.count} medialunas — ${priceStr} €.`;
+    window.open(`https://wa.me/34641514569?text=${encodeURIComponent(text)}`, "_blank", "noreferrer");
+    this.close();
+  },
+};
+
+document.addEventListener("DOMContentLoaded", () => { medialunaSel.init(); });
 
 
 (function initHeroNews() {
@@ -2498,14 +2768,49 @@ document.addEventListener("DOMContentLoaded", () => { boxSel.init(); });
     });
   });
 
-  // Tap anywhere on the card to advance to next slide (not on CTA links)
+  // Tap anywhere on the card to advance to next slide (not on CTA links/buttons)
   track.addEventListener("click", (e) => {
-    if (e.target.closest("a")) return;
+    if (e.target.closest("a, button")) return;
     goTo(current + 1);
     startTimer();
   });
 
   startTimer();
+})();
+
+(function initPromoModal() {
+  const modal = document.getElementById("promo-modal");
+  const openBtn = document.getElementById("hero-promo-open");
+  const closeBtn = document.getElementById("promo-modal-close");
+  const backdrop = document.getElementById("promo-modal-backdrop");
+  const menuLink = document.getElementById("promo-modal-menu-link");
+  const items = document.querySelectorAll(".promo-modal-item");
+  if (!modal || !openBtn) return;
+
+  function open() {
+    modal.hidden = false;
+    document.body.classList.add("has-promo-modal");
+  }
+
+  function close() {
+    modal.hidden = true;
+    document.body.classList.remove("has-promo-modal");
+  }
+
+  openBtn.addEventListener("click", open);
+  closeBtn?.addEventListener("click", close);
+  backdrop?.addEventListener("click", close);
+  menuLink?.addEventListener("click", close);
+
+  items.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      close();
+      const promo = btn.dataset.promo;
+      if (promo === "daily") boxSel.open({ ...BOX_CONFIGS.daily, name: "Media docena", extendable: true });
+      else if (promo === "meeting") boxSel.open({ ...BOX_CONFIGS.meeting, name: "Docena", extendable: true });
+      else if (promo === "medialunas") medialunaSel.open();
+    });
+  });
 })();
 
 (function initMenuGroups() {

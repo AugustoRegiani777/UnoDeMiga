@@ -103,14 +103,14 @@
 
               <div class="hero-news-slide is-active" data-slide="0">
                 <span class="hero-news-tag">Novedades</span>
-                <p class="hero-news-headline">Docena y media docena, por encargo</p>
-                <p class="hero-news-desc">El producto y también los precios, porque queremos que disfrutes seguido.</p>
+                <p class="hero-news-headline">Ahorrá pidiendo con anticipación</p>
+                <p class="hero-news-desc">Hacé tu pedido con 12hs de antelación y aprovechá el descuento 😉</p>
                 <ul class="hero-news-promos">
                   <li><span class="hero-promo-label">½ docena <small>(por encargo)</small></span><span class="hero-promo-price">19 €</span></li>
                   <li><span class="hero-promo-label">Docena <small>(por encargo)</small></span><span class="hero-promo-price">34 €</span></li>
-                  <li><span class="hero-promo-label">2 sánds + bebida</span><span class="hero-promo-price">8 €</span></li>
+                  <li><span class="hero-promo-label">12 medialunas <small>(por encargo)</small></span><span class="hero-promo-price"><span class="office-price-old">27,6 €</span> 24 €</span></li>
                 </ul>
-                <a class="hero-news-cta" href="https://wa.me/34641514569?text=Hola%21%20Quiero%20saber%20sobre%20las%20promos." target="_blank" rel="noreferrer">Consultar promos</a>
+                <button type="button" class="hero-news-cta" id="hero-promo-open">Encargar</button>
               </div>
 
               <div class="hero-news-slide" data-slide="1">
@@ -375,12 +375,12 @@
         <div class="cookie-text">
           <div class="cookie-text-full">
             <h3>Medialunas</h3>
-            <p>Tiernas, dulces y recién horneadas — el clásico infaltable para arrancar el día con onda. ☕ Docena por encargo 24 €.</p>
+            <p>Tiernas, dulces y recién horneadas — el clásico infaltable para arrancar el día con onda. ☕ Docena por encargo <span class="office-price-old">27,6 €</span> 24 €.</p>
             <span class="cookie-price-tag">2,50 € c/u</span>
           </div>
           <div class="cookie-text-mobile">
             <h3>Medialunas</h3>
-            <p>Docena por encargo 24 €.</p>
+            <p>Docena por encargo <span class="office-price-old">27,6 €</span> 24 €.</p>
             <span class="cookie-price-tag">2,50 € c/u</span>
           </div>
         </div>
@@ -847,6 +847,58 @@
             <button class="button primary" id="box-selector-next" type="button">Siguiente</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="promo-modal" id="promo-modal" hidden>
+      <button type="button" class="promo-modal-backdrop" id="promo-modal-backdrop" aria-label="Cerrar promos"></button>
+      <div class="promo-modal-card" role="dialog" aria-modal="true" aria-labelledby="promo-modal-title">
+        <div class="promo-modal-head">
+          <p class="promo-modal-kicker">Promos por encargo</p>
+          <button type="button" class="promo-modal-close" id="promo-modal-close" aria-label="Cerrar promos">Cerrar</button>
+        </div>
+        <h3 id="promo-modal-title">Elegí tu promo</h3>
+        <p class="promo-modal-note">Pedí con 12hs de antelación y aprovechá el descuento 😉</p>
+        <ul class="promo-modal-list">
+          <li>
+            <button type="button" class="promo-modal-item" data-promo="daily">
+              <span class="promo-modal-label">½ docena <small>(por encargo)</small></span>
+              <span class="promo-modal-price"><span class="office-price-old">21 €</span> 19 €</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="promo-modal-item" data-promo="meeting">
+              <span class="promo-modal-label">Docena <small>(por encargo)</small></span>
+              <span class="promo-modal-price"><span class="office-price-old">42 €</span> 34 €</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="promo-modal-item" data-promo="medialunas">
+              <span class="promo-modal-label">12 medialunas <small>(por encargo)</small></span>
+              <span class="promo-modal-price"><span class="office-price-old">27,6 €</span> 24 €</span>
+            </button>
+          </li>
+        </ul>
+        <a class="promo-modal-cta" id="promo-modal-menu-link" href="#menu">Ver menú completo</a>
+      </div>
+    </div>
+
+    <div class="promo-modal" id="medialuna-modal" hidden>
+      <button type="button" class="promo-modal-backdrop" id="medialuna-modal-backdrop" aria-label="Cerrar"></button>
+      <div class="promo-modal-card" role="dialog" aria-modal="true" aria-labelledby="medialuna-modal-title">
+        <div class="promo-modal-head">
+          <p class="promo-modal-kicker">Medialunas por encargo</p>
+          <button type="button" class="promo-modal-close" id="medialuna-modal-close" aria-label="Cerrar">Cerrar</button>
+        </div>
+        <h3 id="medialuna-modal-title">¿Cuántas medialunas?</h3>
+        <p class="promo-modal-note">Cada 12 se cobra a precio de docena (24 €). Lo que sobra, a 2,50 € c/u.</p>
+        <div class="builder-counter">
+          <button type="button" class="builder-counter-btn" id="medialuna-dec" aria-label="Restar">-</button>
+          <div class="builder-counter-value" id="medialuna-count">12</div>
+          <button type="button" class="builder-counter-btn" id="medialuna-inc" aria-label="Sumar">+</button>
+        </div>
+        <ul class="promo-cart-rows" id="medialuna-cart-rows"></ul>
+        <button type="button" class="promo-modal-cta" id="medialuna-confirm">Confirmar por WhatsApp</button>
       </div>
     </div>
 
