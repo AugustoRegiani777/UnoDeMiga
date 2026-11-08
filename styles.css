@@ -606,8 +606,17 @@ h3 {
 /* En desktop el hero tiene mucho lugar de sobra a la derecha — agranda la
    tarjeta de Novedades para que ocupe su espacio en vez de quedar chica. */
 @media (min-width: 981px) {
+  /* El frame centrado (1320px) deja un margen enorme y simétrico en
+     pantallas grandes — en el hero eso se ve como espacio vacío al lado
+     de la tarjeta. Acá el hero ocupa todo el ancho con un padding fijo,
+     así la tarjeta queda cerca del borde real de la ventana. */
+  .hero-inner {
+    width: 100%;
+    padding: 74px clamp(24px, 4vw, 72px) 58px;
+  }
+
   .hero-news {
-    max-width: 440px;
+    max-width: 460px;
   }
 
   .hero-news-slide {
@@ -6102,7 +6111,7 @@ body.has-box-modal { overflow: hidden; }
 
 .promo-cart-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
   padding: 8px 12px;
@@ -6111,7 +6120,19 @@ body.has-box-modal { overflow: hidden; }
   font-size: 0.86rem;
 }
 
+.promo-cart-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .promo-cart-row-label { font-weight: 700; color: var(--text); }
+
+.promo-cart-row-sublabel {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: rgba(38, 23, 18, 0.55);
+}
 
 .promo-cart-row-price { flex-shrink: 0; white-space: nowrap; font-family: "Archivo Black", sans-serif; color: var(--orange-dark); }
 

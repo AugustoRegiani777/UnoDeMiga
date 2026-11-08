@@ -2310,7 +2310,7 @@ const boxSel = {
     if (!config) return;
     const preset = bsxBuildPreset(config);
     this.state = { box: config, step: 0, regular: preset.regular, delaCasa: preset.delaCasa, extras: preset.extras, mitades: false, dia: "" };
-    this.refs.title.textContent = config.name;
+    this.refs.title.textContent = config.extendable ? "" : config.name;
     this.refs.modal.hidden = false;
     document.body.classList.add("has-box-modal");
     this.render();
@@ -2371,9 +2371,12 @@ const boxSel = {
     if (!this.state.box.extendable) return "";
     const { docenaRow, mediaRow, sueltosCount, sueltosTotal } = this.breakdown();
     const rows = [];
-    if (docenaRow) rows.push(cartRowHtml(`${docenaRow.count} sándwiches`, docenaRow.listPrice, docenaRow.price));
-    if (mediaRow)  rows.push(cartRowHtml(`${mediaRow.count} sándwiches`, mediaRow.listPrice, mediaRow.price));
-    if (sueltosCount > 0) rows.push(cartLooseRowHtml(`+${sueltosCount} suelto${sueltosCount > 1 ? "s" : ""}`, sueltosTotal));
+    if (docenaRow) {
+      const promos = docenaRow.count / 12;
+      rows.push(cartRowHtml(`${docenaRow.count} sándwiches`, docenaRow.listPrice, docenaRow.price, `${promos} promo${promos > 1 ? "s" : ""} docena`));
+    }
+    if (mediaRow) rows.push(cartRowHtml(`${mediaRow.count} sándwiches`, mediaRow.listPrice, mediaRow.price, "1 promo 1/2"));
+    if (sueltosCount > 0) rows.push(cartLooseRowHtml(`${sueltosCount} sándwich${sueltosCount > 1 ? "es" : ""}`, sueltosTotal, "sándwich unidad"));
     return rows.length ? `<ul class="promo-cart-rows">${rows.join("")}</ul>` : "";
   },
 
@@ -2585,7 +2588,7 @@ const boxSel = {
         <p class="bsx-step-label">Resumen del pedido</p>
       </div>
       <div class="bsx-summary">
-        <p class="bsx-summary-box">${box.name}</p>
+        ${box.extendable ? "" : `<p class="bsx-summary-box">${box.name}</p>`}
         ${this.cartRowsHtml()}
         ${regularLines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">Sándwiches</p><ul>${regularLines}</ul></div>` : ""}
         ${delaCasaLines ? `<div class="bsx-summary-group"><p class="bsx-summary-label">De la casa (+0,30 €)</p><ul>${delaCasaLines}</ul></div>` : ""}
@@ -2601,7 +2604,8 @@ const boxSel = {
     const { box, regular, delaCasa, extras, mitades, dia } = this.state;
     const finalPrice = this.finalPrice();
     const priceStr = formatEUR(finalPrice);
-    const lines = [`¡Hola! Quiero pedir ${box.name} — ${priceStr} €.`, ""];
+    const label = box.extendable ? `${this.totalAll()} sándwiches` : box.name;
+    const lines = [`¡Hola! Quiero pedir ${label} — ${priceStr} €.`, ""];
 
     const regularEntries = Object.entries(regular).filter(([, q]) => q > 0);
     if (regularEntries.length) {
@@ -2655,21 +2659,27 @@ function formatEUR(n) { return n % 1 === 0 ? `${n}` : n.toFixed(2).replace(".", 
 // Fila de carrito compartida entre el selector de sándwiches y el de
 // medialunas: un paquete con descuento (precio de lista tachado) o un
 // renglón de sueltos sin descuento todavía.
-function cartRowHtml(label, listPrice, price) {
+function cartRowHtml(label, listPrice, price, sublabel) {
   const priceHtml = listPrice > price
     ? `<span class="office-price-old">${formatEUR(listPrice)} €</span> ${formatEUR(price)} €`
     : `${formatEUR(price)} €`;
   return `
     <li class="promo-cart-row">
-      <span class="promo-cart-row-label">${label}</span>
+      <span class="promo-cart-row-text">
+        <span class="promo-cart-row-label">${label}</span>
+        ${sublabel ? `<span class="promo-cart-row-sublabel">${sublabel}</span>` : ""}
+      </span>
       <span class="promo-cart-row-price">${priceHtml}</span>
     </li>`;
 }
 
-function cartLooseRowHtml(label, total) {
+function cartLooseRowHtml(label, total, sublabel) {
   return `
     <li class="promo-cart-row promo-cart-row-loose">
-      <span class="promo-cart-row-label">${label}</span>
+      <span class="promo-cart-row-text">
+        <span class="promo-cart-row-label">${label}</span>
+        ${sublabel ? `<span class="promo-cart-row-sublabel">${sublabel}</span>` : ""}
+      </span>
       <span class="promo-cart-row-price">${formatEUR(total)} €</span>
     </li>`;
 }
@@ -2736,8 +2746,11 @@ const medialunaSel = {
     this.refs.count.textContent = this.state.count;
     const { docenaRow, sueltosCount, sueltosTotal } = this.breakdown();
     const rows = [];
-    if (docenaRow) rows.push(cartRowHtml(`${docenaRow.count} medialunas`, docenaRow.listPrice, docenaRow.price));
-    if (sueltosCount > 0) rows.push(cartLooseRowHtml(`+${sueltosCount} suelta${sueltosCount > 1 ? "s" : ""}`, sueltosTotal));
+    if (docenaRow) {
+      const promos = docenaRow.count / 12;
+      rows.push(cartRowHtml(`${docenaRow.count} medialunas`, docenaRow.listPrice, docenaRow.price, `${promos} promo${promos > 1 ? "s" : ""} docena`));
+    }
+    if (sueltosCount > 0) rows.push(cartLooseRowHtml(`${sueltosCount} medialuna${sueltosCount > 1 ? "s" : ""}`, sueltosTotal, "medialuna unidad"));
     this.refs.cartRows.innerHTML = rows.join("");
   },
 
