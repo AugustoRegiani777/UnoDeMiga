@@ -536,6 +536,10 @@ h3 {
   white-space: nowrap;
 }
 
+.hero-promo-price .office-price-old {
+  color: rgba(242, 236, 228, 0.45);
+}
+
 .hero-news-cta {
   margin-top: 10px;
   align-self: flex-start;
@@ -597,6 +601,60 @@ h3 {
 .hero-news-dot.is-active {
   background: var(--cream);
   transform: scale(1.35);
+}
+
+/* En desktop el hero tiene mucho lugar de sobra a la derecha — agranda la
+   tarjeta de Novedades para que ocupe su espacio en vez de quedar chica. */
+@media (min-width: 981px) {
+  .hero-news {
+    max-width: 440px;
+  }
+
+  .hero-news-slide {
+    padding: 32px 36px 30px;
+    gap: 10px;
+  }
+
+  .hero-news-tag {
+    font-size: 0.72rem;
+  }
+
+  .hero-news-headline {
+    font-size: 1.5rem;
+  }
+
+  .hero-news-desc {
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+
+  .hero-news-promos {
+    margin-top: 10px;
+    padding-top: 14px;
+    gap: 9px;
+  }
+
+  .hero-promo-label {
+    font-size: 0.92rem;
+  }
+
+  .hero-promo-price {
+    font-size: 1.05rem;
+  }
+
+  .hero-news-cta {
+    margin-top: 16px;
+    font-size: 0.78rem;
+  }
+
+  .hero-news-cta-glovo {
+    padding: 10px 20px 9px;
+    font-size: 0.78rem;
+  }
+
+  .hero-news-nav {
+    padding: 0 36px 20px;
+  }
 }
 
 .hero-actions {
