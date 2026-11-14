@@ -2570,6 +2570,12 @@ h3 {
   line-height: 1.5;
 }
 
+.cookie-consent-text a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .cookie-consent-actions {
   display: flex;
   gap: 10px;
@@ -6403,5 +6409,127 @@ body.has-box-modal { overflow: hidden; }
   .bsx-counter {
     gap: 8px;
   }
+}
+
+/* ─── Footer legal ──────────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--text);
+  color: rgba(242, 236, 228, 0.7);
+  padding: 28px 0;
+}
+
+.site-footer-inner {
+  width: var(--frame-width);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  font-size: 0.82rem;
+}
+
+.site-footer-id {
+  line-height: 1.6;
+}
+
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+
+.site-footer-links a {
+  color: rgba(242, 236, 228, 0.75);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.site-footer-links a:hover {
+  color: var(--cream);
+  border-color: rgba(242, 236, 228, 0.4);
+}
+
+@media (max-width: 640px) {
+  .site-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ─── Páginas legales (Aviso legal / Privacidad / Cookies) ────────────────── */
+.legal-page {
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.legal-header {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.legal-header-inner {
+  width: min(760px, calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.legal-header-inner img {
+  height: 40px;
+  display: block;
+}
+
+.legal-back {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--orange-dark);
+  text-decoration: none;
+}
+
+.legal-content {
+  width: min(760px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0 80px;
+  line-height: 1.65;
+}
+
+.legal-content h1 {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  margin: 0 0 6px;
+}
+
+.legal-content .legal-updated {
+  margin: 0 0 32px;
+  color: rgba(38, 23, 18, 0.55);
+  font-size: 0.85rem;
+}
+
+.legal-content h2 {
+  font-size: 1.15rem;
+  margin: 32px 0 10px;
+}
+
+.legal-content p,
+.legal-content li {
+  font-size: 0.96rem;
+  color: rgba(38, 23, 18, 0.82);
+}
+
+.legal-content ul {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.legal-content li + li {
+  margin-top: 4px;
+}
+
+.legal-content a {
+  color: var(--orange-dark);
 }
 
