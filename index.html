@@ -45,8 +45,8 @@
   <body>
     <div class="topbar" aria-label="Información de la tienda">
       <span class="topbar-track" aria-hidden="true">
-        Sabores grandes, identidad fuerte, sandwichería con sello propio &nbsp;·&nbsp; Valencia — A la vuelta del Ayuntamiento &nbsp;·&nbsp; Pedidos por WhatsApp &nbsp;·&nbsp; Lunes 10–14 · Mar–Dom 9–21:30 &nbsp;·&nbsp;
-        Sabores grandes, identidad fuerte, sandwichería con sello propio &nbsp;·&nbsp; Valencia — A la vuelta del Ayuntamiento &nbsp;·&nbsp; Pedidos por WhatsApp &nbsp;·&nbsp; Lunes 10–14 · Mar–Dom 9–21:30 &nbsp;·&nbsp;
+        Sabores grandes, identidad fuerte, sandwichería con sello propio &nbsp;·&nbsp; Valencia — A la vuelta del Ayuntamiento &nbsp;·&nbsp; Pedidos por WhatsApp &nbsp;·&nbsp; Lunes cerrado · Mar–Dom 9–21:30 &nbsp;·&nbsp;
+        Sabores grandes, identidad fuerte, sandwichería con sello propio &nbsp;·&nbsp; Valencia — A la vuelta del Ayuntamiento &nbsp;·&nbsp; Pedidos por WhatsApp &nbsp;·&nbsp; Lunes cerrado · Mar–Dom 9–21:30 &nbsp;·&nbsp;
       </span>
     </div>
 
@@ -254,6 +254,20 @@
                 </article>
                 <article class="flavor-card card">
                   <div class="flavor-image image-container">
+                    <div class="flavor-image-pending" role="img" aria-label="Foto del sándwich de salame y queso próximamente">
+                      <span class="flavor-image-pending-emoji">🧀</span>
+                      <span>Foto próximamente</span>
+                    </div>
+                  </div>
+                  <div class="flavor-body text-container">
+                    <span class="office-size">De la casa</span>
+                    <h3>Salame y queso</h3>
+                    <p>Salame y queso en capas generosas — sabor intenso, bien de la casa.</p>
+                    <p class="flavor-price">3,80 EUR</p>
+                  </div>
+                </article>
+                <article class="flavor-card card">
+                  <div class="flavor-image image-container">
                     <img src="./assets/img/img-63.jpg" alt="Especial de la semana de Uno de Miga" />
                   </div>
                   <div class="flavor-body text-container">
@@ -381,6 +395,42 @@
           <div class="cookie-text-mobile">
             <h3>Medialunas</h3>
             <p>Docena por encargo <span class="office-price-old">30 €</span> 24 €.</p>
+            <span class="cookie-price-tag">2,50 € c/u</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cookie-banner cookie-banner--rtl" data-direction="rtl">
+      <div class="cookie-inner">
+        <div class="cookie-wheel" aria-hidden="true">🍫</div>
+        <div class="cookie-text">
+          <div class="cookie-text-full">
+            <h3>Chocotorta</h3>
+            <p>Capas de galletitas de chocolate, dulce de leche y crema — el clásico argentino, bien cremoso. 🍫</p>
+            <span class="cookie-price-tag">4,50 € c/u</span>
+          </div>
+          <div class="cookie-text-mobile">
+            <h3>Chocotorta</h3>
+            <p>Galletitas, dulce de leche y crema 🍫</p>
+            <span class="cookie-price-tag">4,50 € c/u</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cookie-banner" data-direction="ltr">
+      <div class="cookie-inner">
+        <div class="cookie-wheel" aria-hidden="true">🥐</div>
+        <div class="cookie-text">
+          <div class="cookie-text-full">
+            <h3>Mini medialunas</h3>
+            <p>Mini medialunas tiernas, ideales para acompañar el café o picar de a varias. ☕</p>
+            <span class="cookie-price-tag">2,50 € c/u</span>
+          </div>
+          <div class="cookie-text-mobile">
+            <h3>Mini medialunas</h3>
+            <p>Tiernas, ideales para acompañar el café ☕</p>
             <span class="cookie-price-tag">2,50 € c/u</span>
           </div>
         </div>
@@ -742,7 +792,7 @@
             <div class="contact-item">
               <span class="contact-label">Horarios</span>
               <ul class="contact-hours">
-                <li><span>Lunes</span><span>10:00 – 14:00</span></li>
+                <li><span>Lunes</span><span>Cerrado</span></li>
                 <li><span>Mar – Jue</span><span>9:00 – 21:00</span></li>
                 <li><span>Vie, Sáb y Dom</span><span>9:00 – 21:30</span></li>
               </ul>
@@ -803,7 +853,7 @@
         "hasMap": "https://www.google.com/maps/dir/?api=1&destination=UNO%20DE%20MIGA%20s%C3%A1ndwiches%20y%20CAF%C3%89%20de%20especialidad.%2C%20Carrer%20d'en%20Llop%2C%201%2C%2046002%20Val%C3%A8ncia",
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "Calle Llop 1",
+          "streetAddress": "Carrer Llop 1",
           "addressLocality": "Valencia",
           "addressRegion": "Valencia",
           "addressCountry": "ES"
@@ -813,12 +863,6 @@
           "name": "Valencia"
         },
         "openingHoursSpecification": [
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday"],
-            "opens": "10:00",
-            "closes": "14:00"
-          },
           {
             "@type": "OpeningHoursSpecification",
             "dayOfWeek": ["Tuesday", "Wednesday", "Thursday"],

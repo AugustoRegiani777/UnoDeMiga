@@ -76,6 +76,7 @@ const saboresData = [
   { id: "huevo-queso", nombre: "Huevo y queso", categoria: "de-la-casa", precio: 3.8, tags: ["vegetariano"] },
   { id: "atun-palta", nombre: "Atún, aguacate y queso", categoria: "de-la-casa", precio: 3.8, tags: ["pescado"] },
   { id: "mortadela-pesto", nombre: "Mortadela, pesto y queso", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
+  { id: "salame-queso", nombre: "Salame y queso", categoria: "de-la-casa", precio: 3.8, tags: ["cerdo"] },
 ];
 
 const extrasSections = [
@@ -2244,6 +2245,7 @@ const BOX_DELACASA_FLAVORS = [
   { id: "huevo-queso",     name: "Huevo y queso",            precio: 3.8 },
   { id: "huevo-jamon",     name: "Huevo y jamón",            precio: 3.8 },
   { id: "mortadela-pesto", name: "Mortadela, pesto y queso", precio: 3.8 },
+  { id: "salame-queso",    name: "Salame y queso",           precio: 3.8 },
   { id: "especial-semana", name: "Especial de la semana",    precio: 3.8 },
 ];
 
@@ -2251,7 +2253,7 @@ const BOX_DELACASA_FLAVORS = [
 // elegir los sabores. No tienen descuento por cantidad.
 const BOX_EXTRAS = [
   { id: "chipa",      name: "Chipá",            precio: 1   },
-  { id: "chocotorta", name: "Chocotorta",       precio: 3.5 },
+  { id: "chocotorta", name: "Chocotorta",       precio: 4.5 },
   { id: "alfajor",    name: "Alfajor Havanna",  precio: 3   },
   { id: "bebida",     name: "Bebida",           precio: 2   },
 ];
