@@ -2400,12 +2400,6 @@ h3 {
   will-change: transform;
 }
 
-/* Los emoji suelen tener más "aire" interno que una foto recortada —
-   achicarlos un poco evita que se corten contra el círculo. */
-.cookie-wheel.cookie-wheel--emoji {
-  font-size: 4rem;
-}
-
 .cookie-wheel.cookie-wheel--coin {
   width: auto;
   height: 110px;
@@ -2492,7 +2486,6 @@ h3 {
     font-size: 4.4rem;
   }
   .cookie-wheel.cookie-wheel--coin { height: 100px; }
-  .cookie-wheel.cookie-wheel--emoji { font-size: 3.2rem; }
   .cookie-text { margin-left: 20px; margin-right: 148px; }
   .cookie-text h3 { font-size: 0.9rem; }
   .cookie-text p  { font-size: 0.74rem; }
@@ -2511,7 +2504,6 @@ h3 {
     font-size: 3rem;
   }
   .cookie-wheel.cookie-wheel--coin { height: 88px; }
-  .cookie-wheel.cookie-wheel--emoji { font-size: 2.2rem; }
   .cookie-text { margin-left: 16px; margin-right: 110px; }
   .cookie-text h3 { font-size: 0.85rem; }
   .cookie-text p  { font-size: 0.72rem; margin-bottom: 6px; }
@@ -2534,7 +2526,6 @@ h3 {
     font-size: 2.4rem;
   }
   .cookie-wheel.cookie-wheel--coin { height: 68px; }
-  .cookie-wheel.cookie-wheel--emoji { font-size: 1.75rem; }
   .cookie-text { margin-left: 14px; margin-right: 92px; }
   .cookie-text h3 { font-size: 0.8rem; }
   .cookie-text p  { font-size: 0.7rem; }
