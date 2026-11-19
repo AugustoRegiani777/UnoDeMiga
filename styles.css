@@ -16,6 +16,11 @@
 
 html {
   scroll-behavior: smooth;
+  /* En iOS, el rebote elástico al llegar al final de la página muestra el
+     fondo de <html> por un instante — si queda del color crema del body
+     se ve como si la página siguiera vacía después del footer. Con el
+     mismo marrón oscuro del footer, el rebote se funde con él. */
+  background: var(--text);
 }
 
 body {
@@ -954,34 +959,6 @@ h3 {
 
 .flavor-image img {
   border-radius: 0;
-}
-
-.flavor-image-pending {
-  width: 100%;
-  height: 100%;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(38, 23, 18, 0.06),
-    rgba(38, 23, 18, 0.06) 10px,
-    rgba(38, 23, 18, 0.03) 10px,
-    rgba(38, 23, 18, 0.03) 20px
-  );
-  color: rgba(38, 23, 18, 0.45);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  text-align: center;
-}
-
-.flavor-image-pending-emoji {
-  font-size: 1.8rem;
 }
 
 .flavor-body {
